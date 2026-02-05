@@ -2,8 +2,8 @@
 
 > **Purpose:** Map the complete, granular claims journey across Motor, Health, and Home/Property to identify where pain lives, where Mysa fits, and where the moat is.
 > **Approach:** Build the journey step by step, challenging assumptions, flagging EU vs US differences, and noting where lines of business overlap vs diverge. We are building this collaboratively — not mapping everything at once, but going phase by phase, jamming on each step.
-> **Focus:** Motor claims first. Health and Home/Property will be mapped later.
-> **Status:** In Progress — Phases 0-3 mapped, Phase 4 (First Contact) next.
+> **Focus:** Motor claims first, Home/Property now added.
+> **Status:** In Progress — Motor Phases 0-6 mapped, Home/Property FNOL & Adjuster workflow mapped. Motor Phases 7-11 (Investigation through Close) next.
 
 ---
 
@@ -329,7 +329,7 @@ This is a critical difference that affects automation opportunity.
 
 | Claim Path | Insurer Contacts Driver? | Format | % of Claims ⚠️ |
 |---|---|---|---|
-| **Clean EAS** — both signed, matches convention scenario | **NO** — EAS is legally sufficient | Handler reviews form, matches to fault table, processes. Nobody picks up the phone. | ~60-70% |
+| **Clean EAS** — both signed, matches convention scenario | **NO** — EAS is legally sufficient | Handler reviews form, matches to fault table, processes. Nobody picks up the phone. | ~60-70% theoretical, **~10% actual STP** ⚠️ |
 | **Incomplete/Unclear EAS** — gaps, unclear diagram | **YES** — clarification only | Phone call, email, or app message. Gap-filling, not interrogation. "The diagram isn't clear, can you explain?" | ~15-20% |
 | **No EAS / Disputed / BI / High Value** | **YES** — formal investigation | Written statement requested, expert inspection, lawyer involvement for bodily injury | ~10-15% |
 | **Suspected Fraud** | **YES** — full SIU investigation | Recorded statements, cross-referencing, surveillance in extreme cases | ~5% |
@@ -512,6 +512,246 @@ This is critical for your journey map. Here's the broker's role broken down by P
 
 6. **Acrisure/Joaquim connection:** Acrisure is a broker group. Their ~4K claims/year flow THROUGH them to insurers. If Mysa can help them process those FNOLs faster and with better data, you're adding value at the broker layer AND making the insurer's job easier downstream. This is a natural fit for Option C.
 
+---
+
+## Step 3A-2: 🇺🇸 US Broker Role in Claim Submission — Deep Dive
+
+### The Reality: "Almost Nothing" for Personal Auto
+
+For **US personal auto claims**, the broker/independent agent's role in the actual claims process is **almost nothing**:
+
+| What They Do | What They DON'T Do |
+|---|---|
+| Point you to the phone number to call | File the claim for you |
+| Remind you of your deductible | Process anything |
+| Offer emotional support | Have system access to open claims |
+| Maybe follow up later to check on you | Talk to the adjuster on your behalf |
+
+**Why?** US personal auto is dominated by:
+- **Captive agents** (State Farm, Allstate) who ARE the insurer's front office
+- **Direct channels** (GEICO, Progressive) with no intermediary at all
+- **Independent agents** who sell policies from multiple insurers but have **no claims system access**
+
+When you buy through an independent agent in the US and have a claim, the agent says: *"Here's the claims number, call them directly."* That's it.
+
+### The Exception: Commercial Lines
+
+For **commercial insurance** (fleet, trucking, business auto), brokers DO play an active role:
+- Claims are complex (multiple vehicles, business interruption, cargo)
+- Higher stakes = broker earns their advocacy role
+- Broker may have a dedicated claims contact at the insurer
+- Still don't have system access, but do manage communication actively
+
+### Implication for Mysa's US Strategy
+
+If targeting US personal auto: **go direct to insurers**. The broker layer barely exists for claims.
+
+If targeting US commercial: brokers matter, but it's a different product and sales motion than personal motor.
+
+---
+
+## Step 3A-3: Who Handles Claim Validation Calls in the US?
+
+### The Answer: The Claims Adjuster — Always an Insurer Employee (or Contracted by Insurer)
+
+The **recorded statement** — that 15-30 minute phone call where your version of events is formally documented — is ALWAYS handled by someone working for or contracted by the insurer:
+
+| Role | Description | Who Employs Them |
+|---|---|---|
+| **Staff Adjuster** | Full-time employee of the insurance company | Insurer directly |
+| **Independent Adjuster** | Contractor hired by insurer for overflow or specialized claims | Contracted by insurer |
+| **Public Adjuster** | Works for the POLICYHOLDER, not the insurer | Paid by policyholder (% of settlement) |
+
+### Key Distinction: The Three Types of Adjusters
+
+1. **Staff Adjuster** (most common for routine claims)
+   - W-2 employee of State Farm, GEICO, Progressive, etc.
+   - Handles claims soup-to-nuts: recorded statements, investigation, liability determination, settlement
+   - Has authority limits (may need supervisor approval above certain amounts)
+
+2. **Independent Adjuster** (IA)
+   - 1099 contractor, often used for:
+     - CAT events (hurricanes, wildfires) when volume spikes
+     - Geographic coverage gaps
+     - Specialized expertise (marine, aviation)
+   - Still represents the insurer, not the claimant
+   - Often paid per-claim or hourly
+
+3. **Public Adjuster** (PA)
+   - Works for the POLICYHOLDER against the insurer
+   - Hired when policyholder feels they're being lowballed
+   - Takes 10-15% of the settlement as fee
+   - More common in property/homeowners than auto
+   - Effectively an advocate/negotiator for the claimant
+
+### The Recorded Statement: Adjuster's Domain
+
+**The broker/agent NEVER does the recorded statement.** This is a core adjuster function because:
+- It's creating the official record that determines liability
+- It requires training in questioning techniques
+- It's recorded for legal purposes
+- The adjuster needs to probe for inconsistencies, details, fraud indicators
+
+Even if you called your broker first and they helped you understand the process, once the claim is filed, the adjuster calls you directly. The broker is out of the loop.
+
+---
+
+## Step 3A-4: Strategic Implication — Different Automation Opportunities by Market
+
+### The Core Insight: "Augment" vs "Eliminate"
+
+| Market | Adjuster's Role | Automation Opportunity |
+|---|---|---|
+| **🇺🇸 US** | Central to EVERY claim — even simple fender-benders require recorded statements | **Augment the adjuster**: Tools that help them work faster, extract better data from statements, reduce their time per claim |
+| **🇪🇺 EU (clean EAS path)** | Often NOT involved — convention systems auto-process | **Eliminate adjuster for routine claims**: The ~60-70% that *could* follow clean EAS path, but only ~10% actually achieve STP today due to data quality issues |
+| **🇪🇺 EU (complex path)** | Involved for disputes, BI, high-value | **Augment the adjuster**: Similar to US, tools for faster investigation |
+
+### What This Means for Mysa
+
+**US product focus:** The adjuster IS the user. Help them:
+- Transcribe and structure recorded statements automatically
+- Extract key facts, contradictions, timeline from voice/text
+- Pre-fill liability assessments based on statement analysis
+- Reduce 30-minute calls to 15 minutes with better question routing
+
+**EU product focus:** The claims handler reviewing EAS forms is the user. Help them:
+- OCR and extract structured data from paper EAS
+- Auto-match to convention fault tables
+- Flag incomplete/unclear forms for human review
+- The goal is STRAIGHT-THROUGH PROCESSING, not adjuster augmentation
+
+### Two Different Products?
+
+This raises a strategic question: **Is Mysa building one product or two?**
+
+- **Option A:** Build for EU first (cleaner data, faster path to automation ROI), then adapt for US later
+- **Option B:** Build a flexible "claims intelligence layer" that works for both but requires different configuration
+- **Option C:** Pick one market and go deep
+
+The previous conversation's thesis: **EU first makes sense** because:
+1. Structurally cleaner data (EAS) = faster AI wins
+2. Licensing advantage (Tiago knows EU insurance regulation)
+3. Smaller market but faster path to demonstrating value
+4. US can come later once the core is proven
+
+---
+
+## Step 3A-5: Broker Claims Submission — What Actually Happens (Research)
+
+### The UK Reality (Better Documented)
+
+**Broker Management Systems exist** — Acturis is the dominant platform in UK. But here's the critical finding:
+
+**Aviva and Acturis launched a claims API in December 2024** — the fact that this is "ground-breaking" news tells us what the status quo was:
+
+> **Before this API, brokers were manually keying claims data into Acturis after receiving it from the insurer, or manually requesting updates.**
+
+Source: [Acturis Blog, Dec 2024](https://www.acturis.com/blog/2024/12/13/aviva-and-acturis-launch-ground-breaking-broker-api-to-simplify-claims-process/)
+
+**RSA's broker portal** (launched April 2024) shows what's typical even for large insurers:
+- Only Commercial Property and Motor claims can be submitted via portal
+- Other claim types → still phone, email, or post
+- Block policies don't work in the portal → requires manual handler verification
+
+Source: [RSA Broker Portal FAQs](https://www.rsainsurance.co.uk/brokers-and-partners/faqs/broker-portal/)
+
+### The Pain Points (Confirmed via Industry Sources)
+
+From [Ivans Insurance Blog](https://blog.ivansinsurance.com/posts/2021/how-to-solve-4-pain-points-commercial-submissions):
+
+1. **Rekeying hell:** "Agents must re-key all the same information into the systems over and over, increasing opportunities for errors"
+
+2. **Two bad options for submission:**
+   - Email information to insurer → insurer has to review, follow up, manually enter
+   - Manually enter into each insurer's portal → different portal per insurer, different fields, different logins
+
+3. **No visibility:** Brokers don't get proactive status updates, must chase insurers
+
+4. **~70% of agencies report losing business** because they can't find insurers willing to quote specific risks
+
+### Continental Europe (Portugal, Spain, Italy) — ⚠️ Less Documented
+
+- No equivalent to Acturis dominance in UK
+- MDS is the leading broker in Portugal — no public details on claims workflow
+- Generic broker management systems exist (Sibro, BrokerEdge, Recorder) but adoption unclear
+
+**Inference (⚠️ assumption):** Continental Europe is likely BEHIND the UK in broker-insurer digital integration. If UK brokers are still largely emailing and rekeying in 2024, Portugal/Spain/Italy are probably worse.
+
+### The Broker Claims Submission Flow (Synthesized)
+
+```
+POLICYHOLDER has accident
+        ↓
+Calls broker (panic call)
+        ↓
+BROKER collects info verbally
+├── What happened?
+├── When/where?
+├── Other party details?
+└── Photos? EAS filled?
+        ↓
+BROKER receives documents
+├── Scanned EAS (if EU)
+├── Photos via WhatsApp/email
+├── Police report number (if applicable)
+        ↓
+⚠️ HERE'S WHERE IT GETS MESSY — THREE PATHS
+        ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ OPTION A: Broker has portal access to this insurer              │
+│ → Logs into Insurer X portal                                    │
+│ → Manually enters ALL claim data into portal fields             │
+│ → Uploads documents (size limits, format restrictions)          │
+│ → Gets claim reference number                                   │
+│ → Repeats for each insurer if multi-insurer placement           │
+└─────────────────────────────────────────────────────────────────┘
+        OR
+┌─────────────────────────────────────────────────────────────────┐
+│ OPTION B: No portal access — Email submission                   │
+│ → Writes email summarizing claim details                        │
+│ → Attaches scanned EAS, photos as PDF/JPG                       │
+│ → Sends to claims@insurerX.com                                  │
+│ → Waits for acknowledgment (hours to days)                      │
+│ → INSURER side: someone reads email, manually enters into system│
+└─────────────────────────────────────────────────────────────────┘
+        OR
+┌─────────────────────────────────────────────────────────────────┐
+│ OPTION C: Phone + email follow-up                               │
+│ → Calls insurer claims line                                     │
+│ → Gives info verbally (insurer agent keys it in real-time)      │
+│ → Follows up with email confirmation + document attachments     │
+│ → Claim opened on call, docs arrive later                       │
+└─────────────────────────────────────────────────────────────────┘
+        ↓
+INSURER receives claim
+├── If via email: someone manually enters into claims system
+├── If via portal: data is in, but may need verification
+├── If via phone: data entered during call, docs pending
+        ↓
+Opens claim file, assigns handler
+```
+
+### Key Friction Points Identified
+
+| Friction Point | Where It Happens | Impact |
+|---|---|---|
+| **Rekeying data** | Broker → Insurer portal | Errors, time waste, ~70% of agencies affected |
+| **Multi-portal chaos** | Broker works with 10+ insurers | Different logins, formats, required fields per insurer |
+| **Email black hole** | Broker → Insurer via email | No confirmation, no tracking, unknown delays |
+| **Document format mess** | Policyholder → Broker | WhatsApp photos, scanned PDFs, handwritten EAS, mixed quality |
+| **No status visibility** | Throughout process | Broker has to chase insurer for updates manually |
+| **Policy verification delay** | Insurer receives claim | Manual check if policy exists, is active, covers this incident |
+| **Double data entry** | Insurer receives email | Insurer staff re-keys what broker already typed in email |
+
+### Open Questions (Need Validation)
+
+| # | Question | Why It Matters |
+|---|---|---|
+| Q1 | What % of broker-to-insurer submissions are email vs portal vs phone in Portugal? | Determines where friction is highest |
+| Q2 | When a broker emails a claim, what does the insurer literally do with it? | Validates the double-entry assumption |
+| Q3 | Do captive agents in Portugal have better system integration than brokers? | Affects whether agent path has same friction |
+| Q4 | What document formats do brokers receive from policyholders? | WhatsApp photos? Scanned PDFs? Original paper? |
+| Q5 | How long from broker submission to claim acknowledgment, on average? | Quantifies the delay pain |
 
 ---
 
@@ -537,7 +777,7 @@ This is critical for your journey map. Here's the broker's role broken down by P
 | Advocate for policyholder | ❌ | ✅ | **NO** — broker only |
 | Manage claims across multiple insurers | ❌ (single system) | ✅ | **NO** — broker only |
 
-**Summary: The overlap is concentrated in the first ~30-40% of the journey** — intake, documentation, communication. The back 60-70% (investigation, decision, payment, recovery) is insurer-only. Advocacy and multi-insurer management are broker-only.
+**Summary: The overlap is concentrated in the first ~30-40% of the journey** — intake, documentation, communication. The back portion (investigation, decision, payment, recovery) is insurer-only. Advocacy and multi-insurer management are broker-only.
 
 ### Does What Mysa Builds for Insurers Also Work for Brokers?
 
@@ -592,13 +832,13 @@ For **simple, routine motor claims** — clean EAS, clear fault, low value, sing
 - The broker adds almost nothing to the claims process. They're a **relay node**: receive info from policyholder, reformat it, forward to insurer.
 - A good digital FNOL tool eliminates this step entirely. Policyholder opens insurer's app, files claim in 5 minutes, done.
 - The broker never even hears about it until the renewal conversation.
-- This is already happening — direct digital claims filing is growing, and for the ~60-70% of EU motor claims that follow the clean EAS path, broker involvement in claims is increasingly unnecessary.
+- This is already happening — direct digital claims filing is growing, and for the EU motor claims that follow the clean EAS path (potentially ~60-70%, but only ~10% achieve true STP today), broker involvement in claims is increasingly unnecessary.
 
 ### Where the Thesis Is WRONG ❌ — And Why It Matters Strategically
 
 #### a) Brokers Are Consolidating and Getting MORE Powerful, Not Less
 
-- PE money is flooding into broker M&A — **60-70% of all insurance M&A activity in Europe** is broker consolidation
+- PE money is flooding into broker M&A — **a significant majority of insurance M&A activity in Europe** is broker consolidation
 - Acrisure (Joaquim's group) is one of the biggest global acquirers
 - In the US, independent agents held **61.5% of P&C premiums** in 2024 (Big "I" 2025 report)
 - In Europe, intermediaries (agents + brokers) control **55%+ of non-life premiums**
@@ -695,12 +935,522 @@ As the market shifts and direct channels grow (they will), Mysa's position as th
 
 ---
 
-## Phases 5-11: TO BE MAPPED
+## Phase 5: FNOL (First Notice of Loss)
+
+### What is FNOL?
+
+**FNOL = First Notice of Loss** — the initial report a policyholder makes to their insurer that an incident occurred. It's NOT the full claim — it's the **trigger** that opens a claim file.
+
+| | FNOL | Formal Claim / Proof of Loss |
+|---|---|---|
+| **When** | Immediately after incident | Later, once fully documented |
+| **Purpose** | Alert insurer, open file | Formally request payment |
+| **Detail level** | Basic — what happened, when, where | Detailed — full documentation, sworn statement |
+| **Format** | Phone call, app, email, web form | Often a formal signed document |
+
+Source: [Five Sigma](https://fivesigmalabs.com/blog/the-meaning-of-fnol-in-claims-management/), [Sentry Insurance](https://www.sentry.com/what-we-offer/resources/articles/what-is-fnol)
+
+### FNOL vs First Contact
+
+FNOL comes AFTER first contact because intermediaries may be involved:
+- **Direct channel:** First contact IS FNOL (policyholder → insurer)
+- **Broker channel:** First contact = broker; FNOL = when broker submits to insurer
+- **Agent channel:** Depends on captive (FNOL immediate) vs independent (redirects to insurer)
+
+### Core FNOL Data Fields
+
+| Field | Description |
+|---|---|
+| **Policy number** | To verify coverage |
+| **Policyholder contact** | Name, phone, email |
+| **Date & time of incident** | When did it happen? |
+| **Location** | Where did it happen? |
+| **Description of incident** | What happened? (narrative) |
+| **Police report number** | If applicable |
+| **Third parties involved** | Other drivers, witnesses |
+| **Initial damage description** | What's damaged, injuries? |
+
+**For motor specifically:**
+- Vehicle details (make, model, registration)
+- Other vehicle details
+- Driver info (was policyholder driving?)
+- Circumstances (checkboxes in EU via EAS)
+
+### Who Fills Out FNOL?
+
+| Channel | Who Fills FNOL | How |
+|---|---|---|
+| **Direct (policyholder calls insurer)** | Insurer's **call center agent** | Agent asks questions, types into system |
+| **Direct (policyholder uses app/web)** | **Policyholder** | Guided form |
+| **Broker submits** | **Broker** | Fills form and submits to insurer |
+| **Captive agent submits** | **Captive agent** | Direct system access, fills form in insurer's system |
+
+**Note:** The call center agent is typically an insurer employee or outsourced call center — NOT a TPA. TPAs may handle FNOL but are more commonly used for claims handling, specialty claims, or overflow capacity.
+
+### 🇺🇸 US: ACORD Forms
+
+**ACORD (Association for Cooperative Operations Research and Development)** provides 800+ standardized forms used across the US insurance industry:
+- **ACORD Automobile Loss Notice** — for motor claims
+- **ACORD Property Loss Notice** — for property claims
+- Different forms for different lines and scenarios
+
+**Why 800+ forms?** Before ACORD (founded 1970), every insurer had their own forms. ACORD covers every scenario: different lines of business, transaction types, and claim scenarios.
+
+**Key insight:** ACORD forms are often invisible to the end user. The insurer's claims system has fields that MAP to ACORD standards. When you call State Farm, the agent isn't thinking "I'm filling out ACORD form 123" — they're entering data into their system, which is ACORD-structured.
+
+Source: [ACORD](https://www.acord.org/forms-pages/acord-forms), [NasaSoft](https://www.nasasoft.com/blog/everything-you-need-to-know-about-insurance-acord-forms)
+
+### 🇪🇺 EU: No ACORD Equivalent for Claims
+
+**Does every EU insurer have different forms?** Yes — essentially.
+
+Each EU insurer has their own:
+- FNOL intake forms (web, app, call center scripts)
+- Claims management systems
+- Data fields and formats
+
+**Standardizing forces that DO exist:**
+1. **The EAS (European Accident Statement)** — Pan-EU standard for scene documentation. The INPUTS to FNOL are somewhat standardized for motor.
+2. **Convention systems (CIMPAS, IDA, CID)** — Require insurers to exchange data in specific formats for fault determination.
+
+**But for FNOL itself?** No standard. Insurer A's web form has different fields than Insurer B's. This is why broker submission is messy.
+
+**Product opportunity:** A data normalization layer that takes any input (EAS scan, email, phone transcript) and outputs structured data for ANY insurer's system.
+
+### EU vs US: The Fundamental FNOL Difference
+
+| | 🇪🇺 EU (Motor) | 🇺🇸 US (Motor) |
+|---|---|---|
+| **Data already captured before FNOL?** | YES — EAS captures most incident data at scene | NO — Data must be collected at FNOL |
+| **FNOL primary function** | "Here's my EAS + policy number" — verification | "Let me tell you what happened" — data collection |
+| **Structured data at FNOL?** | HIGH — EAS has checkboxes, diagram, signatures | LOW — mostly narrative/verbal |
+| **Who collects incident details?** | Both drivers at scene (EAS) | Adjuster via recorded statement AFTER FNOL |
+| **Call length for simple claim** | Short — "I had an accident, here's my EAS" | Long — 15-30 min recorded statement |
+| **Adjuster involvement at FNOL?** | Often NONE for clean EAS | Almost ALWAYS |
+
+### 🇪🇺 EU FNOL Flow (Clean EAS Path)
+
+```
+Policyholder calls insurer (or broker submits)
+     ↓
+"I had an accident. Policy number: X. I have my EAS."
+     ↓
+Front office / call center agent:
+├── Verifies policy is active
+├── Receives EAS (scan, photo, digital submission)
+├── Opens claim file
+├── Logs basic info
+     ↓
+NO CALL TO ADJUSTER for ~10% actual STP (60-70% theoretical)
+     ↓
+EAS goes to claims handler who:
+├── Matches EAS to convention fault tables
+├── If clean match → straight-through processing
+├── If unclear → THEN contact driver for clarification
+```
+
+### 🇺🇸 US FNOL Flow
+
+```
+Policyholder calls insurer (or broker submits basic info)
+     ↓
+Call center agent collects:
+├── Policy number
+├── Basic incident info (date, time, location)
+├── Other party info
+├── Police report number
+     ↓
+Claim file opened
+     ↓
+THEN adjuster calls back (often same day or next)
+     ↓
+Adjuster conducts RECORDED STATEMENT (15-30 min):
+├── Walk me through what happened
+├── What were you doing before the accident?
+├── What did you see?
+├── Where exactly were you hit?
+├── Who said what?
+├── Any witnesses?
+├── Any injuries?
+     ↓
+Adjuster ALSO calls OTHER driver for their statement
+     ↓
+Adjuster reconstructs incident from competing accounts
+```
+
+### The Claims File: FNOL is the Seed
+
+The FNOL doesn't create a separate document — it creates the **claims file** that grows throughout the lifecycle:
+
+```
+FNOL Created → Claim file opened
+     ↓
+FNOL data = foundation of this file
+     ↓
+Triage → Assigned to handler/adjuster
+     ↓
+ADJUSTER/HANDLER adds to the SAME file:
+├── Investigation notes
+├── Recorded statement transcript (US)
+├── Additional photos
+├── Police report (retrieved)
+├── Repair estimates
+├── Medical records (if BI)
+├── Liability determination
+├── Reserve amounts
+├── Settlement calculations
+     ↓
+Same file throughout lifecycle until closure
+```
+
+### Health Insurance: FNOL Doesn't Really Apply
+
+Health claims follow a different model:
+- **Pre-authorization:** "I need surgery, approve it" — happens BEFORE treatment
+- **Claim submission:** "I had treatment, pay the provider" — happens AFTER
+
+This is a **request-approval workflow**, not an event-response workflow. The equivalent form in US is the **CMS-1500** (for professional services) with 33 boxes of required fields including diagnosis codes (ICD-10) and procedure codes (CPT).
+
+**Recommendation:** Don't try to map health claims on the same journey. It's a different product.
+
+### FNOL Automation Opportunities
+
+| Market | Opportunity |
+|---|---|
+| **🇪🇺 EU** | **Digitize EAS intake** — OCR, extract structured data, auto-match to convention. FNOL itself is simple; value is processing EAS faster. |
+| **🇺🇸 US** | **Automate recorded statement** — voice-to-text, extract facts from narrative, identify contradictions, pre-fill liability assessment. FNOL is where ALL data collection happens. |
+
+---
+
+## Phase 6: Triage
+
+### What is Triage?
+
+Triage is the process of evaluating an incoming claim and deciding:
+1. **Complexity:** Simple vs. requires investigation
+2. **Severity:** Minor damage vs. total loss vs. bodily injury
+3. **Routing:** Who should handle this? Or can it be auto-processed?
+4. **Priority:** Urgent vs. standard
+
+### Who Does Triage?
+
+| Approach | How It Works | Where Used |
+|---|---|---|
+| **Manual (traditional)** | Supervisor reviews FNOL, assigns to adjuster based on workload, expertise, location | Smaller insurers, complex claims |
+| **Rules-based automation** | System applies business rules: "If claim type = X and location = Y, assign to adjuster Z" | Most mid-large insurers |
+| **AI/ML triage** | Predictive models assess complexity, severity, fraud indicators → route accordingly | Leading insurers, growing |
+
+### EU vs US Triage Difference
+
+| | 🇪🇺 EU (Clean EAS Path) | 🇺🇸 US |
+|---|---|---|
+| **Does claim GO to adjuster?** | Often NO — convention system *could* auto-process ~60-70%, but only ~10% achieve true STP due to data quality | Almost ALWAYS — adjuster does recorded statement |
+| **Triage question** | "Does this need human review?" (yes/no) | "Which adjuster should handle this?" |
+| **Who triages?** | Claims handler + convention system | Supervisor or automated rules engine |
+| **Straight-through processing?** | YES — goal is to skip human investigation | RARE — even simple claims get adjuster time |
+
+### EU Triage: Convention-Driven
+
+In EU, the triage decision often maps to EAS quality:
+
+| EAS Quality | Triage Decision | Path |
+|---|---|---|
+| **Clean EAS** — complete, signed, matches convention scenario | Auto-process | Convention fault tables → settlement calculation → payment |
+| **Unclear EAS** — missing info, unclear diagram | Clarification | Claims handler contacts driver for gap-filling |
+| **Disputed/No EAS** — parties disagree, no joint form | Investigation | Assigned to adjuster for full investigation |
+| **Bodily injury** | Specialist | Assigned to BI handler, likely involves lawyers |
+| **Fraud indicators** | SIU | Flagged for Special Investigation Unit |
+
+### US Triage: Adjuster Assignment
+
+In US, triage is about matching the claim to the right adjuster:
+
+| Factor | Routing Decision |
+|---|---|
+| **Claim type** | Auto vs property vs liability vs BI |
+| **Severity** | Minor damage (junior adjuster) vs total loss (senior) vs BI (specialist) |
+| **Location** | Local adjuster vs remote handling |
+| **Complexity** | Straightforward (standard queue) vs complex (specialist) |
+| **Fraud score** | High score → SIU review |
+
+### TPA vs In-House
+
+**TPA (Third Party Administrator)** — independent company that can handle claims on behalf of an insurer.
+
+| | In-House | TPA |
+|---|---|---|
+| **Call center agent** | Insurer employee | Could be TPA (outsourced FNOL) |
+| **Claims handler** | Insurer employee | Could be TPA |
+| **Adjuster** | Staff adjuster (insurer) | Could be independent adjuster or TPA |
+| **When TPA used** | N/A | Overflow, specialty, run-off, cost savings |
+
+**EU note:** German insurers have historically seen claims as core competency and resisted TPA outsourcing. But shortage of experts and GDPR concerns are slowly changing this.
+
+Source: [Pro Global - TPA in Germany](https://pro-global.com/the-maturing-third-party-authority-tpa-market-in-germany/)
+
+### Adjuster Employment Breakdown (US)
+
+| Type | % of Adjusters | Description |
+|---|---|---|
+| **Staff adjusters** (insurer employees) | ~70% | W-2 employees handling claims for one insurer |
+| **TPA adjusters** | ~23% | Employed by TPAs, handle claims on behalf of multiple insurers |
+| **Regional IA firms** | ~7% | Independent adjusters contracted per-claim |
+
+Source: [Association of Claims Professionals](https://claimsprofession.org/about-independent-claims-adjusters/)
+
+**EU breakdown:** Not well documented. German insurers keep claims in-house. UK has more TPA usage. Southern Europe — no clear data.
+
+---
+
+## Deep Dive: EAS Data Schema & Convention Matching
+
+### EAS Data Schema (~100 Fields)
+
+The European Accident Statement has a standardized structure across all EU countries:
+
+```
+SECTION A: ACCIDENT DETAILS
+├── Date of accident
+├── Time of accident
+├── Location (address, city, country)
+├── Injuries? (Yes/No)
+├── Damage to other vehicles? (Yes/No)
+├── Damage to objects? (Yes/No)
+├── Police called? (Yes/No) → Report number
+├── Witnesses (name, address, phone)
+
+SECTION B: VEHICLE A DETAILS
+├── Policyholder (name, address, phone)
+├── Vehicle (make, model, registration, country)
+├── Insurance (company, policy number, green card)
+├── Driver (name, address, license number, date)
+├── Damage description
+
+SECTION C: VEHICLE B DETAILS
+├── [Same structure as Vehicle A]
+
+SECTION D: CIRCUMSTANCES (17 CHECKBOXES)
+├── □ 1. Parked/stopped
+├── □ 2. Leaving parking space
+├── □ 3. Entering parking space
+├── □ 4. Emerging from car park/private ground
+├── □ 5. Entering car park/private ground
+├── □ 6. Entering roundabout
+├── □ 7. Circulating in roundabout
+├── □ 8. Striking rear of other vehicle (same direction)
+├── □ 9. Same direction, different lane
+├── □ 10. Changing lanes
+├── □ 11. Overtaking
+├── □ 12. Turning right
+├── □ 13. Turning left
+├── □ 14. Reversing
+├── □ 15. Encroaching on opposite carriageway
+├── □ 16. Coming from right (at junction)
+├── □ 17. Not observing right of way / red light
+
+SECTION E: DIAGRAM
+├── Sketch showing positions, movements, road layout
+
+SECTION F: OBSERVATIONS
+├── Free text for additional details
+
+SECTION G: SIGNATURES
+├── Driver A signature + date
+├── Driver B signature + date
+```
+
+### Convention Fault Tables (IRSA/IDA — France Example)
+
+The convention defines **13 standard accident scenarios** that map to EAS checkboxes:
+
+| Code | Scenario | Fault A | Fault B |
+|---|---|---|---|
+| 10 | Same direction, rear collision | 0% | 100% |
+| 13 | Both changing lanes simultaneously | 50% | 50% |
+| 15 | One vehicle changes lane | 0% | 100% (changer) |
+| 17 | Lane change + left turn | 0% | 100% (changer) |
+| 20 | Crosses center line | 0% | 100% (crosser) |
+| 21 | Center position unclear | 50% | 50% |
+| 30 | Priority from right applies | 0% (priority) | 100% |
+| 31 | Priority + crosses axis | 0% (priority) | 100% |
+| 40 | One vehicle legally parked | 0% (parked) | 100% |
+| 43 | One vehicle illegally parked | 100% (illegal) | 0% |
+| 50 | Runs red light | 0% | 100% (violator) |
+| 51 | Ignores police barrier | 0% | 100% (violator) |
+| 56 | Violates traffic bans | 0% | 100% (violator) |
+
+Source: [Aide BTS Assurance - IRSA Barème](https://www.aidebtsassurance.com/en/bareme-of-the-irsa-ida-agreement-understanding-responsibilities-in-case-of-an-accident/)
+
+### How EAS → Convention Matching Works
+
+```
+EAS CHECKBOXES → SCENARIO CODE → FAULT %
+
+Example:
+├── Vehicle A checks: □ 8 (Striking rear)
+├── Vehicle B checks: □ 1 (Parked/stopped)
+     ↓
+└── Maps to Scenario 10 (rear collision)
+     ↓
+└── Fault: A = 100%, B = 0%
+```
+
+**The convention is a LOOKUP TABLE.** Given checkbox combinations, it outputs fault percentage. No human judgment needed for clear cases.
+
+### Portugal: IDS (Direct Indemnification System)
+
+Portugal uses IDS (Indemnização Direta ao Segurado):
+- Your OWN insurer pays you first
+- Then recovers from at-fault insurer via the convention
+- Only applies to material damage < €15,000 and no injuries
+- Similar to Italy's CID
+
+**Note:** CIMPAS is NOT a convention — it's a dispute resolution/arbitration center for when conventions fail.
+
+Source: [C1 Brokers - IDS Portugal](https://c1brokers.pt/en/total-loss-in-car-insurance-when-the-insurer-wrongly-applies-the-ids-agreement-real-case-in-portugal/)
+
+---
+
+## 🔑 Critical Insight: The STP Reality Gap
+
+### The Theory vs Reality
+
+**Theory:** EAS checkboxes → Convention lookup → Fault determined → Claim auto-processed
+
+**Reality:** Only ~10% of claims achieve Straight-Through Processing (STP)
+
+Source: [Insurance Thought Leadership](https://www.insurancethoughtleadership.com/claims/straight-through-processing-2021)
+
+### Why STP Is Only ~10% Despite Conventions Existing
+
+| Theoretical | Reality |
+|---|---|
+| Clean digital EAS | **50% still paper**, handwritten |
+| All checkboxes ticked correctly | Often **incomplete, ambiguous** |
+| Clear diagram | **Messy sketch**, unclear |
+| Both parties signed | Sometimes **unsigned, disputed** |
+| Matches a convention scenario | **Many don't fit** the 13 standard cases |
+
+**The convention lookup is TRIVIAL.** The bottleneck is getting clean data INTO the lookup.
+
+### Where Claims Handlers Actually Spend Time
+
+| Activity | % of Time | What Happens |
+|---|---|---|
+| **Data Extraction** | ~30% | Reading paper EAS, interpreting handwriting, re-keying into system |
+| **Exception Handling** | ~25% | Claims that don't match convention, disputes, complex scenarios |
+| **Damage Assessment** | ~20% | Reviewing photos, getting repair estimates, total loss calculation |
+| **Validation & Clarification** | ~15% | Calling drivers for missing info, incomplete forms |
+| **Policy & Payment** | ~10% | Verifying coverage, processing payment |
+
+### The Data Extraction Problem (Paper EAS)
+
+```
+Paper EAS arrives (scan, photo, fax)
+     ↓
+Handler must READ:
+├── Handwritten text (often illegible)
+├── Checkboxes (which are ticked?)
+├── Diagram (what does it show?)
+├── Signatures (present? valid?)
+     ↓
+Handler TYPES into claims system:
+├── Re-keys every field manually
+├── Interprets unclear handwriting
+├── Guesses at ambiguous checkboxes
+     ↓
+ERROR INTRODUCTION POINT
+```
+
+### The Validation Problem (Incomplete EAS)
+
+```
+Is the EAS complete?
+├── All required fields filled? → Often NO
+├── Both parties signed? → Sometimes NO
+├── Diagram clear? → Often NO
+├── Checkboxes consistent with diagram? → Sometimes NO
+     ↓
+If incomplete → Contact driver:
+├── Phone call (wait for answer)
+├── Explain what's missing
+├── Wait for response/updated form
+├── Update claim file
+     ↓
+DELAY + HANDLER TIME
+```
+
+### The Exception Handling Problem
+
+```
+Does EAS match a convention scenario?
+├── Clear match → Lookup (trivial, seconds)
+├── UNCLEAR MATCH → Handler judgment needed
+├── NO MATCH (complex) → Full investigation required
+├── DISPUTED → Full investigation required
+     ↓
+~40% of claims need human judgment beyond the lookup
+```
+
+### Why Damage Assessment Is Separate From Fault
+
+Even when fault is 100% determined (A caused it), you still need to know:
+- What's the damage worth?
+- Repair or total loss?
+- What does the repair cost?
+- Did the claimant mitigate damages?
+
+**Fault ≠ Settlement amount.** They're different problems.
+
+### The Claim Flow Reality
+
+```
+100 claims arrive
+     ↓
+~50 are paper EAS → Need manual data entry
+     ↓
+~20 are incomplete → Need clarification calls
+     ↓
+~15 don't match convention → Need investigation
+     ↓
+~5 are disputed → Need full adjuster
+     ↓
+~10 are CLEAN → STP possible ✓
+```
+
+### Cost Comparison: Manual vs STP
+
+| Processing Type | Cost Per Claim |
+|---|---|
+| Manual processing | ~$75 (adjuster labor, overhead, rework) |
+| STP (automated) | ~$15 (platform + minimal oversight) |
+| **Savings per claim shifted to STP** | **$60** |
+
+Source: [Nanonets - Claims Automation](https://nanonets.com/blog/claims-process-automation/)
+
+### 🎯 The Real Product Opportunity
+
+**Wrong framing:** "Automate the convention matching"
+- Convention matching is already trivial — it's a lookup table
+
+**Right framing:** "Get clean structured data TO the convention"
+
+| Problem | Solution |
+|---|---|
+| Paper EAS (50%) | OCR + AI extraction |
+| Incomplete EAS | AI flags gaps, prompts for missing data |
+| Unclear checkboxes | AI interprets + confidence scoring |
+| Messy diagrams | AI reconstructs scenario from diagram |
+| Doesn't match convention | AI suggests closest match or flags for human |
+
+**If you can turn a messy paper EAS into clean structured data that maps to convention scenarios, you move claims from the ~90% manual pile to the ~10% STP pile.**
+
+---
+
+## Phases 7-11: TO BE MAPPED
 
 | Phase | Name | Key Questions |
 |---|---|---|
-| 5 | FNOL (First Notice of Loss) | What information is captured? What systems? How long does this take? |
-| 6 | Triage | How are claims categorized? What determines fast-track vs. investigation? |
 | 7 | Investigation | Who investigates? What tools? How long? |
 | 8 | Assessment | Vehicle inspection, damage valuation, repair vs. total loss |
 | 9 | Decision | Who decides? What authority levels? Appeals? |
@@ -716,24 +1466,422 @@ As the market shifts and direct channels grow (they will), Mysa's position as th
 | F1 | Anyone Injured? | 1 - Scene | Are there injuries at the scene? | 2 |
 | F2 | Other Party Cooperative? | 1 - Scene | Is the other driver willing to cooperate? | 3 |
 | F3 | EU vs US Documentation | 2 - Documentation | Which market? | 2 |
-| F4 | 🇪🇺 EAS Quality | 3 - Reconciliation | Is the EAS complete and does it match a convention scenario? | 3 |
-| F5 | 🇺🇸 Claim Filing Type | 3 - Reconciliation | First-party, third-party, or both? | 3 |
-| F6 | 🇺🇸 Fault System | 3 - Reconciliation | No-fault state or at-fault state? | 2 |
+| F4 | First Contact Channel | 4 - First Contact | Who does the policyholder contact first? | 3 |
+| F5 | Broker Submission Method | 4 - First Contact | How does the broker submit the claim to insurer? | 3 |
+| F6 | Triage Decision | 6 - Triage | Skip adjuster (straight-through) or assign to investigation? | 3 |
+| F7 | 🇪🇺 EAS Quality | 3 - Reconciliation | Is the EAS complete and does it match a convention scenario? | 3 |
+| F8 | 🇺🇸 Claim Filing Type | 3 - Reconciliation | First-party, third-party, or both? | 3 |
+| F9 | 🇺🇸 Fault System | 3 - Reconciliation | No-fault state or at-fault state? | 2 |
 
 ### Fork Chain (How Decisions Connect):
 ```
-F1 (Injured?) 
+F1 (Injured?)
 ├── YES → Bodily injury path (police take over)
 └── NO → F2 (Cooperative?)
          ├── YES → F3 (EU vs US?)
-         │         ├── 🇪🇺 EU → EAS filled → F4 (EAS Quality?)
+         │         ├── 🇪🇺 EU → EAS filled → F7 (EAS Quality?)
          │         │                           ├── Clean → Convention auto-resolves
          │         │                           ├── Unclear → Clarification needed
          │         │                           └── Disputed → Full investigation
-         │         └── 🇺🇸 US → F5 (Filing type?) → F6 (Fault system?)
+         │         └── 🇺🇸 US → F8 (Filing type?) → F9 (Fault system?)
          ├── NO (Disputes) → Police called, no EAS
          └── FLED (Hit & run) → Police, guarantee fund path
+
+──────────────────────────────────────────────────────
+AFTER RECONCILIATION → F4 (First Contact Channel)
+├── BROKER → F5 (Broker Submission Method)
+│             ├── Portal → Manual rekey into insurer system ⚠️
+│             ├── Email → Insurer re-keys (double entry) ⚠️
+│             └── Phone → Fastest open, docs delayed ⚠️
+├── AGENT
+│    ├── Captive → Direct system access (≈ insurer)
+│    └── Independent → Directs to insurer
+└── DIRECT → Fastest, no intermediary friction
+         ↓
+    FNOL CREATED
+         ↓
+    F6 (Triage Decision)
+    ├── 🇪🇺 Clean EAS → STRAIGHT-THROUGH (no adjuster) ~10% actual / 60-70% theoretical
+    ├── 🇪🇺 Unclear → Clarification → maybe adjuster ~15-20%
+    ├── 🇪🇺 Complex/BI → Full investigation ~15%
+    └── 🇺🇸 ALL claims → Assign adjuster (100%)
 ```
+
+---
+
+# HOME/PROPERTY CLAIMS JOURNEY
+
+> **Status:** Initial mapping complete. Home claims are structurally different from motor — no counterparty, no EAS, no convention system, almost always requires adjuster inspection.
+
+---
+
+## Home vs Motor: The Fundamental Differences
+
+### Why Home Claims Are Structurally Different
+
+| | **Motor Insurance** | **Home/Property Insurance** |
+|---|---|---|
+| **Counterparty?** | YES — another driver, another insurer | Usually NO — it's you vs. the peril |
+| **Agreed document?** | 🇪🇺 EAS — both parties sign | NONE — only your claim, your photos |
+| **Fault question?** | WHO caused the accident? | WAS the peril covered? |
+| **Convention/lookup system?** | 🇪🇺 Yes — IRSA/IDA fault tables | NONE — coverage is policy interpretation |
+| **STP possible?** | 🇪🇺 ~10% actual, 60-70% theoretical | Very rare — almost always needs inspection |
+| **Adjuster involvement** | 🇪🇺 Often NO for clean EAS path | Almost ALWAYS for non-trivial claims |
+
+### Home Insurance Claim Types (US Data, 2019-2023)
+
+| Peril | % of Claims | Avg Claim Amount | Notes |
+|---|---|---|---|
+| **Wind & hail** | 42.5% | Varies by severity | ~1 in 36 insured homes per year |
+| **Water damage & freezing** | 29.4% | ~$15,400 | Second most common |
+| **Fire & lightning** | ~5% | Highest (often total loss) | Most severe |
+| **Theft** | 0.7% | ~$5,524 | Least common |
+| **Other (liability, etc.)** | ~22% | Varies | Includes personal liability |
+
+### Why Home Claims Almost ALWAYS Need an Adjuster
+
+**Motor (EU clean path):**
+- EAS says what happened (agreed document)
+- Convention says who's at fault (lookup table)
+- Damage is to a standardized asset (car make/model)
+- Repair cost is estimable from photos + make/model
+
+**Home:**
+- NO agreed document of what happened
+- Burden of proof is on YOU to show:
+  1. Damage occurred
+  2. It was caused by a COVERED peril (not excluded)
+  3. The scope of loss matches your claim
+- Every home is unique — can't estimate damage from "make/model"
+- Contents are unknown — need inventory proof
+- Hidden damage is common (water behind walls, mold, structural)
+
+**Result:** ~100% of non-trivial home claims require adjuster inspection vs. ~10% STP for EU motor.
+
+---
+
+## Home Insurance FNOL Process
+
+### FNOL Flow (Simplified)
+
+```
+INCIDENT (water leak, fire, theft, storm)
+         ↓
+IMMEDIATE ACTIONS
+├── Mitigate further damage (turn off water, board up)
+├── Document BEFORE cleanup (photos, video)
+├── Police report (if theft/vandalism)
+         ↓
+FNOL to insurer
+├── Phone / app / web portal
+├── Policy number, date, description
+├── NOT an agreed document — just your report
+         ↓
+CLAIM OPENED
+         ↓
+ADJUSTER ASSIGNED (almost always)
+├── Inspection scheduled (usually within 1 week)
+├── 1-2 hours on-site
+├── Documents everything, estimates costs
+         ↓
+PROOF OF LOSS
+├── Formal sworn statement
+├── Inventory of damaged/stolen items
+├── Supporting documentation (receipts, photos)
+         ↓
+COVERAGE DETERMINATION
+├── Was this peril covered?
+├── Any exclusions apply?
+├── Policy limits?
+         ↓
+SETTLEMENT
+├── May get partial payment upfront
+├── Replacement cost = two payments (ACV now, depreciation later)
+├── Complex claims (fire rebuild) can take MONTHS to YEARS
+```
+
+### Reporting Deadlines (Vary by Country/Insurer)
+
+**France example:**
+| Claim Type | Deadline |
+|---|---|
+| **Theft/burglary** | 2 working days |
+| **Water damage, fire, other** | 5 working days |
+| **Natural disaster (catastrophe naturelle)** | 10 days after official decree |
+
+### Documentation Burden Is MUCH Higher Than Motor
+
+**Motor:** EAS + photos + police report (if applicable)
+
+**Home:**
+- Photos/video of damage from multiple angles
+- Inventory of damaged/stolen items with:
+  - Brand names, model numbers
+  - Original receipts (if you have them)
+  - Age and condition
+- Police report (mandatory for theft)
+- Proof of ownership for valuable items
+- "Proof of loss" form (formal sworn statement)
+
+**The inventory problem is brutal.** After a fire or burglary, people have to remember and prove everything they owned.
+
+---
+
+## What Does a Home Insurance Adjuster Actually Do?
+
+### The Job Has Two Parts
+
+**1. INVESTIGATION — Establishing the Facts**
+- Inspect the damage (what happened, how bad is it)
+- Determine causation (what caused it — covered peril or not?)
+- Document everything (photos, measurements, notes)
+- Interview the policyholder and witnesses
+- Review police reports (for theft/vandalism)
+- Detect fraud indicators
+
+**2. VALUATION — Estimating the Cost**
+- Measure damaged areas
+- Calculate repair/replacement costs using specialized software (Xactimate is industry standard, used by 75-80% of adjusters)
+- Assess whether to repair or replace
+- Account for depreciation (ACV vs replacement cost)
+- Review contractor estimates
+- Negotiate settlement amounts
+
+### Desk Adjuster vs Field Adjuster
+
+| | **Desk Adjuster** | **Field Adjuster** |
+|---|---|---|
+| **Location** | Office or remote (WFH) | On-site at the property |
+| **Claim types** | Small (<$3K), simple, obvious causation | Large (>$3K), complex, unclear causation |
+| **Examples** | Theft with police report, minor vandalism | Major fire, significant water damage, storm |
+| **Tools** | Phone, video call, submitted photos/docs | Xactimate, measurement tools, cameras, drones |
+| **Volume** | High — can handle many more claims | Lower — travel limits capacity |
+| **Trend** | GROWING — virtual inspection enables more | Still needed but scope narrowing |
+
+### The Shift Happening Now
+
+```
+PAST:         Field 80% ─────────────────── Desk 20%
+TODAY:        Field 60% ─────────── Desk 40%
+FUTURE (5yr): Field 40% ───── Desk/Virtual 60%
+```
+
+**COVID accelerated this** — insurers were forced to do virtual inspections and discovered it worked for many claims.
+
+---
+
+## Who Employs Home/Property Adjusters?
+
+### Employment Breakdown (Estimates)
+
+| Employer Type | Description | % of Adjusters |
+|---|---|---|
+| **Staff Adjusters** | Full-time employees of the insurer | ~40-50% |
+| **TPA Adjusters** | Employed by TPAs (Crawford, Sedgwick, Engle Martin) | ~25-35% |
+| **Independent Adjusters (IA)** | Freelance, contracted per claim | ~15-25% |
+| **Public Adjusters** | Work for the POLICYHOLDER, not insurer | ~5% |
+
+### Major TPAs in Property Claims
+
+| TPA | Scale | Notes |
+|---|---|---|
+| **Crawford** | 10,000+ employees, 50,000+ field resources, 70 countries | Largest in the world |
+| **Sedgwick** | Largest adjuster network globally, 25 yrs avg experience | End-to-end TPA |
+| **Engle Martin** | Delegated authority specialist | Low-touch to CAT claims |
+| **McLarens** | 100+ personnel in Europe | Strong EU presence |
+| **Davies** | UK/Europe focus | Loss adjusting specialist |
+| **Charles Taylor** | Global | Technical adjusting |
+
+### When Do Insurers Use TPAs for Property Claims?
+
+| Scenario | Why TPA? |
+|---|---|
+| **CAT events** (hurricane, wildfire, flood) | Need surge capacity — can't staff for 10x volume |
+| **Geographic coverage** | Insurer doesn't have staff in every region |
+| **Specialty claims** | Complex/large loss needs specialist expertise |
+| **Cost optimization** | Variable cost vs fixed headcount |
+| **Overflow** | Staff adjusters at capacity |
+
+**Key insight:** TPAs are a huge potential customer segment. If you can make their adjusters more productive, you directly impact their unit economics.
+
+---
+
+## EU vs US Differences for Home/Property Adjusters
+
+### Terminology Differences
+
+| | **US** | **UK/Europe** |
+|---|---|---|
+| **Insurer's inspector** | Claims Adjuster | Loss Adjuster |
+| **Policyholder's advocate** | Public Adjuster | Loss Assessor |
+| **Regulation** | State-by-state licensing | CILA (Chartered Institute) in UK |
+
+### Structural Differences
+
+| Aspect | **US** | **EU** |
+|---|---|---|
+| **Licensing** | State-specific, complex, varies wildly | More standardized within countries |
+| **TPA usage** | Very common, especially for CAT | Common in UK, growing in continental EU |
+| **Field vs Desk split** | ~60/40 moving toward 50/50 | Similar trend, UK slightly ahead on virtual |
+| **Public adjusters/assessors** | Common, regulated, 10-15% fee typical | UK has loss assessors, less common in continental EU |
+| **CAT response** | Massive IA deployment (hurricane, wildfire) | Less frequent CAT, but similar model |
+| **Major TPAs** | Crawford, Sedgwick, Engle Martin | Crawford, Sedgwick, McLarens, Davies, Charles Taylor |
+
+### Key EU-Specific Factors
+
+**UK:**
+- Loss adjusters "supposed to be impartial" but work for insurer
+- Loss assessors (policyholder advocates) are established profession
+- CILA provides professional standards
+- Strong TPA market
+
+**Germany:**
+- "Sachverständiger" (expert) role for property assessment
+- Historically more insurer staff adjusters, less TPA outsourcing
+- Changing due to talent shortage
+
+**France:**
+- "Expert d'assurance" handles property claims
+- Strong regulatory framework
+- Less TPA penetration than UK
+
+### Unlike Motor, EU Has No Structural Advantage for Home Claims
+
+- No EAS equivalent — no joint agreed document
+- No convention system — no fault lookup tables
+- The claim is between you and your insurer about whether a peril is covered
+- **The 3x productivity opportunity applies equally to EU and US**
+
+---
+
+## Where Home Adjusters Spend Their Time
+
+### Time Breakdown for Field Adjuster (Property Claims)
+
+| Activity | % of Time | Automation Potential |
+|---|---|---|
+| **Travel to/from properties** | ~25-30% | HIGH — eliminate with virtual inspection |
+| **Documentation & data entry** | ~20-25% | HIGH — auto-capture, voice-to-text, photo AI |
+| **On-site inspection** | ~15-20% | MEDIUM — remote video, 3D scanning |
+| **Report writing** | ~10-15% | HIGH — AI draft generation |
+| **Xactimate/estimate creation** | ~10-15% | MEDIUM — AI-assisted, but review needed |
+| **Communication (calls, emails)** | ~10-15% | MEDIUM — automated updates, chatbots |
+| **Collaboration/escalation** | ~5-10% | LOW — human judgment needed |
+
+**Key research finding:** "When a claim is assigned to an adjuster who needs help from a colleague, handling time nearly TRIPLES."
+
+---
+
+## The 3x Adjuster Productivity Opportunity
+
+### Where the 3x Comes From
+
+| Lever | How It Works | Productivity Gain |
+|---|---|---|
+| **1. Eliminate unnecessary field visits** | Virtual inspection for small/simple claims | ~25-30% time back |
+| **2. Auto-generate documentation** | AI reads photos, drafts reports, pre-fills Xactimate | ~15-20% time back |
+| **3. Reduce admin/data entry** | Voice-to-text, auto-capture measurements, photo AI | ~15-20% time back |
+| **4. Triage before assignment** | AI pre-processes claim, adjuster gets structured package | ~10-15% time back |
+| **5. Streamline collaboration** | Single source of truth, no re-explaining to colleagues | ~10% time back |
+
+### Realistic Math
+
+- Current: 1 adjuster handles ~100-150 claims/year (complex) or ~300-500 claims/year (simpler)
+- If you eliminate 50% of field visits AND reduce admin by 50% → adjuster capacity increases ~2-3x
+
+### What Would a "3x Productivity" Product Actually Do?
+
+**BEFORE (Current State):**
+```
+FNOL received → Adjuster assigned → Adjuster schedules visit →
+Adjuster drives to property → Adjuster inspects (1-2 hrs) →
+Adjuster drives back → Adjuster enters data → Adjuster writes report →
+Adjuster creates Xactimate estimate → Adjuster submits → Review/approval
+```
+
+**AFTER (Augmented State):**
+```
+FNOL received → AI pre-processes (photos, docs, coverage check) →
+AI determines: Virtual or Field?
+├── VIRTUAL (~40% of claims):
+│   → Policyholder does video walkthrough with remote adjuster
+│   → AI generates measurements from video
+│   → AI drafts report + Xactimate estimate
+│   → Adjuster reviews + approves (30 min vs 4 hrs)
+│
+├── FIELD (~60% of claims):
+│   → Adjuster gets pre-processed package (coverage confirmed, AI damage assessment)
+│   → Adjuster inspects (focused on what AI flagged)
+│   → Mobile app captures measurements automatically
+│   → AI generates report draft on-site
+│   → Adjuster reviews + submits same day
+```
+
+---
+
+## Can We Replace the Adjuster With AI?
+
+### The Honest Assessment
+
+| Capability | AI Can Do Today | AI Cannot Do Well |
+|---|---|---|
+| **Damage detection from photos** | ✅ Identify roof damage, water stains, fire | ❌ Hidden damage (behind walls, under floors) |
+| **Measurement from photos/video** | ✅ 3D models from smartphone scans | ❌ Complex structures, custom finishes |
+| **Repair cost estimation** | ✅ AI + Xactimate integration | ❌ Final approval, complex negotiations |
+| **Document processing** | ✅ Extract data from receipts, reports | ❌ Verify authenticity, detect fraud |
+| **Fraud pattern detection** | ✅ Flag suspicious claims | ❌ Investigate, prove fraud |
+| **Coverage determination** | ⚠️ Flag potential exclusions | ❌ Complex policy interpretation |
+| **Causation determination** | ⚠️ Suggest likely cause | ❌ "Was this sudden or gradual?" — expert judgment |
+
+### The Accuracy Problem
+
+> "Good AI model accuracy starts at about 70%, but to reliably automate high-risk processes such as insurance claim management, the accuracy needs to be above 95%."
+
+**Current gap:** AI is at ~70%, needs >95% for full automation.
+
+### The Fraud Problem Is Getting WORSE
+
+> "Fraudsters can create fabricated property losses, complete with repair invoices, photos, estimates, and hotel bills using AI." — Gen Re, January 2026
+
+If you automate claims processing with AI that trusts photos and documents, you're creating a target for AI-generated fraud.
+
+### The Hidden Damage Problem
+
+Water damage (29.4% of claims) is often INVISIBLE:
+- Mold growing behind walls
+- Structural damage to joists
+- Electrical damage from water infiltration
+
+**Photos don't show what's behind the drywall.**
+
+### The Realistic Opportunity
+
+| | **Can Automate** | **Can Augment** | **Still Needs Human** |
+|---|---|---|---|
+| **FNOL intake** | ✅ Yes | — | — |
+| **Document processing** | ✅ Yes | — | — |
+| **Photo damage detection** | ✅ For visible damage | — | Hidden damage |
+| **Measurement/3D modeling** | ✅ Yes | — | — |
+| **Repair cost estimation** | — | ✅ Draft for review | Final approval |
+| **Coverage determination** | — | ✅ Flag exclusions | Complex interpretation |
+| **Causation determination** | — | ✅ Suggest likely cause | Disputed/unclear |
+| **Fraud detection** | — | ✅ Flag for review | Investigation |
+| **Settlement negotiation** | — | — | ✅ Human required |
+| **Large/complex claims** | — | ✅ Reduce adjuster time | ✅ Inspection needed |
+
+**The opportunity isn't "replace the adjuster" — it's "make the adjuster 3x more productive" and "eliminate field visits for claims that don't need them."**
+
+---
+
+## Product Opportunity by Buyer Segment
+
+| Segment | Current Pain | Opportunity |
+|---|---|---|
+| **Insurers (staff adjusters)** | Fixed cost, capacity-constrained | 3x productivity = handle 3x volume without hiring |
+| **TPAs** | Variable cost, margin pressure | Productivity = better unit economics |
+| **Independent adjusters** | Paid per claim, want throughput | Tools that let them handle more claims |
+| **Desk adjusters** | Growing but tech-limited | Better virtual tools = handle more complex claims remotely |
+| **Field adjusters** | Travel-heavy, admin-heavy | Reduce travel + automate admin = more inspections/day |
 
 ---
 
@@ -745,7 +1893,7 @@ F1 (Injured?)
 | A2 | US police involvement threshold is ~$500-$1,000 in most states | ⚠️ Approximate | Varies significantly by state |
 | A3 | Health pre-authorization is the dominant pattern in European private health insurance | ⚠️ Needs validation | May vary by market and product type |
 | A4 | EU convention systems handle ~70-80% of motor claims automatically | ⚠️ Needs validation | Based on industry knowledge, not confirmed data |
-| A5 | Clean EAS path (no insurer call to driver) represents ~60-70% of EU motor claims | ⚠️ Needs validation | Related to A4 |
+| A5 | Clean EAS path (no insurer call to driver) represents ~60-70% potential, but only ~10% achieve actual STP | ⚠️ UPDATED | Reality vs theoretical — data quality is the bottleneck |
 | A6 | ~12 US states are no-fault states | ⚠️ Approximate | Number varies depending on how "choice no-fault" states are counted |
 | A7 | Some insurers have digital EAS in their apps but adoption in crisis moments is unclear | ⚠️ Needs research | Key product question — is this already being solved? |
 | A8 | US first-party vs third-party filing split is roughly 60-65% first-party / 20-25% third-party / 10-15% both | ⚠️ Assumption — no clean source | Industry data shows 57% of insurer losses are liability (third-party) vs 43% physical damage (first-party), but this measures insurer payouts not policyholder filing behavior. The same accident generates claims on both sides. |
@@ -758,16 +1906,85 @@ F1 (Injured?)
 | A15 | US captive agents have direct claims system access equivalent to insurer front office | ⚠️ Generally true | May vary by insurer — some captive agents still call a claims center |
 | A16 | EU broker consolidation makes brokers MORE powerful, not less | ✅ Supported by data | PE-driven M&A trends, growing market share, MGA growth all point this direction |
 | A17 | UK/NL/BE broker dynamics differ significantly from IT/DE/PT/ES agent dynamics in claims | ⚠️ Strong but approximate | The broker-dominant vs agent-dominant market distinction is well-established but the claims-specific behavior needs validation |
+| A18 | ~70% of broker agencies report losing business due to submission inefficiencies | ⚠️ US-centric data | From Ivans Insurance 2021 — may not translate directly to EU |
+| A19 | Broker-to-insurer claim submission is primarily via portal (manual rekey), email, or phone | ⚠️ Based on research | UK documented (RSA, Acturis), continental EU less clear |
+| A20 | Email submissions result in double data entry (broker types, insurer re-keys) | ⚠️ Logical inference | No direct validation but strongly implied by industry pain point research |
+| A21 | Continental EU (PT/ES/IT) is behind UK in broker-insurer digital integration | ⚠️ Inference | Based on lack of documented platforms like Acturis outside UK |
+| A22 | Aviva-Acturis claims API (Dec 2024) being "ground-breaking" implies prior process was manual | ✅ Supported by source | Direct implication from Acturis blog announcement |
+| A23 | EU has no ACORD equivalent for FNOL — each insurer has different forms/fields | ⚠️ Strong inference | Based on research showing ACORD is US-centric for retail claims |
+| A24 | ACORD is used internationally but primarily for reinsurance and London market, not retail claims | ⚠️ Based on research | ACORD's international expansion focused on large commercial/reinsurance |
+| A25 | EU FNOL is primarily "EAS submission + policy verification" vs US FNOL which is "data collection" | ⚠️ Logical inference | Based on EAS providing pre-captured data that US lacks |
+| A26 | Only ~10% of EU motor claims actually achieve STP (60-70% is theoretical potential if data were clean) | ⚠️ UPDATED | Research shows data quality, not convention matching, is the bottleneck |
+| A27 | German insurers have historically resisted TPA outsourcing (claims = core competency) | ⚠️ Based on Pro Global source | Trend is changing due to expert shortage |
+| A28 | Health claims don't follow FNOL model — they're request-approval workflows | ⚠️ Logical inference | Pre-auth vs claim submission are fundamentally different |
+| A29 | The convention lookup itself is trivial — a simple database query | ✅ Validated | The complexity is NOT in matching to fault tables |
+| A30 | Only ~10% of EU motor claims achieve true straight-through processing | ⚠️ Based on research | Despite 60-70% being theoretically convention-matchable |
+| A31 | The STP bottleneck is DATA QUALITY, not the convention system | ⚠️ Based on research | Handlers spend ~30% of time on data extraction/reconciliation |
+| A32 | ~50% of EAS are still paper forms filled by stressed people | ⚠️ Needs validation | Poor data quality at origin prevents STP |
+| A33 | Claims handlers spend ~30% on data extraction, ~25% on exception handling, ~20% on damage assessment | ⚠️ Based on research | This is where automation value lives |
+| A34 | Home insurance has no EAS equivalent — no standardized joint document | ✅ Validated | Fundamental structural difference from motor |
+| A35 | Home claims almost always require adjuster inspection (~100% for non-trivial) | ⚠️ Based on research | Unlike motor where ~10% achieve STP |
+| A36 | Wind & hail = 42.5%, water damage = 29.4% of home claims (US 2019-2023) | ✅ Based on III data | Wind/hail most common, water second |
+| A37 | Desk adjusters handle small claims (<$3K) with simple causation | ⚠️ Based on research | Threshold varies by insurer |
+| A38 | Field adjusters spend ~25-30% of time on travel | ⚠️ Estimate | Primary target for virtual inspection |
+| A39 | Xactimate is used by 75-80% of property adjusters | ✅ Based on research | Industry standard estimating software |
+| A40 | TPAs employ ~25-35% of property adjusters (Crawford, Sedgwick, Engle Martin) | ⚠️ Estimate | Significant market segment |
+| A41 | UK uses "loss adjuster" (insurer) / "loss assessor" (policyholder) terminology | ✅ Validated | US uses "claims adjuster" / "public adjuster" |
+| A42 | Virtual claims processing reduces cycle time from 10-15 days to 2-3 days | ⚠️ Based on vendor claims | Needs validation with real data |
+| A43 | AI accuracy for claims needs >95% but current models are ~70% | ⚠️ Based on research | Gap prevents full automation |
+| A44 | AI-generated fraud (fake photos, receipts) is a growing threat to automated claims | ⚠️ Based on Gen Re 2026 report | Adversarial dynamic matters |
+| A45 | Hidden damage (water behind walls) is common and invisible in photos | ✅ Logical | Limits pure photo-based assessment |
+| A46 | When adjuster needs colleague help, handling time nearly TRIPLES | ⚠️ Based on Five Sigma data | Collaboration is major inefficiency |
+
 ---
 
 ## Key Strategic Insights (Running List)
 
 1. **Europe produces structurally cleaner data at origin** than the US (EAS = single agreed document vs. competing narratives). This supports the Europe-first strategy beyond just the licensing advantage.
 
-2. **Convention systems are "pre-computed liability"** — essentially lookup tables for fault. 70-80% of EU motor claims can be auto-resolved. The 20-30% that can't are where the expensive, slow investigation happens. This is where AI/automation adds the most value.
+2. **Convention systems are "pre-computed liability"** — essentially lookup tables for fault. **In theory**, 60-70% of EU motor claims could be auto-resolved. **In reality**, only ~10% achieve true STP because the bottleneck is getting CLEAN DATA into the lookup, not the lookup itself. This is the real automation opportunity.
 
 3. **The US system is incredibly labor-intensive even for simple claims** — up to 4 recorded statements for a fender bender. Different automation opportunity: extracting structured data from voice/text vs. processing structured forms.
 
 4. **Health insurance claims are fundamentally different** — they're request-approval workflows, not event-response workflows. This reinforces the motor-first bet.
 
 5. **The EAS is a brilliant concept with terrible execution** — a standardized, agreed-upon, structured document that's still 50% paper and filled out by stressed people with shaking hands. There's a clear digitization opportunity, but it may already be partially addressed by insurer apps.
+
+6. **Broker-to-insurer submission is a data quality bottleneck** — Three paths (portal, email, phone), all with friction. Portal = manual rekeying. Email = double entry (broker types it, insurer re-keys). Phone = fast open but docs arrive separately. This is where data quality degrades and errors are introduced.
+
+7. **The "data normalization layer" opportunity sits exactly at the broker-insurer handoff** — If Mysa can structure data BEFORE it hits the insurer's system (regardless of submission channel), you eliminate the rekeying problem for both parties. This is the wedge that works for both brokers AND insurers.
+
+8. **EU and US FNOL are fundamentally different products** — EU FNOL = "here's my EAS, verify my policy" (verification). US FNOL = "let me tell you what happened" (data collection). Automation opportunities differ: EU = process EAS faster; US = extract structure from recorded statements.
+
+9. **No ACORD equivalent in EU creates fragmentation AND opportunity** — Every EU insurer has different FNOL forms/fields. This is pain for brokers (adapt to each insurer) but opportunity for a data normalization layer that outputs to ANY format.
+
+10. **EU triage question is "skip the adjuster?" vs US "which adjuster?"** — In EU, convention systems *could* enable straight-through processing for ~60-70% of claims, but only ~10% actually achieve STP due to data quality issues. The goal is to AVOID human investigation. In US, even simple claims get adjuster time. **The real opportunity is bridging the 50+ percentage point gap between theoretical and actual STP.**
+
+11. **THE STP REALITY GAP IS THE PRODUCT OPPORTUNITY** — The gap between ~10% actual STP and ~60-70% theoretical potential represents a massive automation opportunity. The convention lookup is trivial (a database query). The bottleneck is data quality: messy handwriting, unclear diagrams, missing fields, poor photos, paper forms. **Whoever solves data quality upstream unlocks the 50+ percentage point STP gap.**
+
+12. **Where handlers actually spend time points to where automation value lives:**
+    - Data extraction & reconciliation: ~30% (reading forms, deciphering handwriting, matching to systems)
+    - Exception handling: ~25% (missing info, unclear data, follow-up calls)
+    - Damage assessment coordination: ~20% (scheduling inspections, reviewing estimates)
+    - Validation & compliance: ~15% (coverage checks, fraud screening)
+    - Policy lookup & payment: ~10% (mostly automated already)
+
+    **The first 55% (data extraction + exception handling) is the prime automation target.**
+
+### Home/Property Insurance Insights
+
+13. **Home claims are structurally different from motor** — No counterparty, no EAS, no convention system. The question isn't "who's at fault?" but "was this peril covered?" Almost 100% of non-trivial home claims require adjuster inspection vs ~10% STP for motor.
+
+14. **Unlike motor, EU has no structural advantage for home claims** — No EAS equivalent, no convention system, no fault tables. The claim is between policyholder and insurer about coverage interpretation. **The 3x productivity opportunity applies equally to EU and US.**
+
+15. **Home adjuster productivity opportunity is different from motor** — For motor, the opportunity is "clean data upstream to unlock STP." For home, the opportunity is "make the adjuster 3x more productive" because you can't eliminate the adjuster for most claims.
+
+16. **Field adjusters spend ~25-30% of time on TRAVEL** — This is the biggest single productivity lever. Virtual inspection for simple claims eliminates this entirely. For complex claims, pre-processing reduces what the adjuster needs to verify on-site.
+
+17. **TPAs are a massive buyer segment for home claims** — Crawford, Sedgwick, Engle Martin employ 25-35% of property adjusters. They're essentially "adjusters as a service" — if you improve their unit economics, you have a direct value proposition.
+
+18. **The "replace adjuster with AI" narrative is overhyped for home claims** — AI accuracy is ~70% but needs >95% for high-risk automation. Hidden damage (water behind walls) is invisible to photos. AI-generated fraud (fake photos, receipts) is a growing threat. **The realistic opportunity is augmentation, not replacement.**
+
+19. **When an adjuster needs colleague help, handling time nearly TRIPLES** — Collaboration friction is a hidden productivity killer. Single source of truth + structured handoffs could recover significant time.
+
+20. **The inventory/proof-of-loss problem is brutal and under-automated** — After a fire or burglary, policyholders must remember and prove everything they owned. This is a distinct pain point with potential for pre-loss documentation solutions.
