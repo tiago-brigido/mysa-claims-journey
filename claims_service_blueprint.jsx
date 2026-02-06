@@ -461,12 +461,135 @@ C["documents-decision"] = [
   { t: "🇪🇺 Convention fault ruling", y: "eu" },
 ];
 
-// Remaining phases placeholder
-["settlement","close"].forEach(p => {
-  ["policyholder","insurer_handler","documents"].forEach(a => {
-    if (!C[`${a}-${p}`]) C[`${a}-${p}`] = [{ t: "TO BE MAPPED", y: "todo" }];
-  });
-});
+// Phase 10: Settlement — Money Moves
+C["policyholder-settlement"] = [
+  { t: "Receives settlement offer", y: "action" },
+  { t: "Reviews offer vs expectations", y: "action" },
+  { t: "⚡ FORK 12: Settlement path", y: "fork", f: "fork12" },
+  { t: "Accepts or disputes amount", y: "action" },
+  { t: "Signs release of all claims", y: "action" },
+  { t: "Provides bank details", y: "action" },
+  { t: "🇪🇺 Minimal negotiation (convention)", y: "eu" },
+  { t: "🇺🇸 May negotiate / hire attorney (BI)", y: "us" },
+];
+C["insurer_handler-settlement"] = [
+  { t: "Calculates settlement (estimate − deductible)", y: "action" },
+  { t: "Generates offer letter", y: "action" },
+  { t: "Communicates offer to policyholder", y: "action" },
+  { t: "Negotiates within authority level", y: "action" },
+  { t: "Escalates if above authority", y: "friction" },
+  { t: "Processes payment authorization", y: "action" },
+  { t: "Manages supplement requests", y: "friction" },
+  { t: "Initiates subrogation referral", y: "action" },
+  { t: "Updates reserves → match payment", y: "action" },
+  { t: "🇪🇺 Triggers convention reimbursement", y: "eu" },
+  { t: "🇺🇸 Handles attorney demands (BI)", y: "us" },
+];
+C["adjuster-settlement"] = [
+  { t: "Recommends settlement amount", y: "action" },
+  { t: "ACV valuation (total loss)", y: "action" },
+  { t: "Re-inspects for supplements", y: "friction" },
+  { t: "BI: valuation (Colossus/manual)", y: "action" },
+  { t: "Verifies repair completion (DRP)", y: "action" },
+  { t: "🇪🇺 Expert report = basis for offer", y: "eu" },
+  { t: "🇺🇸 May have direct settlement authority", y: "us" },
+];
+C["insurer_uw-settlement"] = [
+  { t: "Reviews large loss impact on policy", y: "action" },
+  { t: "Minimal involvement in routine claims", y: "info" },
+];
+C["insurer_fin-settlement"] = [
+  { t: "Validates payment vs authority matrix", y: "action" },
+  { t: "Processes payment (check/ACH/wire/SEPA)", y: "action" },
+  { t: "Multi-payee checks (lienholder)", y: "friction" },
+  { t: "🇪🇺 Convention clearing reconciliation", y: "eu" },
+  { t: "🇺🇸 Issues 1099 for BI > $600", y: "us" },
+  { t: "Reserve-to-payment variance", y: "action" },
+  { t: "Reinsurance recovery (large losses)", y: "action" },
+];
+C["siu-settlement"] = [
+  { t: "Final fraud check before payment", y: "action" },
+  { t: "Flags suspicious settlement patterns", y: "action" },
+  { t: "May block payment pending review", y: "friction" },
+];
+C["insurer_b-settlement"] = [
+  { t: "Receives subrogation demand", y: "action" },
+  { t: "Evaluates liability", y: "action" },
+  { t: "🇪🇺 Passive: forfait via clearing house", y: "eu" },
+  { t: "🇺🇸 Negotiates / Arbitration Forums", y: "us" },
+];
+C["convention-settlement"] = [
+  { t: "Calculates forfait reimbursement", y: "action" },
+  { t: "Monthly net settlement batch", y: "action" },
+  { t: "Clearing house processing", y: "action" },
+  { t: "Convention arbitration (if disputed)", y: "friction" },
+];
+C["documents-settlement"] = [
+  { t: "Settlement offer letter", y: "doc" },
+  { t: "Release of all claims", y: "doc" },
+  { t: "Payment voucher / authorization", y: "doc" },
+  { t: "Total loss valuation report", y: "doc" },
+  { t: "Salvage title application", y: "doc" },
+  { t: "Subrogation demand letter", y: "doc" },
+  { t: "Supplement estimate", y: "doc" },
+  { t: "🇪🇺 Convention reimbursement claim", y: "eu" },
+  { t: "🇺🇸 1099 tax form (BI)", y: "us" },
+];
+
+// Phase 11: Close — File Closure & Recovery
+C["policyholder-close"] = [
+  { t: "Receives closure confirmation", y: "action" },
+  { t: "NPS / satisfaction survey", y: "action" },
+  { t: "Deductible reimbursement (if subro)", y: "action" },
+  { t: "May reopen (new damage/injury)", y: "friction" },
+];
+C["insurer_handler-close"] = [
+  { t: "Verifies all payments complete", y: "action" },
+  { t: "Zeros out reserves", y: "action" },
+  { t: "Closes vendor accounts (rental etc)", y: "action" },
+  { t: "Files closure documentation", y: "action" },
+  { t: "Initiates subrogation pursuit", y: "action" },
+  { t: "Handles reopens (1-5+ hours each)", y: "friction" },
+  { t: "Quality review / audit", y: "action" },
+  { t: "🇪🇺 Convention auto-settlement", y: "eu" },
+];
+C["adjuster-close"] = [
+  { t: "Salvage / title follow-up (TL)", y: "action" },
+  { t: "Quality review if selected", y: "action" },
+  { t: "May re-engage if reopened", y: "friction" },
+];
+C["insurer_uw-close"] = [
+  { t: "Receives closed-claim data for pricing", y: "action" },
+  { t: "Loss ratio impact analysis", y: "action" },
+];
+C["insurer_fin-close"] = [
+  { t: "Financial reconciliation", y: "action" },
+  { t: "Reserve zeroing", y: "action" },
+  { t: "Reinsurance bordereaux", y: "action" },
+  { t: "🇺🇸 Escheatment (uncashed checks)", y: "us" },
+];
+C["siu-close"] = [
+  { t: "Post-close fraud analysis", y: "action" },
+  { t: "Clear SIU referral flag", y: "action" },
+];
+C["insurer_b-close"] = [
+  { t: "Subrogation settlement finalized", y: "action" },
+  { t: "🇪🇺 Convention auto-settlement", y: "eu" },
+  { t: "🇺🇸 Arbitration resolution", y: "us" },
+];
+C["convention-close"] = [
+  { t: "Final convention settlement", y: "action" },
+  { t: "Monthly batch reconciliation", y: "action" },
+  { t: "Statistics & reporting", y: "action" },
+];
+C["documents-close"] = [
+  { t: "Closure letter to policyholder", y: "doc" },
+  { t: "Subrogation demand / recovery docs", y: "doc" },
+  { t: "Quality audit checklist", y: "doc" },
+  { t: "Reinsurance notification", y: "doc" },
+  { t: "🇪🇺 Solvency II reporting data", y: "eu" },
+  { t: "🇺🇸 State DOI regulatory reports", y: "us" },
+];
 
 const FORKS = {
   fork1: {
@@ -784,6 +907,37 @@ const FORKS = {
       ["d1r","d5"],["d2r","d5"],["d3r","d6"],["d4r","d6"],
       ["d5","d5r"],["d6","d6r"],["d6r","d7"],["d5r","d7"],
       ["d7","d7r"],["d7r","sum"],
+    ],
+  },
+  fork12: {
+    title: "Fork 12: Settlement Path — Cash vs DRP vs Total Loss vs BI",
+    phase: "Phase 10 — Settlement",
+    desc: "The settlement path determines how money moves. Cash settlements give policyholder control; DRP keeps insurer in control of cost and quality; total loss triggers title/salvage/lienholder complexity; BI settlements are adversarial, attorney-driven, and can take years.",
+    nodes: [
+      { id: "s", x: 300, y: 20, w: 220, h: 36, text: "Decision approved", tp: "start" },
+      { id: "q", x: 300, y: 80, w: 220, h: 44, text: "Settlement type?", tp: "decision" },
+      // Cash
+      { id: "cash", x: 20, y: 170, w: 180, h: 34, text: "Cash Settlement", tp: "action" },
+      { id: "cashr", x: 10, y: 220, w: 200, h: 50, text: "Lump sum to policyholder\nPH chooses repair/pocket\n5-30 days", tp: "result-a" },
+      // DRP
+      { id: "drp", x: 220, y: 170, w: 180, h: 34, text: "DRP / Managed Repair", tp: "action" },
+      { id: "drpr", x: 210, y: 220, w: 200, h: 50, text: "Insurer → shop direct\n50-90% need supplements\n5-15 days repair", tp: "result-a" },
+      // Total Loss
+      { id: "tl", x: 420, y: 170, w: 180, h: 34, text: "Total Loss Payout", tp: "action" },
+      { id: "tlr", x: 410, y: 220, w: 200, h: 50, text: "ACV − deductible − salvage\nTitle transfer + lienholder\n2-4 weeks", tp: "result-b" },
+      // BI
+      { id: "bi", x: 620, y: 170, w: 180, h: 34, text: "BI Settlement", tp: "action" },
+      { id: "bir", x: 610, y: 220, w: 200, h: 50, text: "Wait for MMI → demand letter\n3-8 negotiation rounds\n12-18+ months", tp: "result-c" },
+      // EU Convention
+      { id: "euconv", x: 250, y: 320, w: 300, h: 44, text: "🇪🇺 Convention: forfait via clearing house\nMonthly batch, near-automatic", tp: "result-a" },
+      // STP stat
+      { id: "stp", x: 250, y: 400, w: 300, h: 44, text: "STP rate: <3% industry · 50% Lemonade\n$67B/year leakage opportunity", tp: "result-b" },
+    ],
+    edges: [
+      ["s","q"],
+      ["q","cash","Repairable (PH choice)"],["q","drp","Repairable (DRP)"],["q","tl","Total Loss"],["q","bi","Bodily Injury"],
+      ["cash","cashr"],["drp","drpr"],["tl","tlr"],["bi","bir"],
+      ["cashr","euconv"],["drpr","euconv"],["tlr","stp"],["bir","stp"],
     ],
   },
 };
@@ -1212,6 +1366,339 @@ function CompetitorView() {
   );
 }
 
+// Adjuster Journey — Per-phase data
+const ADJUSTER_JOURNEY = [
+  {
+    phase: "Phase 4: First Contact",
+    involvement: "MEDIUM",
+    euTime: "5-15 min",
+    usTime: "15-30 min",
+    activities: [
+      "Receives assignment from auto-routing or supervisor",
+      "Reads FNOL summary + attached documents",
+      "Makes first policyholder contact call",
+      "Confirms coverage eligibility (quick check)",
+      "Sets initial diary / follow-up date",
+    ],
+    painPoints: [
+      "70% of outbound calls go to voicemail — adjuster plays phone tag",
+      "Manual CMS data entry from FNOL summary",
+      "Context-switching between 5-7 separate systems daily",
+    ],
+    competitors: [
+      { name: "Five Sigma (Clive)", solution: "AI handles FNOL from email/voice/chat, auto-assigns based on complexity" },
+      { name: "Avallon", solution: "AI voice agent makes first contact calls 24/7, gathers info" },
+      { name: "Shift Technology", solution: "Complexity scoring at intake, auto-routes to right adjuster tier" },
+      { name: "ClaimSorted", solution: "Full document ingestion and auto-population at first contact" },
+    ],
+  },
+  {
+    phase: "Phase 5: FNOL",
+    involvement: "HIGH",
+    euTime: "5-40 min",
+    usTime: "30-60 min",
+    activities: [
+      "🇪🇺 Reads paper EAS — manually enters into CMS (biggest time sink)",
+      "🇺🇸 Takes recorded statement (15-30 min per party)",
+      "Verifies policy coverage, deductible, limits",
+      "Sets initial reserves (formula + experience)",
+      "Identifies convention applicability (EU) / subrogation potential",
+      "Sends document request list to policyholder",
+    ],
+    painPoints: [
+      "Paper EAS → CMS entry = 20-40 min for messy handwriting",
+      "Only 10-15% of insurers use OCR/AI for document extraction",
+      "Incomplete submissions require 2-3 follow-up cycles",
+    ],
+    competitors: [
+      { name: "Sprout.ai", solution: "500+ document types auto-extracted with AI. Zero manual data entry" },
+      { name: "omni:us", solution: "End-to-end FNOL automation, 50%+ touchless resolution" },
+      { name: "Tractable", solution: "Instant photo assessment at FNOL — knows repair vs total loss from photos" },
+      { name: "Pace", solution: "AI agents process FNOL documents, populate CMS automatically" },
+    ],
+  },
+  {
+    phase: "Phase 6: Triage",
+    involvement: "HIGH",
+    euTime: "5-15 min",
+    usTime: "10-20 min",
+    activities: [
+      "Classifies claim complexity (simple / moderate / complex)",
+      "Determines convention applicability (EU) or investigation path (US)",
+      "Identifies if field inspection needed vs desk handling",
+      "Checks for SIU flags / fraud indicators",
+      "Prioritizes within caseload (80-150 simultaneous claims)",
+    ],
+    painPoints: [
+      "Adjusters override 20-30% of auto-triage classifications",
+      "Diary management across 80-150 claims is manual and error-prone",
+      "Wrong triage = wrong path = rework later",
+    ],
+    competitors: [
+      { name: "Shift Technology", solution: "AI classifies, prioritizes, routes — 60% can go to STP path" },
+      { name: "Five Sigma (Clive)", solution: "Dynamic complexity rating, auto-routes simple claims to STP" },
+      { name: "Snapsheet", solution: "Rules engine routing with configurable triage logic" },
+      { name: "Solva", solution: "Severity scoring + priority assignment with source-cited recommendations" },
+    ],
+  },
+  {
+    phase: "Phase 7: Investigation",
+    involvement: "VERY HIGH",
+    euTime: "30-60 min",
+    usTime: "1-3 hours",
+    activities: [
+      "Coordinates body shop, appraiser, medical providers, attorneys",
+      "Reviews damage photos and expert reports",
+      "Determines liability allocation (EU: convention bareme / US: judgment)",
+      "Gathers police reports, witness statements",
+      "Manages SIU referrals if fraud suspected",
+      "Chases missing documents (avg 2-3 follow-up cycles)",
+    ],
+    painPoints: [
+      "Investigation is the longest phase — simple PD: 1-3 hrs, BI: 20-100+ hrs",
+      "30-40% of time spent chasing documents and status updates",
+      "EU convention claims still require manual EAS interpretation",
+    ],
+    competitors: [
+      { name: "Five Sigma (Clive)", solution: "AI liability determination from evidence. Auto-generates investigation summary" },
+      { name: "Tractable", solution: "Photo evidence analysis — AI identifies damage type, severity, repair path" },
+      { name: "Sprout.ai", solution: "Anomaly + authenticity detection in submitted documents" },
+      { name: "Avallon", solution: "Voice agent handles status calls, contacts employers/providers automatically" },
+    ],
+  },
+  {
+    phase: "Phase 8: Assessment",
+    involvement: "HIGH",
+    euTime: "30-60 min",
+    usTime: "30-90 min",
+    activities: [
+      "Reviews repair estimate (CCC/Mitchell/Audatex)",
+      "Validates estimate against damage photos",
+      "Determines repair vs total loss threshold",
+      "Sets/adjusts reserves based on assessment",
+      "Handles supplements (50-90% of claims need them)",
+      "BI: Evaluates medical records, calculates exposure",
+    ],
+    painPoints: [
+      "Average US claim has 1.3 supplements — each adds 3-14 days",
+      "Total loss ACV disputes with policyholders are time-consuming",
+      "BI valuation is subjective — Colossus is 37 years old with 10,720 rules",
+    ],
+    competitors: [
+      { name: "Tractable", solution: "AI repair estimate from photos with certainty scores. 90% touchless (Admiral)" },
+      { name: "CCC/Mitchell/Audatex", solution: "Line-level estimates, parts databases, total loss ACV valuation" },
+      { name: "Colossus (DXC)", solution: "BI valuation: 750 injury codes, calculates settlement ranges" },
+      { name: "Davies/Kuarterback", solution: "PI valuation in under 1 minute from medical evidence" },
+    ],
+  },
+  {
+    phase: "Phase 9: Decision",
+    involvement: "HIGH",
+    euTime: "15-30 min",
+    usTime: "15-45 min",
+    activities: [
+      "Makes 7 key decisions: coverage, liability, reserves, total loss, fraud, subrogation, BI",
+      "Checks authority limits — escalates if above threshold",
+      "Documents decision rationale in claim file",
+      "Communicates decision to policyholder",
+    ],
+    painPoints: [
+      "80-90% of simple PD falls within adjuster authority — but 10-20% causes escalation delays",
+      "3 codifiable, 3 mixed, 1 judgment-heavy decisions — uneven automation ceiling",
+      "Decision documentation for audit compliance is tedious manual work",
+    ],
+    competitors: [
+      { name: "Five Sigma (Clive)", solution: "STP + AI settlement recommendations for qualifying claims" },
+      { name: "Shift Technology", solution: "Auto-approve/deny/route based on ML models and rules" },
+      { name: "omni:us", solution: "Touchless resolution for 50%+ of claims including decision" },
+      { name: "ClaimSorted", solution: "AI decision with human oversight — leakage below 1.2%" },
+    ],
+  },
+  {
+    phase: "Phase 10: Settlement",
+    involvement: "MEDIUM-HIGH",
+    euTime: "15-30 min",
+    usTime: "15-60 min",
+    activities: [
+      "Calculates settlement (estimate − deductible − depreciation)",
+      "Generates and communicates offer to policyholder",
+      "Negotiates within authority level",
+      "Processes payment authorization",
+      "Manages supplement requests from repair shops",
+      "Initiates subrogation referral if applicable",
+    ],
+    painPoints: [
+      "BI negotiations span months (waiting for MMI). 3-8 rounds typical",
+      "Supplement cycle creates rework: re-inspect, re-authorize, re-pay",
+      "Payment methods: checks still 30-40%, adding 5-10 days delay",
+    ],
+    competitors: [
+      { name: "Snapsheet", solution: "Digital payment + automated settlement. Claims costs cut 40%" },
+      { name: "Tractable", solution: "Settle in minutes — GEICO uses Tractable for instant settlement" },
+      { name: "Five Sigma (Clive)", solution: "Automated settlement + personalized comms. $150K/mo savings" },
+      { name: "Lemonade", solution: "AI Jim: 2-3 second settlements for simple claims. NPS 90+" },
+    ],
+  },
+  {
+    phase: "Phase 11: Close",
+    involvement: "LOW-MODERATE",
+    euTime: "10-20 min",
+    usTime: "15-30 min",
+    activities: [
+      "Verifies all payments complete, zeros reserves",
+      "Closes vendor accounts (rental, storage, tow)",
+      "Files closure documentation for audit trail",
+      "Initiates subrogation pursuit",
+      "Handles reopens (1-5+ hours each, 3-12% reopen rate)",
+    ],
+    painPoints: [
+      "Reopens are the worst: original adjuster may have left, new one re-reads entire file",
+      "Subrogation leakage: 20-30% of recoverable funds go unpursued",
+      "Premature closure with open reserves flags actuarial review",
+    ],
+    competitors: [
+      { name: "CCC", solution: "Subrogation detection models score claims at FNOL, not waiting until close" },
+      { name: "omni:us", solution: "EUR 1B identified in subrogation across 1M+ claims" },
+      { name: "ClaimSorted", solution: "Sub-1% reopen rate within 30 days — industry-leading quality" },
+      { name: "Five Sigma (Clive)", solution: "Auto-close workflows: AI monitors for completion conditions" },
+    ],
+  },
+];
+
+const ADJUSTER_TIME_SPLIT = [
+  { activity: "Administrative / data entry", pct: "30-40%", auto: "YES — high", color: "#EF4444" },
+  { activity: "Communication (phone/email)", pct: "20-25%", auto: "PARTIALLY", color: "#F59E0B" },
+  { activity: "Waiting / follow-up", pct: "15-20%", auto: "YES", color: "#EF4444" },
+  { activity: "Investigation / analysis", pct: "10-15%", auto: "PARTIALLY", color: "#F59E0B" },
+  { activity: "Negotiation", pct: "5-10%", auto: "NOT YET", color: "#10B981" },
+  { activity: "Documentation", pct: "10-15%", auto: "YES", color: "#EF4444" },
+];
+
+function AdjusterView() {
+  const [expandedPhase, setExpandedPhase] = useState(null);
+  const invColors = { "LOW-MODERATE": "#10B981", MEDIUM: "#F59E0B", "MEDIUM-HIGH": "#F97316", HIGH: "#EF4444", "VERY HIGH": "#DC2626" };
+
+  return (
+    <div>
+      <div style={{ marginBottom: 10, padding: 10, background: "#FFF", borderRadius: 8, border: "2px solid #6366F1" }}>
+        <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 4px", color: "#6366F1" }}>The Adjuster: Central Orchestrator of Every Claim</h3>
+        <p style={{ fontSize: 10, color: "#374151", margin: "0 0 6px" }}>
+          The adjuster doesn't do everything — but they coordinate everyone. They're the orchestrator between policyholders, repair shops, medical providers, legal teams, SIU, subrogation, and management. Their job: keep the claim moving while making judgment calls at critical points.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
+          <div style={{ padding: 6, background: "#EEF2FF", borderRadius: 4, textAlign: "center" }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#4F46E5" }}>80-150</div>
+            <div style={{ fontSize: 8, color: "#6366F1" }}>PD claims simultaneously</div>
+          </div>
+          <div style={{ padding: 6, background: "#FEF2F2", borderRadius: 4, textAlign: "center" }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#DC2626" }}>60%</div>
+            <div style={{ fontSize: 8, color: "#991B1B" }}>time on admin (not decisions)</div>
+          </div>
+          <div style={{ padding: 6, background: "#F0FDF4", borderRadius: 4, textAlign: "center" }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#16A34A" }}>2-4h EU</div>
+            <div style={{ fontSize: 8, color: "#166534" }}>per simple PD claim total</div>
+          </div>
+          <div style={{ padding: 6, background: "#FEF3C7", borderRadius: 4, textAlign: "center" }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#D97706" }}>3-7h US</div>
+            <div style={{ fontSize: 8, color: "#92400E" }}>per simple PD claim total</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Time Split Bar */}
+      <div style={{ marginBottom: 10, padding: 8, background: "#FFF", borderRadius: 6, border: "1px solid #E5E7EB" }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: "#374151", marginBottom: 6 }}>WHERE ADJUSTER TIME GOES (% of total)</div>
+        <div style={{ display: "flex", height: 28, borderRadius: 4, overflow: "hidden", marginBottom: 4 }}>
+          {ADJUSTER_TIME_SPLIT.map((s, i) => (
+            <div key={i} style={{ flex: parseInt(s.pct), background: s.color, display: "flex", alignItems: "center", justifyContent: "center", borderRight: "1px solid #FFF" }}>
+              <span style={{ fontSize: 7, color: "#FFF", fontWeight: 600, textAlign: "center", lineHeight: 1.1 }}>{s.activity.split("/")[0]}<br/>{s.pct}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 6, fontSize: 7.5 }}>
+          <span style={{ color: "#EF4444", fontWeight: 600 }}>■ Fully automatable</span>
+          <span style={{ color: "#F59E0B", fontWeight: 600 }}>■ Partially automatable</span>
+          <span style={{ color: "#10B981", fontWeight: 600 }}>■ Human judgment needed</span>
+        </div>
+      </div>
+
+      {/* Phase-by-Phase Cards */}
+      {ADJUSTER_JOURNEY.map((phase, idx) => {
+        const expanded = expandedPhase === idx;
+        return (
+          <div key={idx} onClick={() => setExpandedPhase(expanded ? null : idx)}
+            style={{ marginBottom: 6, background: "#FFF", borderRadius: 6, border: `1px solid ${expanded ? "#6366F1" : "#E5E7EB"}`, cursor: "pointer", transition: "border-color 0.15s" }}>
+
+            {/* Phase Header */}
+            <div style={{ padding: "8px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#374151" }}>{phase.phase}</span>
+                <span style={{ fontSize: 8, padding: "2px 6px", borderRadius: 3, background: invColors[phase.involvement] + "20", border: `1px solid ${invColors[phase.involvement]}`, color: invColors[phase.involvement], fontWeight: 600 }}>{phase.involvement}</span>
+              </div>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <span style={{ fontSize: 9, color: "#374151" }}>🇪🇺 {phase.euTime}</span>
+                <span style={{ fontSize: 9, color: "#374151" }}>🇺🇸 {phase.usTime}</span>
+                <span style={{ fontSize: 12, color: "#6B7280" }}>{expanded ? "▼" : "▶"}</span>
+              </div>
+            </div>
+
+            {/* Expanded Content */}
+            {expanded && (
+              <div style={{ padding: "0 10px 10px", borderTop: "1px solid #E5E7EB" }} onClick={e => e.stopPropagation()}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 8 }}>
+                  {/* Activities */}
+                  <div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#374151", marginBottom: 4 }}>WHAT THE ADJUSTER DOES</div>
+                    {phase.activities.map((a, i) => (
+                      <div key={i} style={{ fontSize: 8.5, color: "#374151", marginBottom: 2, paddingLeft: 8, textIndent: -8 }}>• {a}</div>
+                    ))}
+                    <div style={{ marginTop: 8, fontSize: 9, fontWeight: 700, color: "#DC2626", marginBottom: 4 }}>OPERATIONAL PROBLEMS</div>
+                    {phase.painPoints.map((p, i) => (
+                      <div key={i} style={{ fontSize: 8.5, color: "#991B1B", marginBottom: 2, paddingLeft: 8, textIndent: -8 }}>⚠ {p}</div>
+                    ))}
+                  </div>
+                  {/* Competitor Solutions */}
+                  <div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#166534", marginBottom: 4 }}>HOW COMPETITORS MAKE IT 10x BETTER</div>
+                    {phase.competitors.map((c, i) => (
+                      <div key={i} style={{ padding: 4, marginBottom: 3, background: "#F0FDF4", borderRadius: 3, border: "1px solid #BBF7D0" }}>
+                        <div style={{ fontSize: 8, fontWeight: 700, color: "#166534" }}>{c.name}</div>
+                        <div style={{ fontSize: 8, color: "#374151" }}>{c.solution}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* Adjuster of 2027 Vision */}
+      <div style={{ marginTop: 10, padding: 10, background: "#EEF2FF", borderRadius: 8, border: "2px solid #6366F1" }}>
+        <h3 style={{ fontSize: 13, fontWeight: 700, margin: "0 0 6px", color: "#4F46E5" }}>The "Adjuster of 2027" — What Mysa Enables</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#DC2626", marginBottom: 4 }}>TODAY (100 PD claims)</div>
+            {["30-40% time on data entry and admin","Manually reads paper EAS, types into CMS","20+ phone calls/day (2/3 → voicemail)","Context-switches between 5-7 systems","Misses subrogation opportunities","Manual diary = error-prone prioritization"].map((t,i) => (
+              <div key={i} style={{ fontSize: 8.5, color: "#991B1B", marginBottom: 1 }}>✗ {t}</div>
+            ))}
+          </div>
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#16A34A", marginBottom: 4 }}>MYSA-ENABLED (200+ PD claims)</div>
+            {["AI extracts all docs at intake → structured data in seconds","Convention matching automated for 70-80% of EU claims","AI pre-drafts liability determination with evidence summary","Automated follow-ups reduce phone time by 50%","Single interface — no context-switching","Subrogation flagged from day 1, intelligent diary"].map((t,i) => (
+              <div key={i} style={{ fontSize: 8.5, color: "#065F46", marginBottom: 1 }}>✓ {t}</div>
+            ))}
+          </div>
+        </div>
+        <div style={{ marginTop: 8, padding: 6, background: "#FFF", borderRadius: 4, textAlign: "center" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: "#4F46E5" }}>The adjuster doesn't disappear. The adjuster becomes 2-3x more productive — handling more claims, with better outcomes, and less burnout.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Cell({ aid, pid, onFork }) {
   const items = C[`${aid}-${pid}`];
   if (!items) return <div style={{ minHeight: 46, borderRight: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB", background: "#FAFAFA" }}/>;
@@ -1242,7 +1729,7 @@ export default function App() {
           <p style={{ fontSize: 9, color: "#6B7280", margin: 0 }}>Motor + Home · EU vs US · {ACTORS.length} Actors · {PHASES.length} Phases</p>
         </div>
         <div style={{ display: "flex", gap: 3 }}>
-          {[["blueprint","📋 Blueprint"],["forks","⚡ Forks"],["competitors","🏢 Competitors"]].map(([v,l])=>(
+          {[["blueprint","📋 Blueprint"],["adjuster","👤 Adjuster"],["forks","⚡ Forks"],["competitors","🏢 Competitors"]].map(([v,l])=>(
             <button key={v} onClick={()=>{setView(v);if(v==="blueprint")setAf(null);}}
               style={{ padding:"4px 9px", fontSize:9, fontWeight:600, borderRadius:4, border:"1px solid #D1D5DB", background:view===v?"#111827":"#FFF", color:view===v?"#FFF":"#374151", cursor:"pointer" }}>{l}</button>
           ))}
@@ -1289,10 +1776,12 @@ export default function App() {
         </div>
       )}
 
+      {view==="adjuster"&&<AdjusterView />}
+
       {view==="competitors"&&<CompetitorView />}
 
       <div style={{marginTop:6,padding:5,background:"#FEF3C7",borderRadius:4,border:"1px solid #F59E0B"}}>
-        <p style={{fontSize:8.5,color:"#92400E",margin:0}}><strong>Progress:</strong> Motor Phases 0-9 mapped (incl. Decision — 7 decisions, 9 actors). Home/Property FNOL & Adjuster workflow added. 12 competitors mapped. Click ⚡ Forks → Fork 11 for Decision breakdown.</p>
+        <p style={{fontSize:8.5,color:"#92400E",margin:0}}><strong>Progress:</strong> Motor Phases 0-11 COMPLETE (all 12 phases mapped, 9 actors each). 12 competitors mapped. Forks 1-12 available. Settlement path (Fork 12): Cash vs DRP vs Total Loss vs BI.</p>
       </div>
     </div>
   );
