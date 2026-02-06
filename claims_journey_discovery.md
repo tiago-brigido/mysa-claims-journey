@@ -4053,23 +4053,421 @@ From Five Sigma research: When multiple adjusters touch a claim, handling time n
 
 ---
 
-## 🔴 OPEN QUESTIONS — Resume Here
+## 🟢 OPEN QUESTIONS — Resolved
 
-**Questions to discuss before continuing to Phase 8:**
+**Resolved before continuing to Phase 8:**
 
-1. **The 3x collaboration penalty is massive.** Five Sigma data shows multi-adjuster claims take nearly 3x longer. This feels like a huge opportunity — but is it the kind of problem Mysa wants to solve? It's more workflow/collaboration than data extraction.
+### Q1: The 3x collaboration penalty — Is this Mysa's problem?
 
-2. **Home vs Motor feels like different products.** Motor investigation = reconstruct who's at fault. Home investigation = determine cause and coverage. Different questions, different processes. Does Mysa focus on one?
+**Answer: Not directly, but it's a symptom of the problem Mysa DOES solve.**
 
-3. **TPA data handoffs** — If TPAs handle ~25% of claims and data moves between TPA systems and insurer systems, is that a wedge? "Mysa normalizes data regardless of whether it comes from staff or TPA."
+The 3x penalty comes from **context loss at handoff** — when Adjuster A passes to Adjuster B, B must re-read the entire file to understand what happened. The root cause is poor data structure. If the claim file had clean, structured data from intake (not narrative notes and scattered documents), handoff friction drops dramatically.
 
-4. **Broker irrelevance during investigation** — Brokers add most value at intake and disputes, but NOT during investigation. Does this change your thinking about who to sell to?
+**Mysa's play:** Don't build a collaboration tool (that's Slack/Teams territory). Build the **structured claim data foundation** that makes collaboration unnecessary for simple claims and faster for complex ones. The 3x penalty is a *selling point* for why structured data matters, not a feature to build directly.
+
+### Q2: Home vs Motor — Different products?
+
+**Answer: Different investigation, same data problem.**
+
+- **Motor investigation** = WHO caused it? → Fault reconstruction from competing narratives
+- **Home investigation** = WAS it covered? → Cause & origin determination + damage scoping
+
+These are different investigation workflows. But the UPSTREAM problem (data extraction, document processing, intake structuring) is identical. A scanned EAS and a scanned property damage report both need OCR, extraction, and normalization.
+
+**Mysa's play:** Start with motor (cleaner data via EAS, convention systems enable STP, smaller scope). The extraction + inference engine transfers to home. Investigation-specific features come later and may diverge by line, but the data layer is shared.
+
+### Q3: TPA data handoffs — Is this a wedge?
+
+**Answer: Yes — potentially a strong one.**
+
+~25% of claims flow through TPAs (higher during CAT events). Data moves between TPA systems and insurer systems with friction:
+- Different data formats
+- Manual exports/imports
+- Context loss at boundaries
+- Audit/compliance gaps
+
+"Mysa normalizes claim data regardless of source — staff adjuster, TPA, or broker" is a clean positioning. It makes Mysa the **interoperability layer** between fragmented claims ecosystems.
+
+**But the timing matters:** TPAs are a secondary buyer. Start by selling to insurers (who have the budget and the pain), then naturally extend to the TPA-insurer handoff as a value-add.
+
+### Q4: Broker irrelevance during investigation — Impact on buyer?
+
+**Answer: Confirms the "sell to insurer, design broker-friendly" strategy from Scenario A.**
+
+Brokers are valuable at intake (Phases 4-5) and disputes (Phases 9-11), but absent during investigation (Phases 7-8). This means:
+- **If Mysa focuses on Phases 7-8+:** The buyer is the insurer/TPA, not the broker
+- **If Mysa starts at intake (Phases 4-6):** Both brokers and insurers benefit
+- **The data normalization wedge spans both:** Intake data quality → faster investigation → faster settlement
+
+**No change to strategy:** Sell to insurers. Make brokers happy as a side effect. Don't build broker-specific features until there's demand.
+
+### Hanging Strategic Question: US Augment vs EU Eliminate
+
+**Resolution: Both — but sequentially.**
+
+| Market | Phase 1 (Year 1-2) | Phase 2 (Year 3+) |
+|---|---|---|
+| **EU** | Extraction + inference → push STP from ~10% to ~25% (ELIMINATE adjuster for routine claims) | Add triage + recommendations → push STP to ~40% |
+| **US** | Same extraction + inference → structure recorded statements, normalize competing narratives (AUGMENT adjuster) | Add investigation assistance → reduce adjuster time per claim |
+
+The underlying technology is the same: **document/data understanding and normalization**. The EU application eliminates human steps; the US application makes human steps faster. Same engine, different outcomes.
+
+**This is actually Mysa's moat story:** "We understand insurance documents and data better than anyone — EU or US, motor or home, paper or digital. That understanding powers different workflows depending on the market."
 
 ---
 
-## Phase 8: Assessment (NOT YET MAPPED)
+## Phase 8: Assessment — Damage Valuation & Repair Estimates
 
-*Next phase to map: How damage is valued and repair estimates are generated.*
+*How damage is valued, repair costs are estimated, and total loss decisions are made. This is where the claim gets a price tag.*
+
+### What is Assessment?
+
+Assessment is the phase where the insurer answers: **"How much will this cost?"**
+
+After investigation establishes WHAT happened and WHO is at fault (Phase 7), assessment determines:
+1. **Damage extent** — What is damaged and how severely?
+2. **Repair cost** — What will it cost to fix?
+3. **Total loss decision** — Is it cheaper to replace than repair?
+4. **Reserve adjustment** — Update the financial reserve based on actual costs
+
+### Assessment ≠ Investigation (Critical Distinction)
+
+| | **Investigation (Phase 7)** | **Assessment (Phase 8)** |
+|---|---|---|
+| **Question** | What happened? Who's at fault? | How much damage? What will it cost? |
+| **Actor** | Claims adjuster | Appraiser / damage assessor / expert |
+| **Output** | Liability determination (fault %) | Repair estimate or total loss valuation |
+| **Skills** | Narrative analysis, interviewing, law | Vehicle/property knowledge, estimation tools |
+| **Can happen in parallel?** | Often yes — damage assessment can start while liability is still being determined |
+
+**Key insight:** In the US, these are often done by different people. The **adjuster** handles investigation and the full claim; the **appraiser** focuses specifically on damage valuation. In the EU, the same person ("loss adjuster" or "expert") may do both.
+
+---
+
+### 🚗 Motor Assessment: The Damage Valuation Process
+
+#### Step 1: Inspection — How Is the Vehicle Examined?
+
+##### FORK: Desk vs Field Assessment
+
+| | **Desk Assessment** | **Field Assessment** |
+|---|---|---|
+| **How** | Review photos submitted by policyholder/body shop | Physical on-site inspection of vehicle |
+| **When used** | Minor visible damage, clear liability, low-value claims | Severe damage, hidden damage suspected, total loss candidate, fraud indicators |
+| **Who** | Desk appraiser (remote) | Field appraiser (travels to vehicle) |
+| **Trend** | **Growing fast** — AI photo assessment accelerating this | Still required for complex cases |
+| **Time** | Minutes to hours | 1-3 hours + travel time (25-30% of field adjuster time is travel) |
+| **% of claims** | ~40-50% and growing ⚠️ | ~50-60% but declining ⚠️ |
+
+**Photo-based assessment is the biggest shift in this phase.** Tractable (GEICO customer) reports:
+- Admiral Seguros: **90% of auto estimates run touchless**
+- **98% of assessments completed in <15 minutes**
+- Beesafe (Vienna Insurance Group): damage assessment in seconds, immediate payment offers
+
+**But photo assessment has limits:**
+- Cannot detect hidden damage (frame damage behind bumper)
+- Cannot detect pre-existing damage with certainty
+- ADAS recalibration needs aren't visible in photos
+- Supplemental estimates still frequent (~30-40% of initially photo-assessed claims need supplements ⚠️)
+
+#### Step 2: Estimate Generation — The Estimation Tools Ecosystem
+
+##### 🇺🇸 US: The Big Three
+
+The US motor damage estimation market is dominated by three platforms, all containing vehicle-specific repair databases:
+
+| Platform | Market Share ⚠️ | Owner | Notes |
+|----------|----------------|-------|-------|
+| **CCC Intelligent Solutions** | ~55-60% (shops: ~80% have CCC) | Public (CCCS) | Dominant. 26 of top 30 US insurers. 300M+ transactions processed. MOTOR database. |
+| **Audatex** | ~25% | Solera (Vista Equity) | Global presence. Part of Solera ecosystem. |
+| **Mitchell** | ~20% | Enlyte (parent) | Strong in some regional insurers. GM requires certified shops use Mitchell. |
+
+**How they work:**
+1. Appraiser identifies damaged parts and repair operations
+2. System generates estimate using:
+   - OEM-specific parts catalogs (manufacturer pricing for each part)
+   - Labor time guides (standardized hours per operation)
+   - Paint material calculations
+   - Local labor rates
+3. Output: **line-item repair estimate** (every part, every operation, every hour)
+
+**What the estimate includes:**
+```
+MOTOR DAMAGE ESTIMATE (typical structure)
+├── Part 1: Front bumper cover — Replace
+│   ├── Part cost: $487.00 (OEM)
+│   ├── Labor: 2.5 hrs × $55/hr = $137.50
+│   └── Paint: included in refinish
+├── Part 2: Hood — Repair
+│   ├── Labor: 3.0 hrs × $55/hr = $165.00
+│   ├── Paint: 2.5 hrs × $55/hr = $137.50
+│   └── Materials: $87.50
+├── Part 3: Headlight assembly — Replace
+│   ├── Part cost: $892.00 (OEM)
+│   └── Labor: 0.5 hrs × $55/hr = $27.50
+├── ...
+├── Subtotal parts: $X
+├── Subtotal labor: $Y
+├── Subtotal paint/materials: $Z
+├── Tax: $T
+└── TOTAL ESTIMATE: $X+Y+Z+T
+```
+
+**OEM vs Aftermarket vs Used parts:** A key friction point. Insurers often estimate using aftermarket or used (LKQ — Like Kind and Quality) parts to reduce costs. Policyholders and body shops want OEM parts. Some states require OEM parts on newer vehicles. This is a constant negotiation.
+
+##### 🇪🇺 EU: Different Players, Same Concept
+
+| Platform | Primary Markets | Owner | Notes |
+|----------|----------------|-------|-------|
+| **Audatex** | Pan-European, dominant | Solera | Same parent as US Audatex. Strong in Spain, Italy, Nordics |
+| **DAT** | Germany (dominant), Central Europe | Independent | Standard valuation tool in Germany. Used for both repair estimates AND vehicle valuations |
+| **GT Motive** | Spain, Portugal, Latin America | Solera (acquired) | Strong in Iberian market. Repair time databases. |
+| **Eurotax** | Europe-wide | Solera | Vehicle valuation (market value, residual value). Complementary to Audatex. |
+| **Cap HPI** | UK | Solera | UK vehicle data and valuation |
+
+**Key EU difference:** The estimation tools are similar in concept but the **market is more fragmented** by country. A Spanish insurer uses GT Motive; a German insurer uses DAT; a UK insurer might use Audatex. No single tool dominates across all of Europe like CCC does in the US.
+
+**Product opportunity:** A normalization layer that works regardless of which estimation tool is used. Mysa doesn't replace CCC or Audatex — it connects TO them.
+
+#### Step 3: Total Loss Determination — Repair or Replace?
+
+##### 🇺🇸 US: Threshold-Based
+
+A vehicle is declared a **total loss** when repair costs exceed a percentage of the vehicle's **Actual Cash Value (ACV)**.
+
+**Two methods exist:**
+
+| Method | How It Works | States |
+|--------|-------------|--------|
+| **Total Loss Threshold (TLT)** | Repair cost > X% of ACV = total loss | ~25 states. Threshold typically **70-75%**, ranges 60-100% |
+| **Total Loss Formula (TLF)** | Repair cost + salvage value > ACV = total loss | ~25 states |
+
+**Examples:**
+- Vehicle ACV: $20,000
+- TLT state (75%): If repair > $15,000 → total loss
+- TLF state: If repair ($12,000) + salvage ($5,000) > $20,000 → total loss
+
+**Vehicle valuation for ACV:** Determined using comparable vehicle databases:
+- CCC's **Market Valuation** tool
+- JD Power/NADA guides
+- Local comparable sales analysis
+
+##### 🇪🇺 EU: Less Standardized
+
+EU total loss thresholds are **not harmonized** — each country and often each insurer sets their own:
+
+| Country | Approach | Notes ⚠️ |
+|---------|----------|----------|
+| **UK** | Economic total loss when repair > market value - salvage | No fixed percentage; case-by-case |
+| **Germany** | "Wirtschaftlicher Totalschaden" — economic total loss | DAT provides benchmark valuations. Often ~60-70% threshold ⚠️ |
+| **France** | "Véhicule économiquement irréparable" | Insurer-specific thresholds |
+| **Portugal** | Market value comparison | No mandatory threshold |
+
+**Key EU difference:** More insurer discretion in total loss decisions. Less regulatory prescription than US state-by-state thresholds.
+
+**ADAS impact on total loss rates:** Advanced Driver Assistance Systems (cameras, sensors behind bumpers) are dramatically increasing repair costs. A minor bumper impact that previously cost €500 now costs €2,000-3,000 with ADAS recalibration. Result: **more vehicles being totaled** for what looks like minor damage. This trend is accelerating.
+
+---
+
+### 🏠 Home/Property Assessment (Comparison)
+
+Home/property assessment differs fundamentally from motor:
+
+| Factor | Motor | Home/Property |
+|--------|-------|---------------|
+| **Primary tool** | CCC/Audatex/Mitchell | **Xactimate** (~50%+ of US property claims, ~80% of adjusters use) |
+| **Scope challenge** | Usually visible | **Hidden damage** is the norm (water behind walls, mold, structural) |
+| **Assessment method** | Photos + database lookup | **On-site measurement** + line-item pricing |
+| **Supplements** | Common (~30-40%) | **Very common** (~50%+ of initial estimates get supplemented) |
+| **Standardization** | High (OEM parts catalogs) | Lower (labor varies wildly by region, custom homes) |
+
+**Xactimate dominance:** Verisk (owner) has built the de facto standard for property damage estimation:
+- ~50% of US property claims use Xactimate
+- ~80% of adjusters and contractors reference Xactimate pricing
+- Contains local pricing data (labor rates, material costs by ZIP code)
+- Generates detailed line-item estimates like motor tools
+
+**The Supplement Problem (Home-specific):**
+```
+INITIAL ESTIMATE: $15,000 (visible damage only)
+     ↓
+Contractor opens wall → finds mold, water damage, structural compromise
+     ↓
+SUPPLEMENT #1: +$8,000 (hidden water damage)
+     ↓
+Further tear-out reveals additional damage
+     ↓
+SUPPLEMENT #2: +$4,000 (structural remediation)
+     ↓
+FINAL COST: $27,000 (80% over initial estimate)
+```
+
+This supplement cycle adds weeks/months and is a major source of policyholder frustration and insurer cost overruns.
+
+---
+
+### Assessment: EU vs US Key Differences
+
+| Factor | 🇪🇺 EU | 🇺🇸 US |
+|--------|---------|---------|
+| **Who assesses?** | Often the same "expert" who investigates (loss adjuster) | Separate roles: adjuster (investigation) + appraiser (damage) |
+| **Estimation tools** | Fragmented by country (Audatex, DAT, GT Motive) | Concentrated (CCC dominates ~55-60%) |
+| **Photo assessment adoption** | Growing but varies — Tractable active in EU | Growing fast — GEICO, Admiral Seguros adopting |
+| **Total loss thresholds** | Country/insurer-specific, less standardized | State-regulated, 70-75% typical |
+| **ADAS impact** | Growing — EU has higher ADAS penetration | Growing — rising repair costs, more total losses |
+| **OEM vs aftermarket debate** | Less contentious in some markets | Major friction point, state-regulated |
+| **DRP networks** | Less formalized in some EU markets | Highly developed (insurer-approved repair networks) |
+
+### Adjuster vs Appraiser (US-Specific Distinction)
+
+| | **Claims Adjuster** | **Auto Damage Appraiser** |
+|---|---|---|
+| **Scope** | Entire claim — investigation, liability, coverage, settlement | **Damage valuation only** — what's broken, what it costs |
+| **Employer** | Insurer (staff) or independent | Insurer, independent, or body shop |
+| **Key skill** | Policy knowledge, interviewing, liability analysis | Vehicle knowledge, estimation software, parts/repair expertise |
+| **Licensing** | Required in most states | Required in fewer states (~15 states require separate license) |
+| **When involved** | From FNOL to settlement | After investigation → generates estimate → returns to adjuster |
+| **Decision authority** | Can approve/deny claims | Can only value damage — no coverage decisions |
+
+**Why this matters for Mysa:** In the US, the appraiser is a distinct user persona from the adjuster. If Mysa targets assessment, the user is the appraiser. If Mysa targets end-to-end, both must be served.
+
+---
+
+### Subrogation Identification During Assessment
+
+**When subrogation is identified:** During assessment, when the insurer determines:
+1. The other party is at fault (from investigation)
+2. The insurer has paid a first-party claim to their policyholder
+3. Recovery from the at-fault party's insurer is possible
+
+**How it happens in assessment:**
+- Adjuster/appraiser documents damage → estimates repair cost
+- If first-party claim is being paid, the settlement amount becomes the **subrogation demand**
+- Insurer's subrogation department files demand against at-fault insurer
+- In EU: Convention systems (CIMPAS, IDA, CID) handle this automatically for clear-fault cases
+- In US: **Arbitration Forums, Inc.** handles inter-company disputes
+
+**Key data points:**
+- US subrogation recovery: **$41.4 billion** recovered annually across all P&C lines
+- Average subrogation timeline: **~200 days** from identification to recovery
+- **Missed subrogation** (leakage): Industry estimates **10-20% of recoverable dollars are never pursued** ⚠️
+- AI-based subrogation identification is a growing space (Shift Technology covers this)
+
+**Mysa opportunity:** If you have structured claim data from intake (who's at fault, what was paid), flagging subrogation opportunities automatically is a high-ROI feature. Every recovered dollar goes straight to the bottom line.
+
+---
+
+### Repair Network Management (DRP)
+
+**DRP = Direct Repair Program** — a network of pre-approved body shops that have agreements with the insurer.
+
+| | With DRP | Without DRP |
+|---|---|---|
+| **Who chooses the shop?** | Insurer steers to DRP shop | Policyholder chooses their own |
+| **Estimate process** | DRP shop writes estimate in insurer's system | Shop writes estimate → insurer reviews → negotiation |
+| **Parts** | DRP agreement may specify aftermarket/OEM mix | Shop may quote all OEM → higher cost |
+| **Quality** | Insurer monitors repair quality | Less insurer oversight |
+| **Speed** | Faster — pre-approved, integrated workflows | Slower — more back-and-forth |
+
+**US DRP adoption:** Most major insurers (State Farm, GEICO, Progressive, Allstate) have DRP networks. ~60-70% of repairable claims go through DRP shops ⚠️.
+
+**EU equivalent:** Varies. UK has repair networks through insurers and TPAs. Continental Europe has insurer-approved repair networks but they're less formalized in some markets.
+
+---
+
+### Assessment Pain Points (Opportunities for Mysa)
+
+#### Pain Point 1: Photo Assessment Accuracy vs Hidden Damage
+
+| Problem | Current State | Opportunity |
+|---------|---------------|-------------|
+| Photos miss hidden damage | Initial estimate often underestimates by 20-40% | AI that flags high-probability hidden damage areas based on visible damage patterns |
+| Supplement cycle expensive | Each supplement requires re-inspection, re-estimation, re-approval | Predict likely supplements at initial estimate → set better reserves upfront |
+| ADAS not visible in photos | Bumper damage may hide $2,000+ of sensor recalibration | AI that identifies ADAS-equipped vehicles and auto-adds recalibration to estimate |
+
+#### Pain Point 2: Estimation Tool Fragmentation
+
+| Problem | Current State | Opportunity |
+|---------|---------------|-------------|
+| Different tools per market | CCC in US, DAT in Germany, GT Motive in Spain | Normalization layer that accepts estimate data from ANY tool |
+| Insurer ↔ shop tool mismatch | Shop uses Mitchell, insurer uses CCC → translation needed | Bidirectional estimate translation |
+| EU cross-border claims | German tourist crashes in Portugal — which estimation tool? | Multi-market estimation handling |
+
+#### Pain Point 3: Total Loss Decision Complexity
+
+| Problem | Current State | Opportunity |
+|---------|---------------|-------------|
+| ACV disputes | Policyholder disagrees with vehicle valuation | Better comp data, transparent valuation methodology |
+| ADAS-driven total losses increasing | Minor damage + expensive sensors = total loss | Early total loss prediction from photos before full estimate |
+| Salvage value uncertainty | Hard to predict salvage value accurately | Market data integration for real-time salvage pricing |
+
+#### Pain Point 4: OEM vs Aftermarket Parts Negotiation
+
+| Problem | Current State | Opportunity |
+|---------|---------------|-------------|
+| Policyholder wants OEM | Insurer estimates aftermarket to reduce cost | Transparent parts pricing, automated state-specific compliance |
+| State regulations vary | 15+ US states have OEM parts requirements | Automated regulatory compliance per state/country |
+| Parts availability delays | OEM parts back-ordered → delays repair | Real-time parts availability checking integrated with estimate |
+
+---
+
+### Assessment: Key Assumptions Logged
+
+| # | Assumption | Status | Notes |
+|---|------------|--------|-------|
+| A67 | CCC has ~55-60% US motor estimation market share | ⚠️ Based on research | Historical data shows ~56%, current share may differ |
+| A68 | ~40-50% of motor claims now assessed via desk/photo review | ⚠️ Estimate | Trending up rapidly due to AI |
+| A69 | ~30-40% of photo-assessed claims need supplements for hidden damage | ⚠️ Estimate | Major accuracy limitation |
+| A70 | US total loss thresholds typically 70-75% of ACV | ✅ Based on research | Varies by state (60-100% range) |
+| A71 | EU total loss thresholds are country/insurer-specific, not harmonized | ⚠️ Based on research | Limited public data on EU thresholds |
+| A72 | Xactimate used in ~50%+ of US property claims | ✅ Based on research | Verisk/ISO dominant |
+| A73 | ADAS recalibration adding $2,000-3,000+ to minor collision repairs | ⚠️ Based on industry reports | Varies significantly by vehicle/system |
+| A74 | Missed subrogation leakage estimated at 10-20% of recoverable dollars | ⚠️ Industry estimate | Hard to measure precisely |
+| A75 | DRP shops handle ~60-70% of repairable US motor claims | ⚠️ Estimate | Insurer-steered but not mandatory |
+| A76 | Tractable achieving 90% touchless estimates at Admiral Seguros | ✅ Per Tractable/Admiral | Specific to their implementation |
+| A77 | ~200 days average subrogation timeline | ⚠️ Based on research | Varies widely by complexity |
+
+---
+
+### Documents/Data Generated During Assessment
+
+| Document | Motor | Home/Property |
+|----------|-------|---------------|
+| **Primary estimate** | CCC/Audatex/Mitchell line-item estimate | Xactimate line-item estimate |
+| **Supplement estimates** | Additional damage found during repair | Additional damage found during remediation |
+| **Total loss valuation** | ACV report (comps, mileage, condition) | Replacement cost value (RCV) report |
+| **Vehicle inspection report** | Photos + damage notes (appraiser) | Field inspection report + photos (adjuster) |
+| **Repair authorization** | Approval to proceed with repairs | Approval to proceed with remediation |
+| **Subrogation demand** | If first-party claim with at-fault third party | If neighbor/third party caused damage |
+| **Reserve adjustment** | Updated financial reserve based on actual estimate | Updated reserve (often significantly higher than initial) |
+
+---
+
+### Assessment: Actors and Their Roles
+
+| Actor | Motor | Home/Property |
+|-------|-------|---------------|
+| **Policyholder** | Submits photos, takes vehicle to DRP/chosen shop | Provides access for inspection, gets estimates from contractors |
+| **Claims Handler** | Reviews estimate, approves/negotiates, sets reserves | Reviews Xactimate estimate, manages supplements |
+| **Appraiser** (US) | Inspects vehicle, generates repair estimate, determines total loss | Field/desk adjuster inspects property, scopes damage in Xactimate |
+| **DRP Shop / Body Shop** | May generate or supplement estimate | N/A |
+| **Contractor** | N/A | May generate competing estimate for policyholder |
+| **TPA** | If delegated: manages assessment process end-to-end | If delegated: assigns adjuster, manages Xactimate workflow |
+| **Broker** | **Minimal** — may challenge estimate on client's behalf for high-value claims | **More active** — may engage public adjuster or challenge insurer's scope |
+
+---
+
+### 🔑 Key Strategic Insights for Mysa
+
+1. **Assessment is the most tool-dependent phase.** Unlike investigation (mostly human judgment), assessment relies on specific software (CCC, Audatex, Xactimate). Mysa doesn't compete with these tools — it **complements** them by ensuring the data going INTO them is clean and structured.
+
+2. **Photo-based AI assessment is the fastest-moving area.** Tractable has proven the concept. But photo assessment has a ceiling — hidden damage, ADAS, pre-existing conditions. Mysa could add value by **predicting what photos miss** based on claim context (vehicle type, damage description, historical patterns).
+
+3. **The supplement cycle is a massive cost driver.** Initial underestimates → supplements → delays → increased reserves → policyholder frustration. Better initial data (from Mysa's intake layer) could reduce supplements by flagging likely hidden damage upfront.
+
+4. **Subrogation is low-hanging fruit.** If Mysa has structured data about fault and payment amounts, flagging subrogation opportunities automatically is high-ROI and aligns with the "data layer" positioning.
+
+5. **Assessment and investigation often run in parallel.** Don't assume sequential flow — damage assessment can begin while liability is still being debated. This means Mysa's data layer needs to handle concurrent, evolving data streams.
 
 ---
 
@@ -4774,3 +5172,324 @@ The ~3x time penalty for multi-adjuster claims comes from:
 5. **System friction** — Data may not flow cleanly between assignees
 
 **Mysa Opportunity:** If handoffs included AI-generated summaries, structured data packages, and clear "what's done / what's needed" flags, the 3x penalty could potentially be reduced significantly.
+
+
+
+ ## Strategic Wedge Analysis                                                                                         
+                                                                                                                      
+  *Added: February 2025*                                                                                              
+                                                                                                                      
+  ### The Core Question                                                                                               
+                                                                                                                      
+  Mysa wants to **own the full claims journey** long-term across multiple sectors — become the AI-managed claims      
+  solution for insurers. But we need a **narrow wedge** to start.                                                     
+                                                                                                                      
+  The challenge: Most wedges either don't expand (you get stuck as a point solution), aren't defensible (you get      
+  squeezed or replicated), or don't match the actual bottleneck.                                                      
+                                                                                                                      
+  This section analyzes potential wedges, what we'd reject, and the recommended path.                                 
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### Wedges We'd Reject (And Why)                                                                                    
+                                                                                                                      
+  #### ❌ Wedge: Better EAS Capture at Scene (B2C)                                                                    
+                                                                                                                      
+  **The pitch:** Fix data quality at the source with a consumer app for accident documentation.                       
+                                                                                                                      
+  **Why reject:**                                                                                                     
+  - Consumer distribution problem — getting drivers to use your app is B2C marketing, not B2B SaaS                    
+  - Competing for mobile app installs against every insurer's own app                                                 
+  - omni:us has $52.7M for EAS extraction and STP is still ~10% — the bottleneck isn't capture technology             
+                                                                                                                      
+  **Verdict:** The problem isn't technology at the scene. It's what happens after.                                    
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  #### ❌ Wedge: Integration / Orchestration Layer (Middleware)                                                       
+                                                                                                                      
+  **The pitch:** Be the glue that connects Sprout + Tractable + Shift + conventions. Insurers buy from you, you call  
+  APIs behind the scenes.                                                                                             
+                                                                                                                      
+  **Why reject:**                                                                                                     
+  - Middleware gets squeezed — component vendors can cut you out                                                      
+  - No proprietary value — you're dependent on others' APIs                                                           
+  - Low switching costs — once integrated, you're replaceable                                                         
+  - This is what Accenture and Deloitte sell — they have relationships, we don't                                      
+                                                                                                                      
+  **Verdict:** Integration consulting doesn't compound. Not a venture-scale business.                                 
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  #### ❌ Wedge: Broker-to-Insurer Submission Layer                                                                   
+                                                                                                                      
+  **The pitch:** Be the neutral data layer between brokers and insurers. Network effects from both sides.             
+                                                                                                                      
+  **Why reject:**                                                                                                     
+  - Two-sided marketplace dynamics are brutal — need critical mass on both sides simultaneously                       
+  - Insurers don't want to share a platform with competitors                                                          
+  - Low defensibility — once proven, incumbents can replicate                                                         
+  - This is a feature, not a product                                                                                  
+                                                                                                                      
+  **Verdict:** You'd be building a commodity that gets absorbed.                                                      
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  #### ❌ Wedge: Adjuster Productivity for Property                                                                   
+                                                                                                                      
+  **The pitch:** 3x adjuster productivity via virtual inspection + AI assistance. TPAs are buyers.                    
+                                                                                                                      
+  **Why reject:**                                                                                                     
+  - Competing directly with Tractable ($185M) and Snapsheet on photo AI                                               
+  - Hidden damage limits automation — AI can't see water behind walls                                                 
+  - Doesn't expand to motor — different problem, different solution                                                   
+  - You're a tool for someone else's workflow, not a platform                                                         
+                                                                                                                      
+  **Verdict:** You'd be a feature in Tractable's roadmap.                                                             
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  #### ⚠️ Wedge: Claims Decisioning (Destination, Not Starting Point)                                                 
+                                                                                                                      
+  **The pitch:** Own the decision layer — "Given this claim, tell me: approve, deny, or escalate."                    
+                                                                                                                      
+  **Why it's compelling:**                                                                                            
+  - Decisions are where claims get stuck (extraction takes minutes, decisions take days)                              
+  - Defensible with domain expertise + training data + trust                                                          
+  - Highest-value layer (this is what claims handlers are paid for)                                                   
+  - Expands naturally to all claim types                                                                              
+                                                                                                                      
+  **Why it's not the starting wedge:**                                                                                
+  - Requires data and ground truth to build models (chicken-and-egg)                                                  
+  - Requires trust that takes time to build                                                                           
+  - Can't walk in day one and say "let us make your decisions"                                                        
+  - ClaimSorted is already positioning here                                                                           
+                                                                                                                      
+  **Verdict:** Decisioning is the DESTINATION, not the WEDGE. We need something that leads there.                     
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### The "Corti for Insurance" Thesis                                                                                
+                                                                                                                      
+  #### What Corti Does (Healthcare)                                                                                   
+                                                                                                                      
+  Corti is an API-first AI infrastructure platform for healthcare:                                                    
+                                                                                                                      
+  | Layer | What Corti Offers |                                                                                       
+  |-------|-------------------|                                                                                       
+  | Speech-to-Text | Clinical conversation → accurate medical transcript |                                            
+  | Text Generation | Transcript → formatted medical documentation |                                                  
+  | Agentic Framework | Autonomous agents for coding, prior auth, discharge notes |                                   
+                                                                                                                      
+  **Positioning:** "Build production-grade AI applications without the infrastructure burden."                        
+                                                                                                                      
+  **Buyers:** EHR vendors, telehealth platforms, hospital IT teams — developers who build for healthcare.             
+                                                                                                                      
+  #### The Insurance Equivalent                                                                                       
+                                                                                                                      
+  | Layer | Insurance Equivalent |                                                                                    
+  |-------|---------------------|                                                                                     
+  | Intake APIs | Document submission, FNOL capture, photo upload |                                                   
+  | Processing APIs | OCR, extraction, inference, normalization |                                                     
+  | Agentic Framework | Triage, fraud flagging, decision support, subrogation ID |                                    
+                                                                                                                      
+  **Positioning would be:** "Build insurance AI without the infrastructure burden."                                   
+                                                                                                                      
+  **Potential buyers:** InsurTechs, system integrators, insurer internal dev teams, TPAs wanting AI capabilities.     
+                                                                                                                      
+  #### What's Compelling                                                                                              
+                                                                                                                      
+  1. **Nobody is doing this for insurance** — Everyone builds products, not infrastructure                            
+  2. **Addresses the 93% problem differently** — "We enable you to build your own AI" vs "We'll do your claims for    
+  you"                                                                                                                
+  3. **Higher switching costs** — Once you build on the APIs, switching is painful                                    
+  4. **Network effects** — More developers → more use cases → more data → better models                               
+  5. **Less direct competition** — Not competing with Tractable, potentially enabling alternatives                    
+                                                                                                                      
+  #### What's Risky                                                                                                   
+                                                                                                                      
+  1. **Corti didn't START as infrastructure** — They started with 911 dispatch AI (specific product), proved it, then 
+  became infrastructure                                                                                               
+  2. **Healthcare vs Insurance dynamics differ** — Healthcare has massive documentation burden and clear API use      
+  cases; insurance is more fragmented                                                                                 
+  3. **Developer buyer unclear** — Healthcare has EHR vendors; insurance has... InsurTechs (small, cash-strapped)?    
+  4. **API economics require scale** — Corti processes 1M+ interactions/week; insurance volume is lower               
+  5. **"Infrastructure" is abstract** — Hard to demo, hard to calculate ROI                                           
+                                                                                                                      
+  #### The Key Insight                                                                                                
+                                                                                                                      
+  **Corti's actual journey:**                                                                                         
+  - 2016-2018: Specific product — AI for 911 dispatch, cardiac arrest detection                                       
+  - 2019-2021: Proved accuracy, built trust, published research                                                       
+  - 2022-2023: Expanded to documentation, coding, workflows                                                           
+  - 2024+: Now positions as "APIs for healthcare AI"                                                                  
+                                                                                                                      
+  **They earned the right to be infrastructure by proving the technology on a specific, high-stakes use case first.** 
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### Recommended Path: The Corti-Like Journey for Mysa                                                               
+                                                                                                                      
+  | Phase | Corti's Journey | Mysa Equivalent |                                                                       
+  |-------|-----------------|-----------------|                                                                       
+  | **1. Beachhead** | 911 dispatch AI — real-time cardiac arrest detection | Document extraction + inference — EAS,  
+  photos, police reports with measurable STP lift |                                                                   
+  | **2. Prove** | Published research, NHS adoption, regulatory trust | 2-3 insurer deployments, documented STP       
+  improvement (10% → 25%) |                                                                                           
+  | **3. Expand** | Documentation, coding, clinical workflows | Triage recommendations, fraud flagging, subrogation   
+  identification |                                                                                                    
+  | **4. Platform** | APIs for healthcare developers | APIs for insurance developers |                                
+  | **5. Infrastructure** | "Build healthcare AI on Corti" | "Build insurance AI on Mysa" |                           
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### The Recommended Wedge: Extraction + Inference (B2B)                                                             
+                                                                                                                      
+  **Not** consumer EAS capture. **B2B document understanding:**                                                       
+                                                                                                                      
+  - **Intake:** Accept whatever documents get submitted (paper EAS, photos, police reports, statements)               
+  - **Extraction:** Pull structured data from unstructured mess                                                       
+  - **Inference:** Fill in gaps, resolve ambiguity, normalize across formats                                          
+  - **Output:** Clean, structured claim data that pushes STP up                                                       
+                                                                                                                      
+  #### Why This Wedge                                                                                                 
+                                                                                                                      
+  | Criteria | Assessment |                                                                                           
+  |----------|------------|                                                                                           
+  | Buildable from day zero? | ✅ Yes — document AI is tractable |                                                    
+  | Sellable without deep trust? | ✅ Yes — it's data quality, not decisions |                                        
+  | Works EU and US? | ✅ Yes — different docs, same extraction problem |                                             
+  | Generates data advantage? | ✅ Yes — you see documents, you learn |                                               
+  | Path to decisions? | ✅ Yes — extraction → inference → triage → decisions |                                       
+  | Defensible? | ⚠️ Partially — insurance-native inference is the moat, not raw OCR |                                
+                                                                                                                      
+  #### What Makes This Different from omni:us                                                                         
+                                                                                                                      
+  | | omni:us | Mysa |                                                                                                
+  |---|---------|------|                                                                                              
+  | Scope | EAS only | All documents (EAS, photos, police reports, statements) |                                      
+  | Geography | EU-focused | EU + US |                                                                                
+  | Capability | Extraction | Extraction + Inference (resolve contradictions, fill gaps) |                            
+  | End game | Document processing | Platform / Infrastructure |                                                      
+                                                                                                                      
+  #### What Makes This Different from Sprout.ai                                                                       
+                                                                                                                      
+  | | Sprout.ai | Mysa |                                                                                              
+  |---|-----------|------|                                                                                            
+  | Focus | General insurance back-office | Claims-specific |                                                         
+  | Depth | Document processing | Extraction + inference + path to decisions |                                        
+  | Positioning | Point solution | Platform play |                                                                    
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### What Would Need to Be Nailed                                                                                    
+                                                                                                                      
+  #### 1. Inference, Not Just Extraction                                                                              
+                                                                                                                      
+  Extraction is commoditizing (AWS Textract, Google Document AI). The moat is **insurance-native inference**:         
+  - Resolve contradictions between fields                                                                             
+  - Infer missing values from context                                                                                 
+  - Normalize across document formats                                                                                 
+  - Understand what checkboxes MEAN, not just what they say                                                           
+                                                                                                                      
+  #### 2. Measurable STP Lift                                                                                         
+                                                                                                                      
+  The sales pitch can't be "we extract accurately." It must be "we increased STP from 10% to 25%."                    
+                                                                                                                      
+  Need clear metrics:                                                                                                 
+  - STP rate before/after                                                                                             
+  - Cycle time reduction                                                                                              
+  - Cost per claim impact                                                                                             
+                                                                                                                      
+  #### 3. US Document Diversity                                                                                       
+                                                                                                                      
+  If we can crack US documents (police reports vary by state, no standardized forms, recorded statements), that's a   
+  genuine differentiator. But it's hard.                                                                              
+                                                                                                                      
+  #### 4. Integration with Legacy Systems                                                                             
+                                                                                                                      
+  Insurers run on Guidewire, Duck Creek, custom COBOL. Need to plug in without requiring them to change. Budget 40% of
+   engineering for integrations.                                                                                      
+                                                                                                                      
+  #### 5. First Customer Win                                                                                          
+                                                                                                                      
+  Need a mid-tier EU insurer willing to:                                                                              
+  - Share historical claims data (to validate accuracy)                                                               
+  - Run in shadow mode (extract but human verifies)                                                                   
+  - Be a case study when we scale                                                                                     
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### The Trajectory                                                                                                  
+                                                                                                                      
+  **Year 1: Prove extraction + inference**                                                                            
+  - One market (Portugal? Netherlands?)                                                                               
+  - EU motor, material damage                                                                                         
+  - Target: 95%+ extraction accuracy, measurable STP lift                                                             
+  - Exit criteria: Customer willing to expand scope                                                                   
+                                                                                                                      
+  **Year 2: Add triage + recommendations**                                                                            
+  - "Given this extracted data, here's the recommended action"                                                        
+  - Not decisions — recommendations (easier trust barrier)                                                            
+  - Expand to 3-5 insurers                                                                                            
+                                                                                                                      
+  **Year 3: Add decisioning**                                                                                         
+  - Auto-approve low-risk claims                                                                                      
+  - Enter ClaimSorted territory but SaaS, not TPA                                                                     
+  - First US customer                                                                                                 
+                                                                                                                      
+  **Year 4+: Platform / Infrastructure**                                                                              
+  - Open APIs for insurance developers                                                                                
+  - "Build insurance AI on Mysa"                                                                                      
+  - Multiple sectors, multiple geographies                                                                            
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### Key Strategic Questions (Unresolved)                                                                            
+                                                                                                                      
+  1. **What specific inference would we do that omni:us doesn't?** Need concrete examples — resolving checkbox        
+  contradictions? Inferring speed from damage? Normalizing diagram interpretations?                                   
+                                                                                                                      
+  2. **Can we actually crack US document diversity?** This would be a differentiator but it's hard. Police reports    
+  vary by state, no standardized forms.                                                                               
+                                                                                                                      
+  3. **What's the measurable outcome we'd sell?** STP lift? Cycle time reduction? Cost per claim? Need a number.      
+                                                                                                                      
+  4. **Who's the first customer?** Mid-tier EU insurer? US regional? TPA?                                             
+                                                                                                                      
+  5. **What's the demo that makes them say "I need this"?** The "911 cardiac arrest detection" equivalent for         
+  insurance.                                                                                                          
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### The One-Liner (Draft)                                                                                           
+                                                                                                                      
+  > "Mysa is the intelligence layer for insurance claims. We start by understanding your documents better than anyone 
+  — any format, EU or US. That data advantage compounds into triage, recommendations, and eventually AI-powered       
+  decisions. Long-term, we're the infrastructure that powers AI-native insurance."                                    
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### Assumptions Added                                                                                               
+                                                                                                                      
+  - **A97:** Extraction + inference is a more tractable starting wedge than decisioning ⚠️ Needs validation           
+  - **A98:** Insurance-native inference (not just OCR) is defensible against commodity document AI ⚠️ Needs validation
+  - **A99:** STP lift is achievable through better extraction/inference (not just better decisions) ⚠️ Needs          
+  validation                                                                                                          
+  - **A100:** The "Corti for Insurance" infrastructure play is achievable after proving extraction ⚠️ Needs validation
+  - **A101:** US document diversity is crackable with enough investment ⚠️ Needs validation                           
+                                                                                                                      
+  ---                                                                                                                 
+                                                                                                                      
+  ### Strategic Insights Added                                                                                        
+                                                                                                                      
+  - **Insight #29:** The wedge must be something buildable and sellable from day zero — decisioning requires trust and
+   data that takes time to build                                                                                      
+  - **Insight #30:** Corti didn't start as infrastructure — they started with 911 dispatch AI and BECAME              
+  infrastructure after proving the technology                                                                         
+  - **Insight #31:** Extraction is commoditizing; the defensible moat is insurance-native INFERENCE (understanding    
+  what documents mean, not just what they say)                                                                        
+  - **Insight #32:** The path is: Extraction → Inference → Triage → Decisions → Infrastructure                        
+  - **Insight #33:** "Corti for Insurance" is the right end state but wrong starting pitch — need a concrete product  
+  that leads there                                                                                                    
+                     

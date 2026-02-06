@@ -355,8 +355,49 @@ C["tpa-close"] = [
   { t: "Report to insurer", y: "doc" },
 ];
 
+// Phase 8: Assessment
+C["policyholder-assessment"] = [
+  { t: "Submit damage photos", y: "action" },
+  { t: "Take vehicle to DRP/shop", y: "action" },
+  { t: "May get independent estimate", y: "action" },
+  { t: "OEM vs aftermarket dispute?", y: "friction" },
+];
+C["insurer_handler-assessment"] = [
+  { t: "Review estimate from appraiser", y: "action" },
+  { t: "Approve/negotiate estimate", y: "action" },
+  { t: "Total loss decision", y: "action" },
+  { t: "Adjust reserves", y: "action" },
+  { t: "Flag subrogation opportunity", y: "action" },
+];
+C["adjuster-assessment"] = [
+  { t: "🇺🇸 Appraiser inspects vehicle", y: "us" },
+  { t: "🇺🇸 CCC/Mitchell/Audatex estimate", y: "us" },
+  { t: "🇪🇺 Expert inspection (if needed)", y: "eu" },
+  { t: "🇪🇺 Audatex/DAT/GT Motive est.", y: "eu" },
+  { t: "Photo AI assessment (Tractable)", y: "action" },
+  { t: "Total loss vs repair decision", y: "fork" },
+];
+C["repair-assessment"] = [
+  { t: "DRP shop writes estimate", y: "action" },
+  { t: "May supplement if hidden damage", y: "friction" },
+  { t: "Parts availability check", y: "action" },
+  { t: "ADAS recalibration needed?", y: "action" },
+];
+C["insurer_b-assessment"] = [
+  { t: "🇺🇸 Own appraiser if disputed", y: "us" },
+  { t: "May disagree on repair cost", y: "friction" },
+];
+C["documents-assessment"] = [
+  { t: "Line-item repair estimate", y: "doc" },
+  { t: "Total loss valuation (if TL)", y: "doc" },
+  { t: "Vehicle inspection photos", y: "doc" },
+  { t: "Supplement estimates", y: "doc" },
+  { t: "Reserve adjustment", y: "doc" },
+  { t: "Subrogation demand (if applicable)", y: "doc" },
+];
+
 // Remaining phases placeholder
-["assessment","decision","settlement","close"].forEach(p => {
+["decision","settlement","close"].forEach(p => {
   ["policyholder","insurer_handler","documents"].forEach(a => {
     if (!C[`${a}-${p}`]) C[`${a}-${p}`] = [{ t: "TO BE MAPPED", y: "todo" }];
   });
