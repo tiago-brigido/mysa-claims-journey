@@ -1554,6 +1554,858 @@ ADJ["pace-fnol"] = [{ t: "FNOL data entry automation", y: "action" }];
 ADJ["pace-settlement"] = [{ t: "Settlement doc processing", y: "action" }];
 ADJ["pace-close"] = [{ t: "Close admin automation", y: "action" }];
 
+// Competitor Deep-Dive data — detailed analysis per competitor per phase
+// Keys: "${competitorId}-${phaseId}"
+const COMP_DEEP = {
+  // ═══════════════ FIVE SIGMA (CLIVE) ═══════════════
+  "fivesigma-first_contact": {
+    what: "Clive receives FNOL via email, voice, or chat and auto-assigns by complexity. Recent Liberate partnership adds AI voice intake 24/7.",
+    how: "Multi-agent architecture on Google Vertex AI / LangChain. Specialized FNOL agent extracts structured data from unstructured inputs. REST APIs overlay any CMS (Guidewire, Duck Creek, Sapiens).",
+    limits: [
+      "Voice intake is via 3rd-party Liberate — not native capability",
+      "Only ~53 employees / $10M revenue — tiny team for enterprise ambitions",
+      "No published STP rate for general P&C (only pet insurance case study: 90%)",
+      "70% US business — limited EU presence and zero convention system support",
+    ],
+    gap: "Clive is a copilot, not autonomous. For anything beyond simple claims, it 'consults human adjusters.' No EU convention support (IRSA/CARD/IDS) means it can't handle the 80%+ of EU motor claims governed by conventions."
+  },
+  "fivesigma-fnol": {
+    what: "Auto-FNOL creation with coverage verification. Extracts data from documents, photos, and communications into structured claim records.",
+    how: "Document AI agent classifies and extracts from 100+ document types. Coverage agent cross-references policy terms. Creates claim record in CMS automatically.",
+    limits: [
+      "Document extraction quality unproven at scale — no published accuracy metrics",
+      "No handwritten form capability confirmed (critical for EU Amicable Statements)",
+      "Cannot read paper EAS forms that are still 60-70% of EU motor FNOL",
+      "Relies on insurer's existing intake channels for data — not a front-end system",
+    ],
+    gap: "No evidence of handling the European paper FNOL problem (EAS/Constat Amiable). In EU markets, FNOL still arrives as scanned handwritten forms — Clive can't process these without additional OCR capability."
+  },
+  "fivesigma-triage": {
+    what: "Dynamic complexity scoring routes simple claims to STP and complex ones to specialized handlers. Configurable per insurer SOP.",
+    how: "Complexity Assessment agent (launched April 2025) scores across multiple dimensions. Rules engine + ML model determines STP eligibility. Insurer configures autonomy thresholds.",
+    limits: [
+      "Complexity Assessment is brand new (April 2025) — limited production history",
+      "No published triage accuracy or override rates",
+      "Realistic STP across mixed P&C: estimated 20-40%, not the '60%' marketing suggests",
+      "Small customer base means limited training data vs. Shift's 2B claims analyzed",
+    ],
+    gap: "Triage accuracy depends on training data volume — Five Sigma processes far fewer claims than CCC or Shift, limiting ML model quality. No EU convention triage (IDA/IDS routing) documented."
+  },
+  "fivesigma-investigation": {
+    what: "AI liability determination and auto-generated claim summaries. Reviews documents and generates investigation reports.",
+    how: "Liability agent analyzes accident descriptions, police reports, and witness statements. GenAI generates structured summaries. Fraud agent runs basic anomaly detection.",
+    limits: [
+      "Liability determination quality is unproven — no published accuracy rate",
+      "Fraud detection is basic anomaly flagging, not Shift's deep network analysis",
+      "No integration with repair shops, medical providers, or field assessment",
+      "Cannot coordinate physical inspections or expert appointments",
+    ],
+    gap: "Investigation is where adjusters spend 30-40% of time chasing documents. Clive can summarize docs but can't proactively obtain missing evidence, coordinate with third parties, or handle the phone tag that consumes adjuster hours."
+  },
+  "fivesigma-assessment": {
+    what: "Reserve setting and exposure calculation. AI reviews damage documentation and estimates claim value.",
+    how: "Assessment agent reviews repair estimates, medical records, and policy limits. Sets initial reserves and calculates exposure. Adjusts as new information arrives.",
+    limits: [
+      "No native damage estimation — relies on CCC/Mitchell/Audatex integration",
+      "No photo-based AI damage assessment (unlike Tractable)",
+      "Reserve accuracy metrics not published",
+      "Cannot handle supplement cycles — the single largest rework source in motor claims",
+    ],
+    gap: "Assessment without native damage estimation means Five Sigma depends on the same legacy estimating tools (CCC/Mitchell) that cause the 63% supplement rate problem. They orchestrate but don't solve the core assessment accuracy issue."
+  },
+  "fivesigma-decision": {
+    what: "STP for qualifying simple claims. AI settlement recommendations with confidence scores for human review on complex claims.",
+    how: "Decision agent evaluates claim against configurable rules and ML model. High-confidence simple claims auto-approved. Complex claims get recommendation + rationale for handler.",
+    limits: [
+      "STP only proven for pet insurance vet bills — P&C evidence is thin",
+      "Decision authority must be pre-configured — can't adapt to novel situations",
+      "No regulatory approval documentation for automated claims decisions",
+      "Complex claims still require full human review — AI only recommends",
+    ],
+    gap: "The decision layer is where Mysa can differentiate most. Five Sigma's decisions are rule-based with ML assist. An intelligence layer that understands EU convention baremes, liability matrices, and jurisdiction-specific regulations would be transformative."
+  },
+  "fivesigma-settlement": {
+    what: "Automated settlement calculation and communication. Payment via Vitesse partnership. Claims $150K/month savings per insurer.",
+    how: "Settlement agent calculates offer (estimate minus deductible), generates offer letter, and manages policyholder communication. Vitesse handles actual payment processing.",
+    limits: [
+      "Payment is via 3rd-party Vitesse — not native",
+      "$150K/month savings claim is unverified marketing metric",
+      "Cannot handle BI negotiation (multi-round, attorney involvement)",
+      "No structured settlement capability for complex BI",
+      "No EU convention reimbursement processing (forfait amounts, IDA flows)",
+    ],
+    gap: "Settlement in EU convention claims is largely automated by formula (forfait amounts) but requires convention system integration that Five Sigma doesn't have. The biggest gap is BI settlement where negotiations take months."
+  },
+  "fivesigma-close": {
+    what: "Auto-close workflows when all conditions met. AI monitors for reopen triggers and subrogation opportunities.",
+    how: "Closure agent verifies payment completion, zero reserves, and no pending actions. Subrogation agent identifies recovery opportunities. Dashboard tracks recovery pipeline.",
+    limits: [
+      "Subrogation is identification only — recovery execution is manual",
+      "No automated demand letter generation",
+      "No inter-carrier arbitration support",
+      "Monitoring for reopens may create alert fatigue",
+    ],
+    gap: "20-30% of subrogation goes unpursued because adjusters lack time. Five Sigma identifies opportunities but doesn't execute recovery — the hardest part. Convention-based auto-settlement (EU) is not supported."
+  },
+
+  // ═══════════════ SHIFT TECHNOLOGY ═══════════════
+  "shift-first_contact": {
+    what: "Complexity scoring at intake. AI classifies incoming claim across 7 dimensions simultaneously.",
+    how: "Azure OpenAI (GPT series) + proprietary ML models. Scores coverage, liability, fraud risk, damage, injury, subrogation, and litigation exposure. Built on Azure Kubernetes Service.",
+    limits: [
+      "No policyholder-facing intake — Shift is purely back-end",
+      "No voice/chat FNOL capability (unlike Five Sigma + Liberate)",
+      "Complexity scoring is a classification task, not claim handling",
+      "Shift Claims (full automation) launched Sept 2025 — less than 6 months old",
+    ],
+    gap: "Shift is a 'back-end brain' — it analyzes what the insurer's existing systems capture. It doesn't improve the intake experience for policyholders or reduce the 70% voicemail problem adjusters face."
+  },
+  "shift-fnol": {
+    what: "Extracts, structures, and analyzes every document at FNOL. Automated document classification and data extraction.",
+    how: "Azure AI Vision with ML-based OCR. Azure AI Document Intelligence for layout detection. GPT models for unstructured text. Processes scans, images, and videos.",
+    limits: [
+      "Document processing is strong but it's INPUT analysis, not claim creation",
+      "Shift doesn't create the FNOL record — it enriches what the CMS captures",
+      "Regional data hosting requirements (GDPR) limit deployment flexibility",
+      "Handwritten document accuracy rate not published",
+    ],
+    gap: "Shift processes documents well but doesn't own the FNOL workflow. The insurer still needs a CMS to create and manage the claim. Shift is an intelligence layer, not a claims system."
+  },
+  "shift-triage": {
+    what: "AI classifies, scores, and routes. Claims 60% overall automation rate and 30% faster handling at early adopters.",
+    how: "Classification across 7 complexity dimensions. Priority scoring for urgency/severity. STP Agent designation for eligible claims. Configurable routing rules.",
+    limits: [
+      "60% likely means 60% of TASKS, not 60% of entire claims end-to-end",
+      "Data from 'early adopters' = primarily AXA Switzerland — one customer",
+      ">99% accuracy claim is for classification, not decisions",
+      "No breakdown by line of business — motor PD likely much higher than BI",
+      "These are vendor-reported figures, not independently audited",
+    ],
+    gap: "The 60% number is misleading — task automation is not claim automation. Automating document classification and data entry is different from automating coverage decisions and settlement negotiations."
+  },
+  "shift-investigation": {
+    what: "Industry-leading fraud detection — their core DNA. Insurance Data Network (IDN) enables cross-carrier fraud intelligence with 4 of top 5 US P&C insurers.",
+    how: "Proprietary ML scores against hundreds of fraud scenarios. Network analysis builds 'social networks' of entities. IDN: cross-carrier data triples identified fraud network size. Azure AI Vision for image fraud.",
+    limits: [
+      "31% of fraud alerts are NOT accepted for investigation (false positives)",
+      "IDN is US-focused — European cross-carrier sharing faces GDPR barriers",
+      "System is REACTIVE (detects fraud) not PREVENTIVE",
+      "No documentation for what happens when legitimate claims are wrongly flagged",
+      "Network fraud requires volume — smaller insurers benefit less",
+    ],
+    gap: "Fraud detection is genuinely strong but reactive. The 31% non-actionable alert rate means SIU teams waste significant time. No appeal process for wrongly flagged policyholders. IDN doesn't extend to EU markets."
+  },
+  "shift-assessment": {
+    what: "GenAI evaluates coverage, liability, damage, injury, subrogation, and litigation exposure simultaneously. 90% accuracy on subrogation liability prediction.",
+    how: "Analyzes every document + claims notes with GenAI. References product recalls, comparative negligence laws, state-specific regulations. External data enrichment.",
+    limits: [
+      "90% liability accuracy = 10% wrong — thousands of incorrect determinations at scale",
+      "BI assessment acknowledged as problematic: 'automation becomes under-valuation by default'",
+      "No integration with medical providers or repair shops",
+      "Comparative negligence law database is a single point of failure — accuracy depends on Shift maintaining it",
+    ],
+    gap: "Shift's own team acknowledges BI claims are under-valued by automation. The 10% error rate on liability is unacceptable for complex claims. No connection to the physical assessment world (repair shops, medical providers)."
+  },
+  "shift-decision": {
+    what: "STP Agent handles clearly eligible claims end-to-end. Handler Assistance Agent guides humans on complex claims with context-aware next-best-actions.",
+    how: "STP Agent evaluates eligibility per complexity score. Handler Assistance dynamically guides document review, decision-making, communication. Trained on insurer's own processes.",
+    limits: [
+      "Shift Claims launched September 2025 — LESS THAN 6 MONTHS in production",
+      "Prior to Sept 2025, Shift was ONLY a fraud company, not a claims decision company",
+      "Maturity gap: fraud product is 10+ years old, claims product is months old",
+      "No regulatory approval documentation for automated decisions",
+      "Handler Assistance (copilot) is where most claims actually land",
+    ],
+    gap: "Shift's claims decision product is essentially a startup product from a $1B+ company. 10 years of fraud expertise doesn't automatically transfer to claims decision-making. The product is untested at scale."
+  },
+  "shift-settlement": {
+    what: "Automated settlement processing for STP-eligible claims. GenAI assists handlers with negotiation guidance for complex claims.",
+    how: "STP pipeline processes payments for eligible claims. Integration with insurer's existing payment systems. No dedicated payment partner.",
+    limits: [
+      "No dedicated payment partnership (unlike Five Sigma + Vitesse)",
+      "Settlement relies entirely on insurer's existing payment infrastructure",
+      "No automated settlement negotiation for BI claims",
+      "No structured settlement or multi-currency support",
+      "No direct claimant payment portal",
+    ],
+    gap: "Settlement is not Shift's focus — they are a decision-support layer. Actual payment execution, BI negotiation, and multi-party settlement are completely outside their capability."
+  },
+  "shift-close": {
+    what: "Dedicated AI Subrogation product identifies recovery opportunities with 90%+ accuracy. Monitors claims over time for new recovery reasons.",
+    how: "AI analyzes claim data for subrogation indicators. GenAI scans unstructured claims notes. References product recalls and comparative negligence laws. Continuous monitoring.",
+    limits: [
+      "Subrogation IDENTIFICATION is strong but recovery EXECUTION is manual",
+      "No automated demand letter generation",
+      "No inter-carrier arbitration support",
+      "European convention-based recovery (IDA flows) not addressed",
+      "Continuous monitoring may create alert fatigue for adjusters",
+    ],
+    gap: "Shift identifies subrogation well (90% accuracy, 2x referral volume) but the actual recovery — sending demands, negotiating, arbitrating — still requires human action. EU convention auto-recovery is unsupported."
+  },
+
+  // ═══════════════ TRACTABLE ═══════════════
+  "tractable-fnol": {
+    what: "Instant photo-based damage assessment at FNOL. Customer submits photos, AI returns repair cost estimate in 15 seconds to 3 minutes.",
+    how: "Deep learning computer vision trained on millions of damage images. Integration with Mitchell (US) and GT Motive (EU) repair cost databases. Outputs line-level repair estimate.",
+    limits: [
+      "Only assesses VISIBLE exterior damage — cannot detect hidden/structural/frame damage",
+      "63% of all repairs require supplements after teardown (CCC 2024 data)",
+      "No CCC integration — hostile 5-year lawsuit settled January 2025",
+      "Tractable's own leadership admits 'no AI tool has reduced supplement amounts'",
+    ],
+    gap: "Photo AI has a fundamental physics problem: you cannot see behind panels in a photograph. This means ALL photo estimates are 'best case scenario' starting points. The 63% supplement rate is structural to the model, not a bug to fix."
+  },
+  "tractable-triage": {
+    what: "AI determines repair vs total loss probability from damage photos. Claims 95-98% accuracy on confident total loss calls.",
+    how: "Computer vision model scores damage severity. Compares against make/model-specific total loss thresholds. Outputs probability score for repair vs TL.",
+    limits: [
+      "95-98% accuracy is on CONFIDENT calls only — model abstains on ambiguous cases",
+      "Traditional insurer checklists miss 70% of eventual total losses — low bar",
+      "Cannot factor in pre-existing damage, odometer, or vehicle history",
+      "No liability assessment — only damage severity",
+    ],
+    gap: "Total loss triage from photos is useful for early routing, but the triage decision needs to integrate vehicle history, market value, and repair economics — Tractable only provides the damage side."
+  },
+  "tractable-investigation": {
+    what: "Photo evidence analysis for damage assessment. AI Subro product reviews subrogation demand packets in 15 seconds (vs 30 minutes manually).",
+    how: "Computer vision extracts damage evidence from photos. AI Subro uses NLP to analyze demand packets and assess liability/damages from documentation.",
+    limits: [
+      "Photo analysis is damage severity only — no liability determination",
+      "Cannot reconstruct accident dynamics from damage patterns",
+      "Interior, mechanical, and frame damage completely invisible to the AI",
+      "AI Subro is a new product — limited production track record",
+    ],
+    gap: "Investigation requires understanding fault, not just damage. Tractable sees what the camera shows but can't determine who caused the accident, whether statements are consistent, or if fraud indicators exist."
+  },
+  "tractable-assessment": {
+    what: "AI repair estimates from photos — core product. Admiral Seguros: 90% of estimates touchless, 98% in under 15 minutes. GEICO: cuts 8 days from cycle time.",
+    how: "Computer vision → line-level repair estimate using Mitchell/GT Motive databases. Includes repair vs replace decisions per component. Outputs in estimating platform format.",
+    limits: [
+      "90% touchless measures THROUGHPUT, not ACCURACY",
+      "No head-to-head accuracy comparison vs experienced human appraisers published",
+      "Cannot assess structural/frame damage (requires 3D measurement: Car-O-Liner, Celette)",
+      "Body shops are skeptical: 'AI is a waste of time vs educated collision repair professional'",
+      "Does NOT perform total loss ACV valuation — only flags TL probability",
+    ],
+    gap: "The core problem with ALL photo-based assessment: no one can see behind panels. Tractable's estimates are starting points that will be revised 63% of the time. Body shop trust is mixed — supplements remain the industry's biggest pain point."
+  },
+  "tractable-decision": {
+    what: "Automated repair vs total loss decision based on AI damage assessment. Routes claims to appropriate path (repair network, TL valuation, salvage).",
+    how: "Damage severity score + vehicle value data → repair/TL decision. Outputs confidence score. High-confidence decisions auto-routed. Low-confidence flagged for human review.",
+    limits: [
+      "Decision is binary (repair vs TL) — no nuanced multi-path routing",
+      "No coverage, liability, or fraud decision capability",
+      "Cannot handle the 7+ decision types in a full motor claim",
+      "Total loss decision without ACV capability is incomplete",
+    ],
+    gap: "Tractable makes ONE decision (repair vs TL) out of the 7+ decisions in a motor claim. Coverage, liability, subrogation, BI, fraud, and authority escalation are all untouched."
+  },
+  "tractable-settlement": {
+    what: "Enables settlement in minutes for simple damage claims. GEICO partnership for accelerated auto claims. AI Subro for recovery.",
+    how: "Photo assessment → instant estimate → auto-offer to policyholder. For GEICO: AI double-checks existing estimates to validate settlement amount.",
+    limits: [
+      "Only settles PROPERTY DAMAGE — no bodily injury capability at all",
+      "Settlement amount accuracy limited by the 63% supplement problem",
+      "Cannot negotiate — offers a take-it-or-leave-it number",
+      "No payment processing — relies on insurer infrastructure",
+      "EU-specific: no convention forfait calculation",
+    ],
+    gap: "Fast settlement of an inaccurate estimate doesn't help anyone. The speed is impressive but the accuracy problem means claimants often need to reopen or supplement — creating MORE work downstream."
+  },
+
+  // ═══════════════ SNAPSHEET ═══════════════
+  "snapsheet-first_contact": {
+    what: "Digitized photo capture guidance. Customer receives link (SMS/email/web), takes guided photos of damage. No app download needed.",
+    how: "Intelligent Photo Acquisition recognizes vehicle make/model and adjusts photo overlay guidance. Omni-channel communication triggers. Web-based, mobile-friendly.",
+    limits: [
+      "Photo quality depends on distressed customer following instructions",
+      "Cannot force specific angles or lighting conditions",
+      "No video capture or walk-around guidance documented",
+      "Same fundamental limitation as all photo-based systems",
+    ],
+    gap: "Photo capture guidance is table stakes — every insurer app does this now. The differentiation is what happens AFTER the photos are captured, and Snapsheet's accuracy there is questionable (documented BBB complaints of 40-55% underestimates)."
+  },
+  "snapsheet-fnol": {
+    what: "Digitized FNOL with omni-channel intake. Cloud-native platform handles phone, web, mobile, chatbot. Auto-creates claim records.",
+    how: "Cloud-native SaaS with API integrations. Configurable intake workflows. Photo capture integrated at FNOL stage. Auto-routing based on rules engine.",
+    limits: [
+      "Platform is workflow automation, not AI-powered assessment",
+      "Initial triage depends on rules configuration, not deep learning",
+      "Complex claims still need human judgment at FNOL",
+      "Recent Liberate AI voice partnership (May 2025) adds voice, but it's third-party",
+    ],
+    gap: "Snapsheet digitizes the workflow but doesn't add intelligence to it. Their FNOL is a better form, not a smarter system. The AI is in the appraisal step, not the intake step."
+  },
+  "snapsheet-triage": {
+    what: "Configurable business rules route claims to appropriate workflows. Skill-based assignment by licensing, geography, claim type, complexity.",
+    how: "No-code configurable workflow engine. Rules-based routing (NOT AI/ML). Claims assigned to right expert based on multiple criteria.",
+    limits: [
+      "Rules-based, NOT AI-driven — accuracy depends entirely on rule configuration",
+      "Cannot visually assess damage severity for triage (that's the appraiser's job)",
+      "No total-loss-probability scoring from photos at triage (unlike Tractable)",
+      "Rule maintenance burden falls on the insurer",
+    ],
+    gap: "In 2026, rules-based triage is legacy technology. ML-powered complexity scoring (like Shift's) is where the industry is heading. Snapsheet's triage is configuration, not intelligence."
+  },
+  "snapsheet-assessment": {
+    what: "Core product: HUMAN appraisers write virtual estimates from customer photos. AI assists but humans do the work. 4.3M claims/year, $7B+ in appraisals.",
+    how: "Customer submits photos → Snapsheet's in-house human estimators review → write estimates using CCC/Mitchell/Audatex → return to insurer. HYBRID model.",
+    limits: [
+      "BBB complaints: estimates at 40-55% of actual repair costs documented",
+      "NOT BBB accredited; 7 unresponded complaints on file",
+      "Glassdoor 3.1/5 — employees say quantity prioritized over quality",
+      "'Cherry picking' of easy claims; difficult ones go to less experienced staff",
+      "Supplement process: customers report 2+ weeks and 6+ follow-up calls",
+      "Labor rates described as 'low-balled' by body shops",
+    ],
+    gap: "Snapsheet's 'virtual appraisal' is really a tech-enabled BPO — human estimators working from photos. The fundamental accuracy problem is well-documented through BBB complaints. This is the old model with a digital veneer."
+  },
+  "snapsheet-decision": {
+    what: "Rules engine auto-approves claims within configurable thresholds. Complex claims (litigation, liability, large loss) always go to human review.",
+    how: "Configurable auto-approval thresholds by amount, damage type, policy terms. Business rules trigger decision workflows.",
+    limits: [
+      "Auto-approval is rules-based, not AI-driven visual assessment",
+      "If the underlying virtual appraisal is inaccurate (BBB evidence), auto-approval locks in a wrong decision",
+      "No AI-driven repair-vs-TL scoring (unlike Tractable)",
+      "No documented fraud screening capability in the decision process",
+    ],
+    gap: "Auto-approving a bad estimate faster doesn't help. The decision quality is only as good as the assessment that feeds it — and Snapsheet's assessments have documented accuracy problems."
+  },
+  "snapsheet-settlement": {
+    what: "Digital payment (Push to Debit, ACH, check). Snapsheet Total (July 2024) adds end-to-end total loss management. Marketing claims 40% cost reduction.",
+    how: "Integrated payment processing with instant payment options. Snapsheet Total: valuation + offer creation + customer engagement + negotiation with data-driven valuations.",
+    limits: [
+      "Snapsheet Total is very new (July 2024) — limited track record",
+      "40% cost reduction claim is unverifiable (Sedgwick case study shows 15% cost, 38% cycle time)",
+      "Customer complaints: settlement amounts inadequate, require renegotiation",
+      "Payment speed is good but the RIGHT amount matters more",
+      "Essentially US-only — minimal EU presence (Zurich Ireland planned 2018, no follow-up)",
+    ],
+    gap: "Fast payment of an inaccurate amount creates customer dissatisfaction. The EU market is completely unserved — Snapsheet has essentially zero European presence despite 2018 Zurich partnership announcement."
+  },
+  "snapsheet-close": {
+    what: "Automated closure workflows, digital document management, basic subrogation management, and reporting dashboard.",
+    how: "Workflow automation triggers closure steps. API integration with insurer systems. Standard reporting and analytics.",
+    limits: [
+      "Basic closure automation — nothing differentiated",
+      "Subrogation management is basic, not AI-powered",
+      "No reopening prevention intelligence",
+      "No EU convention auto-settlement capability",
+    ],
+    gap: "Closure is workflow automation, not intelligence. The real value at close is preventing reopens (3-12% of claims) and maximizing subrogation recovery — neither is Snapsheet's strength."
+  },
+
+  // ═══════════════ SPROUT.AI ═══════════════
+  "sproutai-first_contact": {
+    what: "Instant classification of 500+ document types using multi-model AI. Claims 99% classification accuracy. 100+ language support.",
+    how: "Multi-model stack: Computer Vision + NLP + LLMs + Tabular ML. Processes medical records, legal docs, receipts, damage reports, photos across 100+ languages including handwritten.",
+    limits: [
+      "Classification is the first step — it doesn't create or manage the claim",
+      "Document AI layer only — doesn't handle communication or customer interaction",
+      "No FNOL portal or policyholder-facing interface",
+      "Processing layer, not a claims system",
+    ],
+    gap: "Sprout.ai does one thing very well (documents) but nothing else. It's a component, not a solution. An insurer still needs a CMS, communication tools, payment processing, and decision logic."
+  },
+  "sproutai-fnol": {
+    what: "Extracts data from 500+ document types including handwritten forms. AdvanceCare (Portugal): 98% accuracy across medical, dental, pharma documents. Processes 1M+ claims/year.",
+    how: "OCR with handwritten text capability. Multi-language (100+ including Japanese, Greek, Arabic). Automated validation against policy data. Fast: routine health claims in 60 seconds.",
+    limits: [
+      "No confirmed EAS/Constat Amiable specific processing (handwritten accident diagrams)",
+      "Accuracy on critical fields (policy numbers, monetary amounts) not separately verified",
+      "Not a claims platform — extracted data flows back to insurer's CMS",
+      "Health insurance is their strongest vertical — motor claims less proven",
+    ],
+    gap: "Sprout.ai claims 'world leader in handwritten OCR' but hasn't confirmed ability to process the specific EAS form that drives 80%+ of EU motor FNOL. This is the single most important document in EU motor claims."
+  },
+  "sproutai-triage": {
+    what: "Policy coverage checking (85% accuracy day one, ramps to 99%). Fraud screening detects document tampering, AI-generated images, and duplicates.",
+    how: "Pre-trained models for coverage validation. Fine-tunes with customer-specific data. Fraud detection via metadata analysis, pattern recognition, and image authenticity checks.",
+    limits: [
+      "Coverage checking starts at 85% — meaning 15% error rate initially",
+      "Fraud detection flags rather than auto-rejects (human must review every flag)",
+      "False positive rate for fraud not published anywhere",
+      "No complexity scoring or handler routing capability",
+    ],
+    gap: "85% day-one accuracy means 1 in 7 coverage decisions is wrong. The fine-tuning ramp to 99% requires time and data. Fraud flagging creates reviewer workload without quantified false positive rates."
+  },
+  "sproutai-investigation": {
+    what: "Anomaly detection and document authenticity checking. Flags suspicious patterns, inconsistencies, and potential tampering.",
+    how: "AI analyzes document metadata, pixel patterns for editing, cross-references across documents. Flags anomalies with evidence for human investigator.",
+    limits: [
+      "Flagging only — no automated investigation capability",
+      "No interaction with third parties (repair shops, medical, witnesses)",
+      "Cannot conduct interviews, coordinate inspections, or gather evidence",
+      "False positive rate undisclosed",
+    ],
+    gap: "Document tampering detection is useful but investigation is much more than documents. The 30-40% of adjuster time spent chasing missing information requires coordination capability, not just analysis."
+  },
+  "sproutai-assessment": {
+    what: "Auto-interprets policy documents, extracts clauses, cross-references with claim data. Validates coverage terms, exclusions, and limits.",
+    how: "LLM-powered policy interpretation. Cross-references claim documents against policy wording. Auto-approve or auto-reject for qualifying claims.",
+    limits: [
+      "Policy interpretation, not damage assessment — doesn't estimate repair costs",
+      "No integration with CCC/Mitchell/Audatex for cost estimation",
+      "Complex policy language may exceed model capability",
+      "Settlement calculation only confirmed for travel insurance",
+    ],
+    gap: "Sprout.ai checks IF the claim is covered but not WHAT it's worth. That's half the assessment problem. Damage valuation, repair cost estimation, and reserve accuracy are untouched."
+  },
+
+  // ═══════════════ OMNI:US ═══════════════
+  "omnius-first_contact": {
+    what: "Automates intake from email and multi-channel sources. Eliminates duplicates. Classifies line of business, loss type, cause, and parties.",
+    how: "NLP + Computer Vision processes incoming communications. Auto-classification across pre-trained categories. Duplicate detection prevents redundant claims.",
+    limits: [
+      "Email-centric intake — limited voice/chat documented",
+      "No policyholder-facing portal or self-service",
+      "Classification is back-end processing, not customer experience improvement",
+      "~65 employees — small team for 'end-to-end' platform ambitions",
+    ],
+    gap: "omni:us processes what arrives but doesn't improve how it arrives. The intake experience for policyholders is unchanged. No customer-facing interface means no improvement in first contact quality."
+  },
+  "omnius-fnol": {
+    what: "Full FNOL automation through NLP + Computer Vision. Google Cloud case study revealed 7.25% handwritten character error rate.",
+    how: "NLP processes free-text descriptions. OCR extracts from scanned documents. Structures data into claim fields automatically. Built on Google Cloud.",
+    limits: [
+      "7.25% handwritten character error rate is problematic for critical fields",
+      "Policy numbers and monetary amounts need near-zero error tolerance",
+      "Handwritten EAS accuracy likely worse than 7.25% given form complexity",
+      "Google Cloud dependency limits deployment in some regulated environments",
+    ],
+    gap: "7.25% character error rate means roughly 1 in 14 characters is wrong. For a policy number like 'PT-2024-1234567', that could mean routing the claim to the wrong insurer or policy. This error rate is unacceptable for critical data."
+  },
+  "omnius-triage": {
+    what: "Auto-routes claims using pre-built decision catalog for 7 P&C lines. Next-best-action recommendations for handlers.",
+    how: "AI-powered claims decision catalog pre-trained for 7 lines. Severity scoring and complexity assessment. Routes simple claims to STP, complex to handlers.",
+    limits: [
+      "Pre-built catalog may not match insurer's specific processes",
+      "Only 7 P&C lines — no health, life, or travel",
+      "Conflicting automation claims: 50% vs 60% vs 70% in different materials",
+      "UNIQA verified: 60% STP + 25% semi-auto — not as high as marketing suggests",
+    ],
+    gap: "The conflicting automation numbers (50-70%) across marketing materials suggest inconsistent real-world performance. The pre-built decision catalog is a strength for speed of deployment but limits customization."
+  },
+  "omnius-investigation": {
+    what: "Major differentiator: AI-powered subrogation detection. Identifies 20+ subrogation reasons with supporting proof. Express Subrogation uses GenAI.",
+    how: "AI scans all claim documents for recovery indicators. Identifies subrogation reasons with evidence. EUR 1B total identified across all clients cumulative.",
+    limits: [
+      "EUR 1B is cumulative across ~30 clients over several years — sounds bigger than it is",
+      "Per-claim value: ~EUR 12 per claim scanned (EUR 3.8M from 320K claims for one insurer)",
+      "Identification only — recovery execution is still manual",
+      "Not a broad investigation tool — focused specifically on subrogation",
+    ],
+    gap: "EUR 1B sounds impressive but it's EUR 12 per claim across 30 clients over multiple years. The real gap: subrogation identification without recovery execution means someone still has to pursue the money."
+  },
+  "omnius-assessment": {
+    what: "Automated cost assessment for claims under EUR 5,000. Algorithm trained on historical claims data.",
+    how: "Tabular ML models trained on historical patterns. Cross-references against claims decision catalog. Severity-based cost estimation.",
+    limits: [
+      "Hard cap at EUR 5,000 — anything above requires human assessment",
+      "Trained on historical data which may not reflect current costs (inflation, parts shortages)",
+      "No integration with repair cost databases (CCC/Mitchell/Audatex)",
+      "No photo-based damage assessment capability",
+    ],
+    gap: "EUR 5,000 cap means any motor claim with moderate damage (average US auto claim: $4,700 in 2024) might exceed the automation threshold. Complex, multi-part, or bodily injury claims are completely unaddressed."
+  },
+  "omnius-decision": {
+    what: "50-70% touchless resolution claimed. UNIQA verified: 60% STP + 25% semi-automated = 85% with some AI involvement.",
+    how: "STP for qualifying claims against decision catalog. Handler gets AI-powered next-best-action suggestions for non-STP claims. Configurable per client.",
+    limits: [
+      "70% is aspirational — UNIQA verified 60% STP, 25% semi-auto, 15% manual",
+      "Semi-automated still requires human confirmation (not truly touchless)",
+      "Only high-frequency, low-severity personal P&C claims qualify for STP",
+      "Complex/high-value/BI claims always need experienced adjusters",
+    ],
+    gap: "60% STP is impressive for simple claims but that's the easy 60%. The remaining 40% — complex, multi-party, high-value, BI — is where adjusters spend most of their time and where the real value opportunity exists."
+  },
+  "omnius-settlement": {
+    what: "Triggers payment within insurer's core CMS (Guidewire, Sapiens). No human approval needed for qualifying STP claims.",
+    how: "System determines amount → validates against policy → triggers payment instruction in core CMS → CMS executes disbursement. NOT a payment processor.",
+    limits: [
+      "Does NOT process payments — triggers instructions in insurer's existing systems",
+      "No direct policyholder payment capability",
+      "No BI negotiation or structured settlement support",
+      "No multi-currency or cross-border payment handling",
+      "Speed depends on the insurer's payment infrastructure, not omni:us",
+    ],
+    gap: "omni:us is an automation layer, not a payment system. The actual settlement experience for policyholders depends entirely on the insurer's existing infrastructure. No innovation in how or how fast people get paid."
+  },
+  "omnius-close": {
+    what: "Post-settlement recovery identification. Ongoing subrogation opportunity detection. Recovery claim filing enablement.",
+    how: "Continuous monitoring of settled claims for new recovery indicators. AI flags previously missed subrogation opportunities.",
+    limits: [
+      "Recovery identification only — no execution capability",
+      "No convention-based auto-settlement for EU claims",
+      "No automated demand letter or arbitration support",
+      "Monitoring creates ongoing notification burden",
+    ],
+    gap: "Same gap as investigation: finding subrogation opportunities is easy with AI, pursuing them is hard. The EUR 1B 'identified' includes significant uncollected amounts. The execution gap is where value is destroyed."
+  },
+
+  // ═══════════════ CCC / MITCHELL / AUDATEX ═══════════════
+  "ccc-fnol": {
+    what: "CCC First Look: AI predicts damage severity and repair vs TL from initial photos at FNOL. Enables early triage and reserve setting.",
+    how: "Computer vision trained on hundreds of millions of damage images (largest training set in the industry). Point-of-impact and severity prediction. Runs on NVIDIA GPU infrastructure.",
+    limits: [
+      "Prediction only — does not create a full repair estimate at FNOL",
+      "CCC is US-dominant — limited European presence (Audatex/GT Motive is separate)",
+      "Insurers locked into CCC's ecosystem — parts databases, labor rates, repair procedures",
+      "Photo-based: same hidden damage limitation as Tractable",
+    ],
+    gap: "CCC has the data moat (billions of claims) but is a legacy ecosystem, not an innovation platform. Insurers are locked in, not empowered. The same 63% supplement rate applies to CCC's own AI estimates."
+  },
+  "ccc-triage": {
+    what: "AI-powered subrogation detection at early stages. Identifies recovery potential before investigation begins.",
+    how: "ML models trained on CCC's massive claims database identify subrogation indicators. Flags claims with recovery potential for early intervention.",
+    limits: [
+      "Subrogation detection at triage is useful but narrow",
+      "CCC's triage is damage-focused — no coverage or liability assessment",
+      "Part of a massive legacy platform — not a standalone triage solution",
+      "EU convention routing not supported (CCC is US-focused)",
+    ],
+    gap: "CCC catches subrogation early but doesn't address the broader triage challenge: complexity scoring, handler routing, STP eligibility, and EU convention classification."
+  },
+  "ccc-investigation": {
+    what: "Core platform: industry-standard repair estimating with the largest parts database. CCC Estimate-STP delivers line-level estimates from photos in seconds.",
+    how: "Computer vision → line-level repair estimate using CCC's proprietary parts/labor/procedure database. Intelligent Reinspection reviews body shop estimates against damage photos.",
+    limits: [
+      "CCC is an ESTIMATING tool, not an investigation platform",
+      "Does not determine liability, coordinate with witnesses, or investigate fraud",
+      "Parts database dominance creates vendor lock-in (insurers can't easily switch)",
+      "5-year lawsuit with Tractable (settled 2025) shows competitive hostility",
+      "Adjusters complain about slow system, rigid workflows, and expensive licensing",
+    ],
+    gap: "CCC dominates repair estimating but that's ONE part of investigation. Liability determination, evidence gathering, expert coordination, and fraud analysis are all outside CCC's scope."
+  },
+  "ccc-assessment": {
+    what: "Industry gold standard for line-level repair estimates and total loss ACV valuation. CCC Impact Dynamics predicts injury severity from damage photos.",
+    how: "Line-level estimates with CCC's parts/labor database. Total loss ACV from CCC Valuation. Impact Dynamics: Delta V prediction from damage photos → injury potential scoring.",
+    limits: [
+      "Repair estimates start the supplement cycle — 63% of CCC estimates need revision after teardown",
+      "The average gap between initial estimate and final cost: $1,200-$1,800",
+      "Body shops widely criticize CCC's labor rates as below-market",
+      "ACV valuation uses comparable vehicle data — accuracy varies by market",
+      "Impact Dynamics predicts injury POTENTIAL, not injury VALUE",
+    ],
+    gap: "CCC IS the assessment infrastructure but also the SOURCE of the supplement problem. Their estimates trigger the 63% supplement rate. They're optimizing within a broken paradigm rather than fixing it."
+  },
+  "ccc-decision": {
+    what: "Auto-approve estimates within insurer-configured parameters. Intelligent Reinspection evaluates body shop supplements against damage evidence.",
+    how: "Rules engine checks estimate against insurer's authority parameters. Reinspection AI compares supplement requests to original damage photos. Flags discrepancies.",
+    limits: [
+      "Rules-based auto-approval, not AI-driven decision making",
+      "Reinspection is adversarial (catching shop overcharges) not collaborative",
+      "No coverage, liability, or BI decision capability",
+      "Decisions limited to 'approve/flag for review' on repair estimates",
+    ],
+    gap: "CCC makes ONE decision: is this repair estimate acceptable? It doesn't address coverage decisions, liability determination, BI valuation, or the broader claims decision tree."
+  },
+  "ccc-settlement": {
+    what: "Subrogation recovery workflows. Manages the inter-carrier recovery process for property damage claims.",
+    how: "Identifies subrogation potential from claim data. Facilitates demand creation and tracking. Integrates with inter-company arbitration forums.",
+    limits: [
+      "US-centric subrogation workflows — no EU convention integration",
+      "Recovery management, not settlement calculation",
+      "No policyholder-facing settlement or payment capability",
+      "Part of the broader CCC ecosystem — not standalone",
+    ],
+    gap: "CCC's subrogation is solid in the US but irrelevant for EU convention-based claims where recovery follows IDA/IRSA/CARD flows. No policyholder settlement capability."
+  },
+  "ccc-close": {
+    what: "Subrogation recovery tracking through to completion. Reporting and analytics on claims outcomes.",
+    how: "Workflow tracks recovery demands, responses, and arbitration outcomes. Analytics dashboard for claims performance metrics.",
+    limits: [
+      "Administrative workflow, not intelligent automation",
+      "Closure analytics are retrospective, not predictive",
+      "No reopen prevention intelligence",
+      "US-only recovery workflows",
+    ],
+    gap: "CCC tracks what happened but doesn't prevent problems (reopens, missed recovery, leakage). The analytics tell you what went wrong after it's too late."
+  },
+
+  // ═══════════════ COLOSSUS (DXC) ═══════════════
+  "colossus-assessment": {
+    what: "BI valuation system used by 70%+ of US auto insurers. Assigns 'severity points' to injuries using ~600 injury codes (some sources cite 750+). Generates settlement ranges.",
+    how: "Adjuster enters injury data through guided consultation. System assigns numeric scores based on injury type, severity, age, location. Multipliers adjust for jurisdiction. Outputs dollar range.",
+    limits: [
+      "Born in 1980s Australia — architecture is 30+ years old",
+      "Requires MANUAL DATA ENTRY by adjuster — not automated",
+      "Accused of systematically undervaluing claims (lawsuits by injured parties)",
+      "Only handles BI — no property damage capability",
+      "Adjusters routinely override Colossus ranges (suggesting low trust)",
+      "No evidence of updates for 'social inflation' trends (nuclear verdicts)",
+    ],
+    gap: "Colossus is the definition of legacy. It's a 1980s system that requires manual data entry and has been sued for systematic undervaluation. The industry needs AI-powered BI valuation that's transparent, accurate, and current."
+  },
+  "colossus-decision": {
+    what: "Settlement range output provides floor and ceiling for BI negotiation. Adjusters use as negotiation anchor.",
+    how: "After injury evaluation consultation, outputs a recommended settlement range. Adjusters negotiate within (or outside) this range.",
+    limits: [
+      "Range output, not a decision — adjuster still decides the actual offer",
+      "Adjusters override ranges 'routinely' (per legal and industry commentary)",
+      "System doesn't account for litigation risk, attorney involvement, or venue",
+      "No integration with modern data sources (medical cost trends, verdict data)",
+      "Plaintiffs' attorneys have learned to reverse-engineer Colossus inputs",
+    ],
+    gap: "Colossus provides a range that adjusters frequently ignore and attorneys game. A modern BI decision system needs to factor in litigation risk, venue history, attorney track record, and real-time medical cost data."
+  },
+
+  // ═══════════════ DAVIES / KUARTERBACK ═══════════════
+  "davies-fnol": {
+    what: "ClaimPilot's new Claim Opening Agent (H2 2025) automates claim opening and document reading using LLM-powered AI. Kuarterback traditionally enters at Stage 2 (post-FNOL).",
+    how: "Claim Opening Agent uses GenAI to read/interpret documents, create claim records, and seek human assistance when needed. Self-learning, configurable per client.",
+    limits: [
+      "ClaimPilot agents launched H2 2025 — minimal production history",
+      "Kuarterback doesn't do FNOL — it enters at UK RTA Portal Stage 2",
+      "UK-specific: designed for the RTA Portal and OIC Portal systems",
+      "Not portable to other jurisdictions without significant rework",
+    ],
+    gap: "Davies' AI automation is purpose-built for the UK motor PI pipeline (RTA/OIC Portal). It doesn't generalize to other countries' claim submission systems or property damage claims."
+  },
+  "davies-triage": {
+    what: "ML-based document classification auto-routes claims by type and complexity. DTection fraud screening processes 15,000+ claims/day.",
+    how: "Machine learning classifies document types. OCR extracts structured data. DTection (launched Feb 2022) screens for fraud indicators. Auto-routes to appropriate handler or automation path.",
+    limits: [
+      "Triage is UK motor PI-specific — not applicable to other lines or markets",
+      "DTection is fraud SCREENING, not investigation",
+      "Classification is limited to documents — no visual damage assessment",
+      "Rules engine, not AI-driven complexity scoring",
+    ],
+    gap: "Strong in the narrow UK motor PI market but completely inapplicable to EU continental claims, US claims, or non-motor lines. The AI is trained on UK-specific data and regulations."
+  },
+  "davies-investigation": {
+    what: "Kuarterback reads Stage 2 packs: OCR extracts medical reports, classifies document types, and converts to structured data. Know Your Opponent (KYO) intelligence.",
+    how: "OCR → ML classification → structured data extraction → validation against rules. KYO analyzes opposing solicitor firm's historical behavior patterns to adjust strategy.",
+    limits: [
+      "Only reads medical evidence for PI valuation — not a broad investigation tool",
+      "KYO is UK-specific (based on UK solicitor firms database)",
+      "Cannot coordinate physical inspections, expert appointments, or evidence gathering",
+      "Limited to documents in the RTA/OIC Portal pack format",
+    ],
+    gap: "KYO (Know Your Opponent) is clever but UK-only. The broader investigation problem — coordinating evidence gathering, managing expert appointments, chasing missing documents — is completely unaddressed."
+  },
+  "davies-assessment": {
+    what: "PI valuation in under 1 minute. Kuarterback processes medical evidence through valuation matrices. Handles 85% of low-value UK motor PI claims automatically.",
+    how: "Extracted medical data → insurer-specific valuation matrices → KYO opponent intelligence → settlement value. New ClaimPilot Agent 2 adds LLM-based valuation.",
+    limits: [
+      "Only low-value UK motor PI claims (RTA Portal threshold)",
+      "No property damage assessment capability",
+      "Valuation accuracy vs actual outcomes not independently verified",
+      "Valuation matrices are insurer-configured — quality depends on the insurer",
+      "No liability determination — only 'quantum-only' (amount) disputes",
+    ],
+    gap: "Fast PI valuation for UK low-value motor is a solved problem — but it's a tiny niche. No property damage, no complex BI, no multi-jurisdiction, no liability disputes. And no assessment for 95% of global claims."
+  },
+  "davies-decision": {
+    what: "Auto-valuation for qualifying claims with human review for the remaining 15-20%. Stage 3 disputes handled by Legal AI (Lauri) for quantum defense.",
+    how: "Rules engine + valuation output → auto-offer for qualifying claims. Legal AI handles quantum-only disputes using ML, NLP, and process automation. 15,000+ claims processed.",
+    limits: [
+      "Does NOT automate liability determination — only 'quantum' (amount)",
+      "Legal AI handles defense only, not claimant communication",
+      "15-20% of claims still need full human review",
+      "UK RTA/OIC Portal-specific — not portable",
+    ],
+    gap: "The hardest decision in claims — 'who is at fault?' — is completely manual. Davies automates 'how much?' but not 'who pays?' This is the highest-value unsolved problem in the industry."
+  },
+  "davies-settlement": {
+    what: "Settlement offer generation for UK portal claims. Credit hire claims handled via VeriRate rate validation.",
+    how: "Auto-generated offers based on Kuarterback valuation. VeriRate validates credit hire rates against archived Basic Hire Rates. Integrates with UK portal payment flows.",
+    limits: [
+      "UK portal settlements only — specific to the RTA/OIC ecosystem",
+      "No BI negotiation capability for complex cases",
+      "No direct payment processing",
+      "VeriRate is defensive (reducing credit hire costs) not proactive",
+    ],
+    gap: "UK portal claims are largely formulaic — the settlement process follows tariff tables. The complex settlement problem (BI negotiation, multi-party, cross-border) is completely unaddressed."
+  },
+
+  // ═══════════════ CLAIMSORTED ═══════════════
+  "claimsorted-first_contact": {
+    what: "White-label eNOL (electronic Notice of Loss) fully customizable to insurer brand. Policyholder self-service portal for tracking, questions, document uploads.",
+    how: "Cloud-native platform with white-label configuration. Customer-facing portal and self-service tools. AI-powered document ingestion from day one.",
+    limits: [
+      "Founded 2024, ~20 employees — very early stage",
+      "Total funding $16.3M (seed) — limited runway for enterprise ambitions",
+      "20+ insurer partners but 'tens of thousands' of policyholders — small volumes",
+      "Multi-line breadth (auto, property, warranty, travel, health, liability) with 20 people raises depth questions",
+    ],
+    gap: "ClaimSorted validates the 'AI-native TPA' thesis but is unproven at scale. Their breadth across 6 insurance lines with 20 employees means depth in any single line is questionable."
+  },
+  "claimsorted-fnol": {
+    what: "Full FNOL automation including document ingestion and verification. Multi-market from inception (US, UK, EU).",
+    how: "AI-powered document processing. Automated verification against policy data. Claim creation and initial triage in a single workflow.",
+    limits: [
+      "No published accuracy metrics for document extraction",
+      "Pet insurance founders — motor/property expertise unproven",
+      "Multi-market claim means navigating 3 different regulatory regimes at seed stage",
+      "Document types and complexity vary enormously across US/UK/EU",
+    ],
+    gap: "Multi-market FNOL is ambitious but unproven. EU motor FNOL has specific requirements (EAS forms, convention classification) that US-trained AI may not handle."
+  },
+  "claimsorted-triage": {
+    what: "AI-driven triage with eligibility checks. Routes based on complexity — simple claims toward STP, complex toward human adjusters.",
+    how: "ML-based complexity scoring. Eligibility validation against policy terms. Auto-routing to appropriate handler or automation path.",
+    limits: [
+      "Triage quality depends on training data — limited volume at seed stage",
+      "No published triage accuracy or override rates",
+      "Competitive moat unclear — similar approach to Five Sigma and others",
+      "Dependence on foundation models (LLM hallucination risk in regulated industry)",
+    ],
+    gap: "AI triage from a seed-stage company with limited data vs. Shift (2B claims analyzed) or CCC (billions of records) is a fundamentally different proposition. The data advantage matters enormously for ML accuracy."
+  },
+  "claimsorted-investigation": {
+    what: "Automated document verification, eligibility checks, and fraud detection via proprietary algorithms.",
+    how: "AI validates documents for authenticity. Flags unusual patterns, excessive costs, and tampering. Proprietary fraud detection algorithms.",
+    limits: [
+      "Fraud detection details are vague — 'proprietary algorithms' without specifics",
+      "Cannot handle complex fraud investigations requiring human judgment",
+      "No integration with external investigation services",
+      "Limited claims volume means limited fraud pattern training data",
+    ],
+    gap: "At 'tens of thousands' of claims, ClaimSorted's fraud detection can't match Shift's network analysis built on billions of claims. Pattern recognition requires volume they don't yet have."
+  },
+  "claimsorted-assessment": {
+    what: "Claims less than 1.2% leakage rate. Automated cost assessment against policy wording.",
+    how: "AI validates claim amount against policy terms, exclusions, and limits. Benchmarks against historical claim costs. Flags outliers.",
+    limits: [
+      "<1.2% leakage is SELF-REPORTED, not independently audited",
+      "Industry average is 5-10% (some claim 2-4%) — if real, this would be exceptional",
+      "Small claims volume means limited statistical significance",
+      "Leakage definition varies — measurement methodology not disclosed",
+      "Likely handling simpler claims initially (selection bias)",
+    ],
+    gap: "The <1.2% leakage claim is marketing until independently verified at meaningful scale. With 'tens of thousands' of claims, the confidence interval on this metric is very wide."
+  },
+  "claimsorted-decision": {
+    what: "AI makes decisions with human oversight. Humans retained for 'judgment and trust' moments. System decides when to escalate.",
+    how: "AI decision engine with configurable human-in-the-loop triggers. Handles approval, rejection, and escalation. Human adjusters alongside AI agents.",
+    limits: [
+      "Human oversight requirement means it's a copilot, not autonomous",
+      "No published decision accuracy or override rates",
+      "Complex claims (BI, fraud, multi-party, litigation) likely all escalate to humans",
+      "Team of ~20 means very limited human capacity for complex cases",
+    ],
+    gap: "AI + human oversight is the right approach but at 20 employees, how many complex claims can they handle when the AI escalates? Their human capacity is the bottleneck."
+  },
+  "claimsorted-settlement": {
+    what: "3x faster cycle times than traditional TPAs. Payouts in minutes for straightforward claims.",
+    how: "AI determines settlement amount. Automated payment processing for qualifying claims. Digital communication with policyholders.",
+    limits: [
+      "3x faster claim is unverified — no baseline or comparison methodology published",
+      "'Minutes' likely applies only to simplest claims (low-value, clear liability)",
+      "No BI settlement or negotiation capability",
+      "Payment infrastructure details not disclosed",
+    ],
+    gap: "Speed on simple claims is table stakes in 2026. The differentiation is handling complex settlements — BI negotiation, multi-party, cross-border — where ClaimSorted has no demonstrated capability."
+  },
+  "claimsorted-close": {
+    what: "Less than 1% reopen rate vs industry average of 3-5%. AI-powered quality assurance prevents premature closure.",
+    how: "AI validates all closure conditions before finalizing. Quality checks ensure no outstanding payments, reserves, or pending actions.",
+    limits: [
+      "<1% reopen rate is self-reported — not independently verified",
+      "Likely handling simpler, shorter-tail claims (naturally lower reopen rate)",
+      "Claims mix matters enormously — BI claims reopen far more than PD",
+      "Limited volume means limited statistical confidence",
+    ],
+    gap: "Low reopen rate is good but the metric is only meaningful at scale and with a representative claims mix. A seed-stage TPA handling simple claims naturally has fewer reopens."
+  },
+
+  // ═══════════════ AVALLON ═══════════════
+  "avallon-first_contact": {
+    what: "AI voice agents handle inbound FNOL calls 24/7. Automated policyholder intake without hold times.",
+    how: "Conversational AI voice agents on phone. Extracts FNOL data from natural speech. Routes to claims system. Available around the clock.",
+    limits: [
+      "Only $4.6M funding — very early stage, viability uncertain",
+      "Voice AI struggles with: accented speech, emotional callers, background noise",
+      "Multi-language capability not confirmed (critical for EU markets)",
+      "No evidence of how callers react to AI during stressful accident reporting",
+      "Fallback to human agent not well documented",
+    ],
+    gap: "Voice AI for FNOL is a growing space (Liberate, Five Sigma partnership) but Avallon is tiny. The hard problem isn't the technology — it's handling distressed, emotional callers in a traumatic situation with empathy."
+  },
+  "avallon-fnol": {
+    what: "Extracts structured FNOL data from voice conversations. Transcribes and classifies information from calls.",
+    how: "Speech-to-text transcription. NLP extracts claim-relevant data points. Auto-populates FNOL form fields from conversation.",
+    limits: [
+      "Transcription accuracy in noisy/emotional conditions unknown",
+      "Cannot verify information provided (no document cross-reference)",
+      "No photo capture capability during voice intake",
+      "Limited to what the caller can verbally describe",
+    ],
+    gap: "Voice-only FNOL misses the visual dimension. Modern FNOL should combine voice, photos, and documents simultaneously. Avallon captures the voice but not the evidence."
+  },
+  "avallon-investigation": {
+    what: "AI voice agents make follow-up calls for missing information. Outbound capability for document requests and status updates.",
+    how: "Automated outbound calls to claimants, witnesses, and third parties. Scripted conversations with AI flexibility. Updates claim file from responses.",
+    limits: [
+      "Outbound AI calls may face regulatory restrictions in some jurisdictions",
+      "Recipient reaction to AI cold-calls for claim information unknown",
+      "Cannot handle complex interview situations or evasive witnesses",
+      "No coordination with physical inspection or expert services",
+    ],
+    gap: "AI follow-up calls could save adjusters the 20+ calls/day (2/3 going to voicemail), but regulatory and social acceptance of AI calling about insurance claims is untested at scale."
+  },
+  "avallon-assessment": {
+    what: "Document summarization from voice inputs. Creates structured summaries from call transcripts for adjuster review.",
+    how: "NLP processes call transcripts. Extracts key facts, dates, descriptions. Generates structured claim summaries.",
+    limits: [
+      "Summarization only — not assessment or valuation",
+      "Voice-captured information is subjective (caller's perception)",
+      "No damage assessment, cost estimation, or reserve setting",
+      "Summary quality depends on caller's ability to describe events",
+    ],
+    gap: "Summarizing what a caller said is not the same as assessing a claim. Avallon provides input data, not analysis. The actual assessment still requires all the traditional tools and expertise."
+  },
+
+  // ═══════════════ PACE ═══════════════
+  "pace-first_contact": {
+    what: "Portal data entry automation. AI enters FNOL data into insurer's existing systems, replacing manual BPO staff.",
+    how: "AI agents interact with insurer portals (screen automation). Enters data from documents into CMS fields. Replaces offshore data entry teams.",
+    limits: [
+      "Screen automation (RPA-like) — not intelligent processing",
+      "Only as good as the data it's entering (garbage in, garbage out)",
+      "No data validation or enrichment beyond what's in the source documents",
+      "Differentiation vs. UiPath/Automation Anywhere RPA unclear",
+    ],
+    gap: "Pace replaces data entry staff, not claims expertise. In a world where document AI can extract directly into claims systems (Sprout.ai, omni:us), screen-level automation is becoming the legacy approach."
+  },
+  "pace-fnol": {
+    what: "FNOL data entry automation. Reads FNOL documents and enters into insurer's CMS, replacing manual processing staff.",
+    how: "Document reading + CMS portal automation. Mimics human data entry process but faster and available 24/7.",
+    limits: [
+      "Process automation, not intelligence — doesn't improve the process, just executes faster",
+      "Cannot handle exceptions or ambiguous data",
+      "No decision-making capability at FNOL stage",
+      "Only $10M funding — limited R&D capacity",
+    ],
+    gap: "Automating a bad process faster doesn't fix the process. Modern claims needs end-to-end reimagining, not faster data entry. Pace is a bridge technology between BPO and true AI automation."
+  },
+  "pace-settlement": {
+    what: "Settlement document processing. AI handles administrative document preparation for settlement execution.",
+    how: "Automated document generation and processing. Handles settlement-related administrative tasks.",
+    limits: [
+      "Administrative automation only — no settlement calculation or negotiation",
+      "Cannot determine settlement amounts or make offers",
+      "Document preparation is low-value work in the settlement process",
+      "No payment processing capability",
+    ],
+    gap: "Settlement document processing is the easiest part of settlement to automate. The hard parts — calculating the right amount, negotiating with claimants/attorneys, handling disputes — are untouched."
+  },
+  "pace-close": {
+    what: "Closure administration automation. AI handles the administrative tasks of closing a claim file.",
+    how: "Automated closure document processing, reserve zeroing in CMS, file completion verification.",
+    limits: [
+      "Administrative closure tasks only — no intelligent quality review",
+      "No reopen prevention or subrogation identification",
+      "No recovery pursuit capability",
+      "Basic process automation, not claims intelligence",
+    ],
+    gap: "Closure admin is necessary but low-value. The high-value closure activities — subrogation pursuit, reopen prevention, quality review — require intelligence that Pace doesn't provide."
+  },
+};
+
+
 const ADJUSTER_TIME_SPLIT = [
   { activity: "Admin / data entry", pct: "30-40%", color: "#EF4444" },
   { activity: "Communication", pct: "20-25%", color: "#F59E0B" },
@@ -1564,6 +2416,7 @@ const ADJUSTER_TIME_SPLIT = [
 ];
 
 function AdjusterView() {
+  const [dd, setDd] = useState(null);
   return (
     <div>
       {/* Summary stats */}
@@ -1646,11 +2499,17 @@ function AdjusterView() {
                 if (!items) return <div key={p.id} style={{ borderRight: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB", background: "#FAFAFA", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 40 }}>
                   <span style={{ fontSize: 7, color: "#D1D5DB" }}>—</span>
                 </div>;
+                const dk = `${comp.id}-${p.id}`;
+                const hasDeep = !!COMP_DEEP[dk];
                 return (
-                  <div key={p.id} style={{ padding: 2, borderRight: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB", background: comp.color + "08", display: "flex", flexDirection: "column", gap: 1, minHeight: 40 }}>
+                  <div key={p.id} onClick={hasDeep ? () => setDd(dd === dk ? null : dk) : undefined}
+                    style={{ padding: 2, borderRight: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB", background: dd === dk ? "#ECFDF5" : comp.color + "08", display: "flex", flexDirection: "column", gap: 1, minHeight: 40, cursor: hasDeep ? "pointer" : "default", outline: dd === dk ? "2px solid #10B981" : "none", transition: "all 0.15s" }}
+                    onMouseEnter={hasDeep ? (e) => { e.currentTarget.style.background = "#F0FDF4"; } : undefined}
+                    onMouseLeave={hasDeep ? (e) => { e.currentTarget.style.background = dd === dk ? "#ECFDF5" : comp.color + "08"; } : undefined}>
                     {items.map((item, i) => (
                       <div key={i} style={{ padding: "1.5px 4px", borderRadius: 2, fontSize: 8, lineHeight: 1.2, background: "#D1FAE5", border: "1px solid #86EFAC", color: "#065F46" }}>{item.t}</div>
                     ))}
+                    {hasDeep && <div style={{ fontSize: 6.5, color: "#059669", fontWeight: 600, textAlign: "center", marginTop: 1 }}>🔍 click for deep-dive</div>}
                   </div>
                 );
               })}
@@ -1658,6 +2517,51 @@ function AdjusterView() {
           ))}
         </div>
       </div>
+
+
+      {/* Deep-dive panel */}
+      {dd && COMP_DEEP[dd] && (() => {
+        const d = COMP_DEEP[dd];
+        const parts = dd.split("-");
+        const compId = parts[0];
+        const phaseId = parts.slice(1).join("-");
+        const comp = ADJ_COMPETITORS.find(c => c.id === compId);
+        const phase = ADJ_PHASES.find(p => p.id === phaseId);
+        if (!comp || !phase) return null;
+        return (
+          <div style={{ marginTop: 8, background: "#FFF", borderRadius: 8, border: "2px solid #10B981", padding: 12, position: "relative" }}>
+            <button onClick={() => setDd(null)} style={{ position: "absolute", top: 6, right: 8, background: "none", border: "none", fontSize: 14, cursor: "pointer", color: "#6B7280" }}>✕</button>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <div style={{ padding: "4px 8px", background: comp.color, color: "#FFF", borderRadius: 4, fontSize: 10, fontWeight: 700 }}>{comp.label.replace("\n", " ")}</div>
+              <div style={{ padding: "4px 8px", background: phase.color, color: "#FFF", borderRadius: 4, fontSize: 10, fontWeight: 700 }}>{phase.label.replace("\n", " ")}</div>
+              <span style={{ fontSize: 8, color: "#6B7280" }}>{comp.funding} · {comp.type}</span>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "#065F46", marginBottom: 3, padding: "2px 4px", background: "#D1FAE5", borderRadius: 3, display: "inline-block" }}>What They Do</div>
+                <p style={{ fontSize: 9, color: "#374151", margin: "0 0 8px", lineHeight: 1.4 }}>{d.what}</p>
+
+                <div style={{ fontSize: 9, fontWeight: 700, color: "#1E40AF", marginBottom: 3, padding: "2px 4px", background: "#DBEAFE", borderRadius: 3, display: "inline-block" }}>How (Technically)</div>
+                <p style={{ fontSize: 9, color: "#374151", margin: "0 0 8px", lineHeight: 1.4 }}>{d.how}</p>
+              </div>
+              <div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "#991B1B", marginBottom: 3, padding: "2px 4px", background: "#FEE2E2", borderRadius: 3, display: "inline-block" }}>Limitations & Gaps</div>
+                {d.limits.map((l, i) => (
+                  <div key={i} style={{ fontSize: 8.5, color: "#991B1B", marginBottom: 2, paddingLeft: 8, position: "relative", lineHeight: 1.3 }}>
+                    <span style={{ position: "absolute", left: 0 }}>✗</span> {l}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginTop: 8, padding: 6, background: "#EEF2FF", borderRadius: 4, border: "1px solid #C7D2FE" }}>
+              <div style={{ fontSize: 9, fontWeight: 700, color: "#4F46E5", marginBottom: 2 }}>🎯 Gap for Mysa</div>
+              <p style={{ fontSize: 9, color: "#3730A3", margin: 0, lineHeight: 1.4 }}>{d.gap}</p>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Adjuster of 2027 Vision */}
       <div style={{ marginTop: 8, padding: 10, background: "#EEF2FF", borderRadius: 8, border: "2px solid #6366F1" }}>
