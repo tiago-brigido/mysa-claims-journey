@@ -11828,3 +11828,141 @@ Based on session 2 analysis:
 - A64: The first customer's CMS determines Block 6 priority (which CMS to integrate first).
 - A65: US motor + property use the same product architecture but require separate SOP rule sets (Block 2).
 - A66: Revised MVP timeline: 4-5 months (vs. previous estimate of 3-4 months) due to CMS integration requirement.
+
+---
+
+## 24. The Two-Wedge Strategy: US Voice Track + EU Document Track
+
+> **Purpose:** Explain how Mysa enters two markets with different wedges that feed the same data flywheel.
+> **Key insight:** US and EU adjusters have fundamentally different workflows. The entry point differs, but the underlying architecture and data model are the same. Both tracks converge into the decision capture engine, and cross-market data makes the recommendation engine stronger than single-market competitors.
+
+### Why Two Wedges Are Needed
+
+The mistake most claims AI startups make is assuming "a claim is a claim everywhere." It's not.
+
+**US motor claim workflow:**
+```
+Claimant calls in → Adjuster gets assignment → Adjuster CALLS claimant →
+Adjuster calls witnesses → Adjuster reviews police report/photos →
+Adjuster determines fault (state rules) → Reserve → Settlement
+```
+The adjuster's day is **phone calls + CMS data entry.** The phone is the primary tool.
+
+**EU motor claim workflow:**
+```
+Drivers fill out EAS at scene (paper form) → FNOL filed with insurer →
+Adjuster receives EAS + photos + police report → Adjuster READS documents →
+Convention system determines liability (IRSA/CARD) → Reserve → Settlement
+```
+The adjuster's day is **document review + convention matching.** The EAS form is the primary artifact.
+
+### Wedge 1: US — "The Call That Writes the Claim"
+
+**Entry blocks:** Block 1 (Call Assistant) + Block 2 (SOP Engine) + Block 6 (CMS Push) + Block 5 (Decision Capture, invisible)
+
+**How it works:**
+1. Adjuster makes call → Mysa transcribes live
+2. Entities extracted in real time (names, dates, vehicles, policy numbers)
+3. Fields auto-filled as conversation progresses
+4. SOP prompts in sidebar: "Ask about witnesses" → "Confirm injury status" → "Get rental details"
+5. Call ends → structured summary generated → one click pushes to CMS
+6. Invisible: every interaction logged as decision training data
+
+**The pitch:** "After every call, the claim file is 80% done. No retyping. No re-reading notes. Your adjuster saves 20 minutes per call."
+
+**Why it sells:** US adjusters make 20-30 calls/day. 15-20 minutes saved per call = 5-10 hours/day reclaimed. The adjuster handles 2x the claims. ROI math is simple.
+
+**Competitive position:** Nobody does real-time voice assist during live adjuster calls. Avallon does voice INTAKE (replacing the human). Mysa does voice ASSIST (empowering the human). Fundamentally different.
+
+### Wedge 2: EU — "The EAS That Reads Itself"
+
+**Entry blocks:** Block 3 (Document Intelligence) + Block 4 (Convention Engine) + Block 6 (CMS Push) + Block 5 (Decision Capture, invisible)
+
+**How it works:**
+1. EAS scanned/photographed → OCR extracts driver details, insurer info, vehicle data
+2. Collision diagram interpreted → mapped to convention scenario
+3. Convention engine matches: "IRSA Scenario 4 — rear-end collision — 0/100 liability"
+4. Evidence synthesis: diagram + statements + photos → liability recommendation with confidence
+5. Adjuster confirms or overrides with one click → pushed to CMS
+6. Invisible: every confirmation/override logged as decision training data (the gold — liability reasoning)
+
+**The pitch:** "Photograph the EAS, get the liability split in seconds. Convention matching that takes 30 minutes is now instant."
+
+**Why it sells:** Convention matching is fully manual today. ZERO competitors handle IRSA, CARD, IDS, or CIDE. Every insurer in France, Italy, Spain does this by hand. And the convention engine is a structural moat — building it requires per-country legal expertise that can't be copied quickly.
+
+**Competitive position:** Zero competitors in EU conventions. This is the clearest whitespace in the entire claims AI landscape.
+
+### The Convergence: Why Both Wedges Feed the Same Engine
+
+```
+    US TRACK                              EU TRACK
+    (Voice)                               (Document)
+       │                                      │
+   Block 1+2                              Block 3+4
+   Call transcription                     EAS extraction
+   + SOP coaching                         + Convention match
+       │                                      │
+       └──────────┐          ┌────────────────┘
+                  ▼          ▼
+           ┌──────────────────────┐
+           │  BLOCK 5             │
+           │  Decision Capture    │
+           │                      │
+           │  Unified data model: │
+           │  evidence → reasoning│
+           │  → decision          │
+           │                      │
+           │  US claims + EU      │
+           │  claims = same       │
+           │  structured format   │
+           └──────────┬───────────┘
+                      │
+                      ▼  (Month 12-18)
+           ┌──────────────────────┐
+           │  BLOCK 9             │
+           │  Recommend Engine    │
+           │                      │
+           │  Trained on decision │
+           │  REASONING from both │
+           │  markets             │
+           └──────────┬───────────┘
+                      │
+                      ▼  (Month 18-24+)
+           ┌──────────────────────┐
+           │  BLOCK 10            │
+           │  Autonomous STP      │
+           └──────────────────────┘
+```
+
+**The unified data model:** Both tracks output the same structure: `(claim → evidence → reasoning → decision)`. The entry point differs, the data format is the same. This is an architectural decision, not an accident.
+
+**Cross-market advantage:** A competitor with only US data trains on US patterns. A competitor with only EU data trains on EU patterns. Mysa, running both tracks, gets cross-market decision intelligence. A rear-end collision is a rear-end collision whether it's in Texas or Lyon — the liability logic is the same even though the process differs (state fault rules vs IRSA conventions). The recommendation engine that sees both markets learns faster and generalizes better.
+
+### The Timeline Story
+
+| Month | What Ships | Market | Investor Narrative |
+|---|---|---|---|
+| 1-5 | MVP: US Call Assistant (Blocks 1+2+5+6) | US | "Adjuster saves 20 min per call. We capture decision data." |
+| 5-7 | Document Intelligence (Block 3) | US + EU | "EU adjusters can use Mysa too. EAS + document processing." |
+| 7-10 | Convention Engine (Block 4) | EU moat | "Structural EU moat locked. Zero competitors." |
+| 10-14 | Full Adjuster OS (Blocks 7+8) | Both | "Complete platform. Both markets fully served." |
+| 14-20 | Recommend Engine (Block 9) | Both | "Only dataset of decision reasoning on the planet. Two markets. Recommendations go live." |
+| 20+ | Autonomous STP (Block 10) | Both | "Auto-decide routine claims. Models trained on real adjuster reasoning." |
+
+### Meeting Discipline
+
+Every customer meeting must answer two questions:
+1. **Which track?** Are they a US customer (voice-first) or EU customer (document-first)?
+2. **Which CMS?** The answer determines Block 6 engineering priority.
+
+Do not let meetings scatter focus across both tracks simultaneously. The first 2-3 customers should ideally be on the SAME track and the SAME CMS platform.
+
+---
+
+## 25. Updated Assumptions (Session 2, continued)
+
+- A67: Mysa has two market wedges: US (voice track, Blocks 1+2) and EU (document track, Blocks 3+4). Both feed the same decision capture engine (Block 5).
+- A68: Cross-market data is a compounding advantage — the recommendation engine trained on both US and EU decision patterns generalizes better than single-market competitors.
+- A69: The first 2-3 customers should ideally be on the same track (US voice or EU document) and the same CMS platform, to avoid fragmenting early engineering effort.
+- A70: The EU convention engine (Block 4) is the strongest structural moat in the product — zero competitors, requires per-country legal expertise, years to replicate.
+- A71: The broker opportunity is a CHANNEL strategy, not a product strategy. Brokers recommend Mysa to their insurer clients. A separate broker product is deferred.
