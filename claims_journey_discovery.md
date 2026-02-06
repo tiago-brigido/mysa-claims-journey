@@ -4471,6 +4471,1097 @@ This supplement cycle adds weeks/months and is a major source of policyholder fr
 
 ---
 
+## Phase 9: Decision — Coverage, Liability & Claims Disposition
+
+*Where all prior data converges into actionable decisions. This is where claims get stuck, where money leaks, and where the true value sits. Decisions are where extraction takes minutes but resolution takes days/weeks/months.*
+
+### What is the Decision Phase?
+
+After investigation (Phase 7) establishes WHAT happened and WHO is at fault, and assessment (Phase 8) determines HOW MUCH the damage costs, the Decision phase answers: **"What do we do about it?"**
+
+Seven distinct decisions happen here — often in parallel, not sequentially:
+
+| # | Decision | Question | Who Decides | Automation Today |
+|---|----------|----------|-------------|-----------------|
+| 1 | **Coverage** | Is this covered under the policy? | Rules engine + handler | 80-90% for clean claims |
+| 2 | **Liability** | Who's at fault and what %? | Convention (EU) / adjuster (US) | EU: high (bareme); US: mostly manual |
+| 3 | **Reserve** | How much to set aside? | Adjuster + actuarial | PD: mostly automated; BI: mostly manual |
+| 4 | **Total Loss vs Repair** | Fix or replace? | Appraiser/handler | Threshold math automated; edge cases manual |
+| 5 | **Fraud Referral** | Send to SIU? | Fraud model + handler | Scoring automated; referral decision human |
+| 6 | **Subrogation Pursuit** | Pursue recovery? | Handler + subro dept | Identification increasingly automated; pursuit manual |
+| 7 | **BI Valuation** | What are injuries worth? | Colossus/ClaimIQ + adjuster | 50-60% (software range); negotiation manual |
+
+---
+
+### Decision 1: Coverage — "Is This Covered?"
+
+#### The Coverage Decision Tree (6 Gates)
+
+Every coverage check follows a cascading logic. Each gate can terminate or branch the claim:
+
+**Gate 1: Policy Status Verification**
+- Is the policy active (not lapsed, cancelled, or in grace period)? Premium paid at date of loss?
+- **Automation: ~100%** at modern carriers. Guidewire/Duck Creek pulls policy data in real-time.
+
+**Gate 2: Insured Vehicle/Driver Match**
+- Is the vehicle on the policy? Is the driver named or covered under "permissive use"?
+- **Automation: ~90%** for named insured. Drops to ~50% when permissive use is in question.
+
+**Gate 3: Coverage Applicability**
+- Does the policy include the relevant coverage type? (collision, comprehensive, liability, PIP)
+- Many US drivers carry only state-minimum liability — if they file first-party and don't have collision, denied.
+- **Automation: ~95%.** Straightforward policy lookup.
+
+**Gate 4: Exclusion Screening** — **This is where complexity lives**
+
+| Exclusion | How It Works | Dispute Frequency | Automatable? |
+|---|---|---|---|
+| **DUI/Drunk Driving** | State-dependent. CA mandates liability still applies even for DUI driver. Other states allow broader denial. | Moderate | Partially — state rules codifiable, proving DUI requires investigation |
+| **Unlisted/Excluded Driver** | Specifically excluded by endorsement = denied. Merely unlisted = permissive use may apply. Major gray area. | **High — most common dispute** | Low — requires investigation of permission |
+| **Commercial Use** | Personal auto excludes Uber/Lyft/delivery. Rideshare endorsements partially address. | **Growing fast** | Low — requires establishing use at time of accident |
+| **Racing/Speed Contests** | Nearly universally excluded. | Low but clear-cut | High — if documented |
+| **Intentional Acts** | Deliberately caused damage = denied. Hard to prove. | Low | Very low — judgment call |
+| **Vehicle Modification** | Performance mods may void coverage. | Moderate in specialty segments | Low — requires inspection |
+| **Lapsed Policy (procedural)** | Disputes about grace periods, payment timing, notification. | Moderate | Medium — procedural rules codifiable |
+
+**Gate 5: Policy Conditions Compliance**
+- Timely reporting? Cooperation with investigation? Most policies require "prompt" notice.
+- **Automation: Mostly manual.** Assessing "reasonableness" of late reporting is judgment-based.
+
+**Gate 6: Limits & Deductible Application**
+- Mathematical. What are the applicable limits and deductible?
+- **Automation: ~100%.** Pure math.
+
+#### Net Coverage Automation Assessment
+
+For a **clean, simple auto claim** (active policy, named insured, clear peril, no exclusion triggers): coverage verification is **80-90% automated** at a modern carrier on Guidewire/Duck Creek. For claims with **any ambiguity**, a human is in the loop.
+
+#### Documents/Data Used for Coverage Decision
+
+| Document/Data | Source | When Available | Critical For |
+|---|---|---|---|
+| Policy declarations page | Policy admin system | Immediately | Gates 1-3, 6 |
+| Policy endorsements & exclusions | Policy admin system | Immediately | Gate 4 |
+| FNOL report | Policyholder/agent | At intake | All gates |
+| Police report | Law enforcement | Delayed (days) | Gate 4 (DUI, commercial use) |
+| Driver's license / ID | Policyholder | At intake or delayed | Gate 2 |
+| State regulatory requirements | Compliance database | Always available | Gate 4 (state-specific rules) |
+
+#### Coverage Dispute Rates
+
+- Overall auto claim denial rate: **5-15%** (full denial + partial denial + coverage limitation) ⚠️ synthesized, no single authoritative stat
+- Most common reasons: lapsed policies, unlisted/excluded drivers, no applicable coverage type, late reporting
+- Auto denial rate much lower than home (~42% denial rate) because auto is structurally simpler and often mandatory
+
+#### Insurer-Specific Coverage Rules
+
+**Yes — every insurer has their own coverage rules, and the variation is significant.**
+
+What differs between insurers:
+- How strictly they enforce exclusions
+- How they interpret "permissive use" (broad vs restrictive vs explicit exclusion)
+- Which state-specific endorsements they offer
+- Grace period policies
+- STP eligibility criteria
+
+Real court cases showing variation in permissive use:
+- **State Farm v. GEICO (Virginia, 1991):** Daughter given permission; parents barred lending. Second permittee in accident. Court found coverage existed under State Farm policy.
+- **GEICO v. USAA (Virginia, 2011):** First permittee with "general use" has authority to extend permission.
+- **Progressive permissive use exclusion:** Progressive's policy excludes permissive users insured through another carrier — unlike most competitors.
+
+Where rules live:
+
+| Platform | Market Share | Notes |
+|---|---|---|
+| **Guidewire ClaimCenter** | ~24% (dominant) | Rules in Gosu (proprietary) or new Rules Service (low-code). 293 customers, 2.5B+ claims/year |
+| **Duck Creek Claims** | ~3.3% (growing) | Drag-and-drop Configuration Console. Non-technical. |
+| **Custom/Legacy (COBOL)** | Large installed base | Still alive at many Tier 1 carriers |
+| **Spreadsheets & tribal knowledge** | Widespread in small/mid | Rules literally in Excel and adjusters' heads |
+
+#### Could We Automate Insurer-Specific Coverage Rules?
+
+**Extremely hard at full fidelity. Achievable at "good enough" for specific use cases.**
+
+Why hard: Rules are proprietary trade secrets, vary by state (50+ variations), change frequently, reference data from inaccessible systems, partially tribal knowledge.
+
+Why achievable: **80/20 rule applies** — a small number of rules handle the vast majority of claims. Industry standards (ISO loss codes, NAIC regs, state minimums) provide a shared baseline. Carriers want help — they're frustrated by their own complexity.
+
+---
+
+### Decision 2: Liability — "Who's at Fault and What %?"
+
+#### This is the decision that differs MOST between EU and US.
+
+#### 🇪🇺 EU: Convention Systems (Pre-Computed Liability)
+
+EU convention countries have **solved liability determination at an industry level** through standardized lookup tables. This is not AI — it's **50-year-old rules-based decisioning**.
+
+##### France — IDA/IRSA Convention (est. 1968)
+
+**The bareme (fault lookup table):** 13 numbered accident cases organized into 4 classes:
+
+| Class | Cases | Examples |
+|---|---|---|
+| **1: Same direction** | 10, 13, 15, 17 | Rear-end (100% rear), lateral same lane (50/50), lane change (100% changer) |
+| **2: Opposite direction** | 20, 21 | Encroachment (100% encroacher), mutual encroachment (50/50) |
+| **3: Different roadways** | 30, 31 | Intersection collision (priority rules), turning collision |
+| **4: Stationary** | 40, 43, 51 | Hit parked car (100% mover), illegally parked (shared), exiting parking (100% exiter) |
+
+**Critical design rules:**
+- Only outputs **0%, 50%, or 100%** fault. No 30/70 or 20/80 splits.
+- Only uses **objective elements**: vehicle position, direction, impact points.
+- **Deliberately excludes**: speed, intoxication, lighting, tire wear, traffic violations, signaling.
+- Not legally binding on the insured — only governs inter-insurer recourse.
+
+**Inputs needed (from the EAS):**
+- 17 circumstance checkboxes (parked, leaving parking, entering roundabout, overtaking, turning, etc.)
+- Points of impact on vehicle silhouette diagrams
+- Sketch of accident scene
+- Road type
+
+**Coverage:** ~80% of French material-damage motor claims. Companion IRCA convention handles ~90% of bodily injury (permanent disability ≤ 5%).
+
+**Inter-insurer economics (forfait):**
+
+| Damage Amount | Settlement Method | Amount |
+|---|---|---|
+| < EUR 6,500 | Forfait (flat-rate) | Up to **EUR 2,030** (2025-2026) |
+| < EUR 6,500 shared liability | Reduced forfait | **EUR 850** |
+| > EUR 6,500 | Actual damages | Full verified amount |
+
+**Automation level: HIGH.** e-constat auto app digitizes EAS input, feeds directly into insurer systems. Bareme lookup is trivially automatable. Challenge is edge cases and ambiguous sketches.
+
+##### Italy — CARD Convention (mandatory since 2007)
+
+- Victim deals with **own insurer** (direct compensation)
+- CONSAP clearing house handles inter-insurer payments
+- Forfait: ~EUR 1,700 flat (regardless of actual damages)
+- Eligibility: max 2 vehicles, permanent disability ≤ 9%, valid Italian/EU plates
+- **Italy does NOT have a codified fault lookup table like France** — liability is less deterministic
+- Automation level: **MEDIUM-HIGH** for eligibility; **MEDIUM** for liability
+
+##### Portugal — IDS (direct compensation protocol)
+
+**Performance stats (2024):**
+
+| Metric | Value |
+|---|---|
+| Claims opened | 209,775 |
+| Total paid | EUR 267,210,294 |
+| Average cost/claim | EUR 1,448 |
+| Agreement rate | **91%** |
+| Average time to decision | **1.94 days** |
+
+Eligibility: max 2 vehicles, no bodily injury, damage ≤ EUR 15,000. CIMPAS arbitration as backstop for ~9% that can't agree.
+
+##### Spain — CIDE/ASCIDE/CICOS
+
+**CICOS is already a centralized computer system** connecting all participating insurers. Resolves **70-83% of all motor claims** (2.5M+ per year). Includes codified **Tabla de Culpabilidad** (culpability table). Arguably the most digitally integrated convention system in Europe.
+
+##### Germany & UK — No Convention System
+
+Both use adversarial, case-by-case liability determination (structurally similar to US). Germany's Haftungsquote allows any fault percentage. UK's historical knock-for-knock agreements largely abandoned.
+
+##### Could We Build a Universal Convention Lookup Engine?
+
+**Technically feasible with significant caveats.**
+
+What's needed:
+- Licensed access to convention texts (IRSA, CARD, CIDE/ASCIDE, IDS) — **proprietary to national insurer associations**
+- EAS form data in structured format (e-constat exists for France)
+- Country-specific eligibility rules
+- Bareme/fault tables per country
+
+Estimate: **~60-70% of EAS checkbox combinations** map cleanly to a deterministic fault outcome. The remaining 30-40% require human interpretation ⚠️.
+
+**No single platform currently spans all EU markets as a universal lookup engine.** Spain's CICOS is the closest but Spain-only.
+
+#### 🇺🇸 US: Adversarial, Case-by-Case
+
+**Three negligence regimes:**
+
+| Regime | States | Rule | Impact |
+|---|---|---|---|
+| **Pure Contributory** | AL, MD, NC, VA + DC | Any fault (even 1%) = zero recovery | 4 states + DC. Harsh. |
+| **Pure Comparative** | 13 states (CA, NY, FL, etc.) | Recovery reduced by fault %. Even 99% at fault can recover 1%. | Most plaintiff-friendly |
+| **Modified Comparative** | 33 states | Cannot recover if ≥50% or ≥51% at fault (varies) | Most common |
+
+**How fault is determined (US):**
+1. Police report (if available) — provides initial indication but not binding
+2. Adjuster investigation — interviews, photos, scene evidence
+3. Accident reconstruction (complex/disputed)
+4. **No standardized lookup table** — adjuster judgment, informed by state law
+5. If disputed: negotiation → Arbitration Forums, Inc. → litigation
+
+**Automation level: LOW.** Liability determination in the US is mostly human judgment. Shift Technology now "evaluates" liability but no one auto-decides for multi-party claims.
+
+#### Documents/Data for Liability Decision
+
+| Document/Data | EU Convention | US |
+|---|---|---|
+| **European Accident Statement** | PRIMARY — checkboxes map to bareme | N/A (no US equivalent) |
+| **Police report** | Secondary (not needed for convention) | Primary starting point |
+| **Witness statements** | For edge cases | Critical for disputed liability |
+| **Photos/video** | Supporting | Supporting |
+| **Dash cam footage** | Growing | Growing |
+| **Accident reconstruction** | Rarely needed | For complex/fatal |
+| **State negligence law** | Country convention rules | 50+ state variations |
+
+---
+
+### Decision 3: Reserves — "How Much Should We Set Aside?"
+
+#### Four Methods in Practice
+
+| Method | How It Works | Automation | Accuracy | Used For |
+|---|---|---|---|---|
+| **Tabular/Average** | Lookup table by claim type, severity, geography. "Rear-end, moderate, Texas = $4,500" | **Fully automated** at modern carriers | Reasonable for PD | Auto Physical Damage |
+| **Formula** | Computed from claim characteristics. PD: estimate + rental + depreciation. BI: multiplier of medical specials | **Partially automated** — needs input data | Moderate | PD + simple BI |
+| **Individual Case Estimate (ICE)** | Adjuster reviews facts, sets reserve based on professional judgment | **Manual** | Varies wildly by adjuster | Complex BI, high-value |
+| **AI/ML-Assisted** | GBM, XGBoost, neural nets predict ultimate cost. Random Forest achieving AUC 0.94 for high-cost claims | **Emerging** — used as suggestion, adjuster overrides | Better than traditional | Pilot programs |
+
+**Key problem: "Stair-stepping"** — adjuster sets low initial reserve, raises incrementally as claim develops, rather than setting adequate reserve from day one. This pattern varies dramatically by insurer culture.
+
+#### Data Inputs for Reserve Setting
+
+| Input | Available at FNOL? | Impact |
+|---|---|---|
+| Claim type (collision, comp, liability, PIP) | Yes | Primary driver |
+| Vehicle year/make/model | Yes | Repair vs total loss threshold |
+| Damage severity description | Partially | High impact but low accuracy at FNOL |
+| Photos | Sometimes | Increasingly used for AI estimation |
+| Police report | Delayed (days) | Informs liability and severity |
+| Injury reported? (Y/N) | Yes | **Massively increases reserve** |
+| Medical records | Delayed (weeks/months) | Drives BI reserve |
+| Attorney involvement | Delayed | **Increases reserve 2-5x** |
+| Geographic jurisdiction | Yes | Some jurisdictions have much higher verdicts |
+| Prior claim history | Yes | Flags fraud/over-claiming |
+
+#### Reserve Accuracy
+
+| Claim Type | Initial Reserve Accuracy | Notes |
+|---|---|---|
+| **Auto Physical Damage** | **±10-20%** variability | Short-tail, observable, CCC/Mitchell benchmarks |
+| **Auto Bodily Injury** | **±30-50%+** variability | Long-tail, medical evolves, litigation changes everything |
+
+#### Financial Impact
+
+- **Claims leakage** (paying more than should be paid): estimated **$67 billion/year** in US (conservative: 5-10% of total claims; aggressive: 20-30%) ⚠️
+- Under-reserving: understates liabilities, hits earnings, regulators may intervene, can threaten solvency
+- Over-reserving: depresses earnings, ties up capital unnecessarily
+
+#### Insurer Reserve Customization
+
+Every insurer configures reserve rules differently in Guidewire/Duck Creek:
+- **Default reserve amounts** per claim type are insurer-specific
+- **Segmentation rules** that drive reserve defaults are entirely custom
+- **Loss development factors** calculated from each insurer's own triangle data
+- Two carriers on the same Guidewire version can have **completely different reserve rules**
+
+A 2024 Guernsey GFSC thematic review found firms use a "range of approaches" to IBNR, from appointing actuaries to using simplified multiples.
+
+**Variation score: VERY HIGH.** Reserve setting is one of the most customized decision areas across insurers.
+
+---
+
+### Decision 4: Total Loss vs Repair — "Fix or Replace?"
+
+(Assessment phase valued the damage. Here the **decision** is finalized.)
+
+#### The Decision Logic
+
+```
+IF repair_cost > threshold × ACV → TOTAL LOSS
+ELSE → REPAIRABLE
+```
+
+**US:** State-regulated. Two methods:
+- **Total Loss Threshold (TLT):** ~25 states. Repair cost > X% of ACV = total loss. Typically 70-75% (ranges 60-100%).
+- **Total Loss Formula (TLF):** ~25 states. Repair cost + salvage value > ACV = total loss.
+
+**EU:** Country/insurer-specific, not harmonized. More insurer discretion.
+
+#### Do Insurers Set Their Own Thresholds?
+
+**Yes, routinely.** Insurers can and do total vehicles below the state threshold:
+- Internal thresholds range from **51% to 80%** regardless of state ceiling ⚠️
+- Avoids diminished value liability
+- Reduces cycle time
+- Manages repair quality risk
+
+#### The ACV Valuation Scandal (Alameda County, 2024)
+
+The **Alameda County DA lawsuit** names USAA, Progressive, CCC, and Mitchell, alleging:
+- CCC and Mitchell develop **"customized" valuation software for each insurer** — the methodology page literally changes per insurer
+- Insurers spend **$500K-$600K/year** on software "unique to that customer"
+- Custom versions use **exclusive matrices of comparable vehicles and condition adjustments** available only to that insurer
+- Average alleged underpayment: **$3,000-$4,000 per total loss claim** in California
+- Aggregate underpayment estimated in **billions of dollars** ⚠️ allegations, unproven
+
+**This means:** Two people with identical totaled cars, insured by different companies, can receive materially different ACV payouts — not because the car is different, but because the valuation software is configured differently.
+
+**Variation score: VERY HIGH for ACV valuation. MODERATE for total loss threshold itself** (state law constrains range).
+
+---
+
+### Decision 5: Fraud Referral — "Send to SIU?"
+
+#### How Fraud Scoring Works
+
+| Stage | What Happens | Technology |
+|---|---|---|
+| **Automated scoring** | Every claim scored against hundreds of fraud scenarios at FNOL/triage | Shift Technology (dominant), FRISS, SAS |
+| **Flag threshold** | Claims above score threshold flagged for review | Configurable per insurer |
+| **Handler review** | Claims handler reviews flags, decides whether to refer to SIU | **Human judgment** |
+| **SIU investigation** | Special Investigations Unit conducts full investigation | Manual, specialized |
+| **Decision** | Deny claim, refer to law enforcement, or clear | **Human** |
+
+#### Key Numbers
+
+| Metric | Value |
+|---|---|
+| Insurance fraud cost (US) | ~$80B+ annually across all lines ⚠️ |
+| Shift Technology alert acceptance | **69% of alerts accepted** for investigation (high precision) |
+| False positive rate | ⚠️ ~31% of AI flags dismissed after human review (69% accepted) |
+| Impact on cycle time | Fraud-flagged claims take **2-3x longer**, even if legitimate |
+| SIU referral rate | ~2-3% of all claims (weighted average) ⚠️ |
+
+#### Fraud Threshold Variation Between Insurers
+
+| SIU Posture | Characteristics | Referral Rate |
+|---|---|---|
+| **Aggressive** | Large dedicated SIU, low thresholds, Shift/FRISS analytics, pursue prosecution | >3% of claims |
+| **Moderate** | SIU exists, investigates high-value referrals only | 1-3% |
+| **Passive** | Compliance-only SIU, rarely investigates, writes off suspected fraud | <1% |
+
+- **More than one-third of SIUs receive less than 1% of new claims as referrals**
+- SIUs reject **25% of all referrals** on average
+- **22% of SIUs accept less than half** of referrals; **39% accept more than 90%**
+- ROI: **$10 recovered for every $1 spent** on SIU ⚠️ industry benchmark
+- One insurer: **$21M fraud savings in 2 years** after deploying analytics, fraud savings per investigator up from $550K to $2M
+
+#### Documents/Data for Fraud Decision
+
+| Data Point | Source | Use |
+|---|---|---|
+| Claims history (frequency, pattern) | Internal + NICB databases | Red flag scoring |
+| Claimant behavior (late reporting, evasive) | Adjuster notes | Pattern detection |
+| Medical billing patterns | BI claims | Detect padding/upcoding |
+| Photo metadata (timestamps, GPS) | Submitted photos | Detect staging/manipulation |
+| Social media | Open source | Contradicts injury claims |
+| Policy inception date vs claim date | Policy system | New policy + immediate claim = flag |
+
+**Variation score: VERY HIGH.** Fraud detection approach driven by economic philosophy more than regulation. Regulatory floor is low — states require having SIU, not having an effective one.
+
+---
+
+### Decision 6: Subrogation Pursuit — "Go After Recovery?"
+
+#### The Decision
+
+When the insurer pays a first-party claim and a third party is at fault, the insurer can pursue **subrogation** — recovering what they paid.
+
+#### Cost-Benefit Threshold
+
+| Approach | Threshold | Who |
+|---|---|---|
+| **Pursue everything** | $0+ (including deductible reimbursement) | Large carriers with dedicated subro teams |
+| **Cost-effective threshold** | ~$500-$2,000 | Mid-size carriers |
+| **High-value only** | $2,500-$5,000+ | Small carriers |
+| **Outsource entirely** | Varies by vendor | Carriers using ISG, Crawford (25-33% contingency fee) |
+
+#### Key Numbers
+
+| Metric | Value |
+|---|---|
+| US subrogation recovery | **$51.6B** annually (2021, up 144% from $12.8B in 1996) |
+| Missed subrogation | **$15B+** annually — recoverable dollars never pursued ⚠️ |
+| Average subrogation timeline | **~200 days** from identification to recovery |
+| Proactive carriers | Recover **12-25% of paid losses** through subrogation |
+| Recovery rate (straightforward) | 80-100% of recoverable costs |
+| Recovery rate (contested) | 50-75% |
+| EU convention advantage | Forfait eliminates pursuit decision for small claims — recovery automatic |
+
+#### Subrogation Automation
+
+- **Identification** increasingly automated (CCC Safekeep, Shift Technology) — CCC uses AI to score, prioritize, and auto-package evidence per **insurer-specific parameters**
+- **Pursuit decision** still mostly manual — cost-benefit judgment
+- **EU advantage**: Convention forfait eliminates pursuit decision entirely for small claims
+
+**Variation score: HIGH.** Range between aggressive and passive subrogation programs is enormous.
+
+---
+
+### Decision 7: Bodily Injury Valuation — "What Are the Injuries Worth?"
+
+*This is arguably the single highest-value decision in motor claims. BI is ~20-30% of claims by count but ~60-70% by cost.*
+
+#### The Dominant Tool: Colossus (DXC Technology)
+
+**Age:** ~37 years old (originated Australia 1988, commercialized in US by CSC mid-1990s).
+**Architecture:** Rules-based expert system. NOT machine learning.
+**Market share:** >70% of US insurers use Colossus or similar. Processes >50% of all US insurance claims. ⚠️ widely cited but source unclear
+**Known users:** Allstate, Farmers, MetLife, USAA, Hartford, Erie, Nationwide, CNA, Travelers
+
+**How it works:** 10,720 rules + ~750 injury codes → severity score → dollar range
+
+##### Colossus Inputs (What the Adjuster Enters)
+
+| Input Category | Specific Data Points |
+|---|---|
+| **Injury identification** | Body part(s), diagnosis, injury type (fracture, sprain, TBI), ICD codes |
+| **Injury classification** | Demonstrable (visible on imaging — higher severity) vs non-demonstrable (soft tissue — lower severity) |
+| **Treatment** | Type (ER, surgery, PT, chiropractic), duration (<90 or >90 days), frequency, intensity |
+| **Hospitalization** | Whether hospitalized, duration |
+| **Immobilization** | Casts, braces, traction, duration |
+| **Complications** | Post-treatment complications, re-injuries |
+| **Prognosis** | A-Undetermined; B-No treatment/no complaints; C-Complaints/no treatment; D-Complaints/treatment recommended; E-Guarded |
+| **Permanency** | Permanent impairment rating (significant value driver) |
+| **Pre-existing** | Prior injuries to same body part, degenerative conditions |
+| **Age** | Claimant's age |
+| **Medical costs** | Total medical specials (bills) |
+| **Lost wages** | Documented income loss |
+| **Jurisdiction** | Court jurisdiction (plaintiff-friendly venues get higher ranges) |
+| **Attorney** | Whether represented; reportedly attorney's reputation/trial willingness |
+
+##### Colossus Output: Range, Not Single Number
+
+- Outputs **"Colossus Low"** and **"Colossus High"** — the acceptable settlement corridor
+- Low end typically ~20% below central estimate
+- **Inexperienced adjusters** restricted to low end or given zero deviation
+- **Senior adjusters** get latitude across full range
+- Settling above Colossus High requires **supervisor approval** — strictly enforced at most carriers
+- CSC/DXC marketing reportedly boasted the system would **"immediately reduce BI claims by up to 20 percent"**
+
+##### How Each Insurer Runs a DIFFERENT Colossus
+
+**Two identical claims at two different insurers produce different settlement ranges.**
+
+The "tuning" process:
+1. Insurer selects a set of **previously settled claims** in a region
+2. Those settlement/trial values become the **baseline**
+3. Colossus derives ranges for similar claims based on this baseline
+
+**What varies between insurers:**
+
+| Configuration Lever | Example |
+|---|---|
+| **Baseline dollar values** | Severity-to-dollar conversion entirely insurer-specific |
+| **Injury weights** | Erie scores radiating pain, nausea, vision impairment, neurosis, depression more severely than Farmers ⚠️ |
+| **Geographic adjustments** | Plaintiff-friendly venues get higher ranges |
+| **Flat percentage cuts** | Insurers can reduce ALL values by 5-20% across the board |
+| **Override policies** | Allstate: nearly zero discretion. Travelers: significantly more adjuster weight. |
+
+##### The Allstate/McKinsey Scandal
+
+**1992:** Allstate hires McKinsey. McKinsey frames claims as a "zero-sum economic game."
+
+**McKinsey's "Deny, Delay, Defend" strategy:**
+- **"Good Hands"** for policyholders who accept low offers
+- **"Boxing Gloves"** for those who fight — aggressively litigate
+- **"Alligator approach"** — sit and wait on payments
+- **MIST claims** (Minor Impact Soft Tissue) — treat with extreme skepticism
+
+**1995:** Allstate implements Colossus with McKinsey strategy. Removes adjuster discretion.
+
+**Financial results:** Income soared **thirtyfold** — from ~$82M/year to ~$2.5B/year. Amount paid per premium dollar: **69 cents → 43.5 cents.**
+
+**2008-2010:** NAIC 18-month multistate market conduct examination. Found inconsistencies in Colossus oversight, non-uniform tuning across regions.
+
+**2010 settlement:** Allstate pays **$10M to 45 states**. Required to: notify claimants Colossus may be used, enhance tuning oversight, strengthen auditing, consolidate BI claims handling manual.
+
+McKinsey documents revealed in litigation, documented in David Berardinelli's 2008 book *"From Good Hands to Boxing Gloves."*
+
+##### Insurer Reputation Spectrum (BI Claims)
+
+| Insurer | Approach | Notes |
+|---|---|---|
+| **Progressive** | Most aggressive lowballer | "Holds the title for being the most aggressive" ⚠️ per legal practitioners |
+| **Allstate** | Aggressive | Pioneer of McKinsey strategy; wedded to Colossus output |
+| **GEICO** | Low initial offers | High adjuster caseloads; first offers reportedly <30% of eventual settlement |
+| **State Farm** | Tough pre-suit | "Not getting a good offer before filing suit in 90% of cases" ⚠️ |
+| **Farmers** | Moderate | Uses Colossus but less aggressive |
+| **Nationwide** | Middle ground | Standard Colossus approach |
+| **Erie** | Varies | Scores certain symptoms more severely than peers |
+| **Travelers** | More adjuster discretion | Gives Colossus results less weight |
+| **USAA** | Most reasonable | Better reputation; uses Colossus with more flexibility |
+
+##### BI Valuation Competitors
+
+| System | Approach | Key Difference | Market |
+|---|---|---|---|
+| **Colossus (DXC)** | Rules-based, 10,720 rules, ~750 codes | Dominant but 37 years old. Static rules, doesn't learn. | >50% US claims |
+| **ClaimIQ (Mitchell/Enlyte)** | Workflow + evaluation. Liability + medical review + general damages. | Includes **comparative negligence assessment** (Colossus doesn't). 5% avg liability reduction = **$9.8M per 10K exposures**. 40% cycle time improvement. | Growing, strong #2 |
+| **Claims Outcome Advisor (Verisk/ISO)** | Analytics/statistical. **18,000 medical conditions** (vs Colossus ~750). | Compares to insurer's own settled claims database. Insurers saved **9.8% per severity point**. "Know your opponent" attorney analytics. | Smaller share, modern |
+| **ICE (Broadridge)** | Evaluation-based | Less documented | Niche |
+
+##### Attorney Impact on BI Settlements
+
+| Metric | With Attorney | Without Attorney |
+|---|---|---|
+| Average settlement | **$77,600** | **$17,600** |
+| Settlement rate | **91%** received settlement | **51%** received settlement |
+| Net after fees (33-40%) | ~$46,500-$52,000 | $17,600 |
+
+Some plaintiff attorneys use tools like **Settlement Intelligence** that reverse-engineer Colossus inputs to craft demand letters triggering higher severity scores.
+
+##### BI Multiplier Formulas
+
+```
+General Damages = Medical Specials × Multiplier
+Total Claim Value = General Damages + Lost Wages + Out-of-Pocket
+```
+
+| Injury Severity | Typical Multiplier |
+|---|---|
+| Minor (soft tissue, full recovery) | 1.5 - 2x |
+| Moderate (fractures, significant PT) | 2 - 3x |
+| Serious (surgery, long recovery) | 3 - 4x |
+| Severe (permanent impairment, TBI) | 4 - 5x |
+| Catastrophic (paralysis, amputation, death) | 5 - 10x+ |
+
+Multipliers are starting points for negotiation, not outcomes. Colossus doesn't use simple multipliers — its 10,720 rules are more complex.
+
+##### BI Claim Cycle Times
+
+| Scenario | Duration |
+|---|---|
+| Simple BI, no attorney | 3-6 months |
+| Moderate BI, attorney, pre-suit | 7-12 months |
+| Serious BI, litigation | 1-3 years |
+| Catastrophic | 2-5+ years |
+| **Average (all settled)** | **~7 months** |
+
+##### Colossus Limitations (= Mysa Opportunities)
+
+| Limitation | Detail | Opportunity |
+|---|---|---|
+| **Garbage in, garbage out** | Output only as good as what adjuster enters | NLP/AI that auto-extracts injuries from medical records |
+| **Rules-based, not learning** | 10,720 static rules, doesn't learn from outcomes | ML model that calibrates to actual outcomes |
+| **Undervalues soft tissue** | Built-in bias against non-demonstrable injuries | More nuanced severity modeling |
+| **No unique circumstances** | Musician with hand injury = office worker | Context-aware valuation |
+| **Tuning manipulation** | Insurers control baseline, can systematically lower values | Transparent, auditable valuation |
+| **37 years old** | Legacy architecture | Modern, API-first |
+| **No trial risk modeling** | Doesn't model jury verdict probability distribution | Predictive verdict analytics |
+
+---
+
+### Authority Levels & Escalation
+
+#### Typical Authority Matrix (Mid-to-Large US Auto Insurer)
+
+| Role | Settlement Authority | Reserve Authority |
+|---|---|---|
+| **Junior Adjuster** | Up to $5K-$10K | Up to $10K-$15K |
+| **Experienced Staff Adjuster** | Up to $15K-$25K | Up to $25K-$50K |
+| **Senior Adjuster / Team Lead** | Up to $25K-$50K | Up to $50K-$100K |
+| **Claims Supervisor** | Up to $50K-$100K | Up to $100K-$250K |
+| **Claims Director** | Up to $100K-$250K | Up to $250K-$500K |
+| **VP of Claims** | Up to $250K-$500K | Up to $500K-$1M |
+| **CCO / Reserve Committee** | Above $500K-$1M | Above $1M |
+
+⚠️ Ranges synthesized. Actual thresholds vary enormously. One large US auto insurer reportedly cut higher-level authority from $100K to $10K.
+
+#### Escalation Triggers (Beyond Dollar Thresholds)
+
+- Bodily injury → always escalated
+- Fatality → immediately to senior management + legal
+- Fraud indicators → SIU
+- Coverage dispute → coverage counsel
+- Attorney involvement → litigation handler
+- Regulatory/media sensitivity → executive
+- Large loss (>$100K-$750K) → complex claims unit
+
+#### Documents Required at Each Level
+
+- **Junior adjuster:** Estimate, photos, police report, coverage confirmation
+- **Senior/Supervisor:** + written reserve justification, investigation summary, medical records (if BI)
+- **Director/VP:** + formal reserve memo, actuarial input, legal opinion (if coverage question)
+- **Committee/Board:** Full file review, actuarial reserve opinion, legal brief, possible reinsurance notification
+
+---
+
+### Decision Support Technology Landscape
+
+#### The Layer Cake
+
+| Layer | What | Key Players |
+|---|---|---|
+| **Core CMS** (system of record) | Workflow, rules, tasks, financials | Guidewire ClaimCenter (~24%), Duck Creek (~3.3%), Majesco, COBOL legacy |
+| **Damage Estimation** | Repair cost, total loss valuation | CCC (~55-60% US), Mitchell, Audatex, Tractable, Snapsheet |
+| **BI Valuation** | Pain & suffering scoring | **Colossus** (10,720 rules, ~750 codes), Mitchell ClaimIQ, Verisk COA (18,000 conditions) |
+| **Business Rules Engines** | Configurable decision logic | Guidewire Rules Service/Gosu, Duck Creek Config Console, IBM ODM, InRule, FICO Blaze |
+| **Fraud Detection** | AI scoring, pattern detection | Shift Technology, FRISS, SAS, NICB database |
+| **Manual/Judgment** | Still enormous | Adjusters, supervisors, coverage counsel, actuaries |
+
+**McKinsey: 50%+ of claims activities automatable by 2030.** But as of 2025-2026, industry is early. "82% of insurers integrated AI" stat is misleading — most is narrow (photo assessment, fraud scoring), not end-to-end decisioning.
+
+---
+
+### Competitor Automation on the Decision Front
+
+#### Summary Matrix: Who Can Decide What?
+
+| Competitor | Coverage | Liability | Reserves | Total Loss | Fraud | Subrogation | BI Valuation | STP Claimed |
+|---|---|---|---|---|---|---|---|---|
+| **Five Sigma** | **YES (decides)** | No | **YES (calculates)** | No | No | No | No | Not disclosed |
+| **Shift Technology** | Evaluates (new) | Evaluates (new) | No | No | **YES (core)** | **YES (detects)** | No | 60% (early adopters) |
+| **Sprout.ai** | **YES (decides)** | No | No | No | Flags | No | No | **~70% STP** |
+| **Tractable** | No | No | No | **YES (classifies)** | No | No | No | 90% (1 case) |
+| **omni:us** | **YES (via catalog)** | Limited | Implied | No | Implied | No | No | 50-70% no-touch |
+| **CCC** | No | No | No | **YES (valuates)** | No | **YES (Safekeep)** | No | Not disclosed |
+| **Guidewire** | Via rules only | Predicts likelihood | Predicts severity | No | Via partners | Predicts likelihood | No | Not disclosed |
+| **Duck Creek** | Via rules only | No | No | No | Via partners | No | No | Not disclosed |
+| **Snapsheet** | No | No | No | **YES (valuates)** | Via partners | No | No | Not disclosed |
+| **Colossus (DXC)** | No | No | No | No | No | No | **YES (dominant)** | N/A |
+| **ClaimIQ (Mitchell)** | No | **Partial (comparative neg.)** | No | No | No | No | **YES** | N/A |
+| **COA (Verisk)** | No | No | **YES (Reserve Manager)** | No | No | No | **YES** | N/A |
+
+**Key competitive insights:**
+
+1. **No one does it all.** Zero competitors automate all 7 decisions. Market is fragmented point solutions.
+2. **Coverage decisioning is the least crowded high-value space.** Only Five Sigma, Sprout.ai, omni:us.
+3. **Liability determination is nearly untouched.** Hardest problem, biggest gap. Mitchell ClaimIQ has partial comparative negligence — nobody else.
+4. **BI valuation is dominated by a 37-year-old system** (Colossus) ripe for disruption.
+5. **Damage estimation/total loss well-served.** Tractable, CCC, Snapsheet. Competitive, commoditizing.
+6. **Fraud dominated by Shift Technology.** Deep moat.
+7. **Platform vendors (Guidewire, Duck Creek) provide infrastructure, not intelligence.**
+8. **STP claims require skepticism.** Always ask "STP of WHAT?" — Roots' 99% is mailroom letters. Sprout's 70% is most credible.
+9. **Agentic AI wave (2025-2026)** — Shift, Five Sigma, Duck Creek, omni:us all launching. Moving from recommendations → autonomous decisions, but mostly pre-GA.
+
+---
+
+### STP: The North Star and Its Ceiling
+
+#### Current STP Rates
+
+| Segment | STP Rate | Notes |
+|---|---|---|
+| **Industry average (all auto)** | **7-10%** | Datos Insights 2023 |
+| **Glass-only** | ~100% | Safelite handles end-to-end |
+| **CCC Estimate-STP** | 15 insurers (~50% US volume) | Estimation STP, not full-claim STP |
+| **Theoretically STP-eligible** | **25-35%** | Simple PD, glass, parking, single-vehicle |
+| **Total US auto claims/year** | ~16-20 million | |
+
+#### STP Eligibility Gates (All Must Pass)
+
+1. Policy active, paid-up
+2. Named insured or clearly permissive driver
+3. Single vehicle or clear liability
+4. No bodily injury
+5. Damage below threshold ($5K-$10K)
+6. No fraud indicators
+7. No prior related claims
+8. Photos/documentation sufficient
+9. Within DRP network
+10. No litigation/attorney
+11. No subrogation complexity
+
+#### STP Barriers
+
+| Barrier | Detail |
+|---|---|
+| **BI complexity** | Unsuitable for STP. 20-30% of claims by count, 60-70% by cost. |
+| **Liability ambiguity** | Multi-vehicle, conflicting accounts |
+| **Legacy tech** | COBOL carriers can't do modern STP |
+| **Regulatory requirements** | State-mandated procedures |
+| **Fraud risk** | Even small fraud in STP stream is very costly |
+| **Data quality at FNOL** | Incomplete, ambiguous, unstructured |
+| **Organizational resistance** | Adjusters resist automation |
+| **Trust in AI** | Carriers and regulators not comfortable yet |
+
+#### STP Opportunity Sizing
+
+- Currently STP'd: ~1.1-2.0M claims/year (7-10% of 16-20M)
+- Theoretically eligible: ~4-7M claims/year (25-35%)
+- Cost saving per claim (manual → STP): ~$40-60, plus 50-70% cycle time reduction
+- **Gap: ~3-5M claims/year that COULD be automated but aren't**
+
+---
+
+### The Tribal Knowledge Crisis
+
+#### How Much Decision-Making Is Undocumented?
+
+| Decision Type | % In Systems | % Written Guidelines | % Tribal/Experiential |
+|---|---|---|---|
+| **Coverage determination** | 30-40% | 20-30% | **30-50%** |
+| **Reserve setting** | 10-30% | 10-20% | **50-80%** |
+| **Fraud referral** | 20-40% | 10-20% | **40-70%** |
+| **Subrogation pursuit** | 30-50% | 20-30% | **20-50%** |
+| **BI settlement negotiation** | 5-10% | 10-20% | **70-85%** |
+
+⚠️ All percentages are estimates. **The most judgment-intensive decisions are the least documented.**
+
+#### The Retirement Wave
+
+- US insurance sector projected to **lose ~400,000 workers by 2026** (BLS)
+- **25% of all claim adjusters predicted to retire within 5 years**
+- **21,500 job vacancies/year** projected over next decade
+- New hires cannot keep pace with departures
+- Swiss Re SONAR 2025: workforce shortages identified as emerging risk
+
+#### What Happens When Experienced Adjusters Leave
+
+- Carriers lose institutional memory about unusual claim types
+- Tribal knowledge about local shops, medical providers, legal environments walks out the door
+- New adjusters: more errors, less accurate reserves, missed subrogation, longer cycle times
+- **Most carriers have NOT systematically captured this knowledge**
+- Some carriers invested in knowledge management (n2uitive, others) but most rely on organic mentoring
+
+#### Time to Full Adjuster Productivity
+
+| Claim Type | Time |
+|---|---|
+| Basic auto PD | 3-6 months |
+| Complex auto BI | 12-18 months |
+| Complex commercial/specialty | 2-3+ years |
+
+---
+
+### Insurer-Specific Decision Variation Heatmap
+
+| Decision Type | Regulatory Constraint | System Config | Adjuster Discretion | **Overall Variation** |
+|---|---|---|---|---|
+| **Reserve setting** | Low (must be adequate) | HIGH | VERY HIGH | **VERY HIGH** |
+| **BI settlement** | Low (good faith) | MODERATE (Colossus) | VERY HIGH | **VERY HIGH** |
+| **Fraud detection** | Low (must have SIU) | HIGH | HIGH | **VERY HIGH** |
+| **Total loss / ACV** | MODERATE (state ceiling) | HIGH (tools customized) | MODERATE | **HIGH** |
+| **Subrogation pursuit** | Low (right, no duty) | HIGH | MODERATE | **HIGH** |
+| **Coverage interpretation** | MODERATE (policy language) | LOW | HIGH | **HIGH** |
+
+**Three layers of variation exist:**
+1. **Policy layer:** Different policy language and endorsements
+2. **System configuration layer:** Guidewire, Duck Creek, CCC, Mitchell, Colossus all configured differently per carrier
+3. **Human judgment layer:** Adjuster discretion, tribal knowledge, insurer culture
+
+**Layer 3 is the biggest and least documented.** This is both a challenge (hard to standardize) and an opportunity (whoever captures and systematizes this knowledge creates a moat).
+
+---
+
+### Automation Feasibility Assessment (Per Decision)
+
+| Decision | Current | Feasible Near-Term | Ceiling | Key Barrier |
+|---|---|---|---|---|
+| **Coverage (clean)** | 80-90% | **95%+** | ~95% | Ambiguous exclusions |
+| **Coverage (disputed)** | ~20% | 40-50% | ~50% | Requires investigation |
+| **Liability (EU convention)** | 60-70% | **90%+** | ~90% | Sketches, edge cases |
+| **Liability (US)** | ~10% | 30-40% | ~40% | No standardized framework |
+| **Reserve (PD)** | 70-80% | **90%+** | ~95% | Already largely automated |
+| **Reserve (BI)** | 20-30% | 50-60% | ~60% | Long-tail uncertainty |
+| **Total loss math** | ~90% | **95%+** | ~98% | ACV disputes |
+| **Fraud scoring** | 60-70% | 80-85% | ~85% | Precision/recall tradeoff |
+| **Fraud referral** | ~10% | 30-40% | ~50% | Cost-benefit judgment |
+| **Subro identification** | 40-50% | **80%+** | ~90% | Data quality |
+| **Subro pursuit** | ~20% | 50-60% | ~70% | Cost-benefit judgment |
+| **BI valuation** | 50-60% | 70-80% | ~80% | Catastrophic always needs humans |
+| **BI negotiation** | ~5% | 20-30% | ~30% | Fundamentally human |
+
+---
+
+### EU vs US: The Structural Divide
+
+| Dimension | 🇪🇺 EU Convention Countries | 🇺🇸 US |
+|---|---|---|
+| **Who victim deals with** | Own insurer (direct compensation) | Other driver's insurer (3rd-party claim) |
+| **Liability determination** | Standardized lookup table / bareme | Case-by-case adversarial investigation |
+| **Fault granularity** | Often binary (0/50/100%) | Any percentage |
+| **Inter-insurer settlement** | Forfait (flat-rate) for small claims | Actual cost subrogation |
+| **Speed** | Days (Portugal: 1.94 days avg) | Weeks to months |
+| **Dispute mechanism** | Convention arbitration → courts | Negotiation → Arbitration Forums → litigation |
+| **Automation potential** | **Very high** (structured inputs, deterministic rules) | **Lower** (unstructured, judgment-dependent) |
+| **Data standard** | EAS — universal form | No universal form |
+| **BI valuation** | Less Colossus-dependent, more expert-driven | Colossus-dominated |
+
+**The conventions are 50-year-old pre-computed decision engines.** They're not "AI" — they're industry agreements that solved liability structurally. This is why EU motor claims can achieve STP rates that US markets cannot structurally match.
+
+---
+
+### Phase 9: Pain Points & Opportunities
+
+| Pain Point | Impact | Opportunity |
+|---|---|---|
+| **Coverage ambiguity** (permissive use, exclusions) | Delays entire claim. 5-15% hit this. | Rules engine handling 80% of checks automatically |
+| **Liability disputes (US)** | Multi-party claims take weeks-months | Convention-like structured approach for US ⚠️ |
+| **Reserve inaccuracy (BI)** | $67B/year leakage. ±30-50% variance. | ML reserve prediction — even small improvement = massive ROI |
+| **Authority bottlenecks** | Claims wait for supervisor approval | Auto-approve within authority thresholds |
+| **Fraud false positives** | 31% of flags dismissed. Adds 2-3x cycle time. | Better precision in fraud scoring |
+| **Missed subrogation** | $15B+ left on table (US) | Automated identification + pursuit recommendation |
+| **Colossus is 37 years old** | Static rules, GIGO, no learning | Modern BI valuation with NLP medical record ingestion |
+| **Tribal knowledge walking out the door** | 400K retirements, undocumented decisions | Knowledge capture platform |
+| **ACV manipulation** | $3,000-$4,000 underpayment per total loss ⚠️ | Transparent, auditable valuation |
+
+---
+
+### Phase 9: Key Assumptions Logged
+
+| # | Assumption | Status |
+|---|---|---|
+| A105 | Coverage verification is 80-90% automated for clean claims | ⚠️ Research synthesis |
+| A106 | ~60-70% of EAS checkbox combinations map to deterministic convention outcomes | ⚠️ Estimate |
+| A107 | Initial BI reserves have ±30-50% variance vs ultimate cost | ⚠️ Actuarial literature |
+| A108 | Claims leakage costs US insurers ~$67B/year | ⚠️ VCA Software estimate |
+| A109 | Industry average auto STP rate is 7-10% | ⚠️ Datos Insights 2023 |
+| A110 | Theoretically STP-eligible: 25-35% of auto volume | ⚠️ Estimate |
+| A111 | No competitor automates all 7 decision types | ✅ Competitive research |
+| A112 | Liability determination is the least automated decision | ⚠️ Competitive research |
+| A113 | >70% of US insurers use Colossus or similar BI valuation | ⚠️ Widely cited but source unclear |
+| A114 | Colossus processes >50% of all US insurance claims | ⚠️ Legal practitioner sources |
+| A115 | 400,000 insurance workers lost by 2026 (US) | ⚠️ BLS projection |
+| A116 | 25% of adjusters retiring within 5 years | ⚠️ Industry estimates |
+| A117 | Most carriers have NOT systematically captured tribal knowledge | ⚠️ Industry reporting |
+| A118 | CCC/Mitchell create insurer-customized ACV tools ($500K-600K/year per insurer) | ⚠️ Alameda County DA allegations, unproven |
+| A119 | Represented claimants receive 3.5x more than unrepresented | ⚠️ Insurance Research Council |
+
+---
+
+### Phase 9: Strategic Insights
+
+- **Insight #37:** Decisions are where claims get stuck — extraction takes minutes, decisions take days/weeks/months
+- **Insight #38:** The 7 decisions are NOT sequential — they happen in parallel, with dependencies
+- **Insight #39:** EU convention systems are 50-year-old pre-computed decision engines — structurally superior to US adversarial approach for automatable claims
+- **Insight #40:** No competitor automates all 7 decisions — the market is fragmented point solutions
+- **Insight #41:** Liability determination is the biggest untouched gap — especially US where it's almost entirely manual
+- **Insight #42:** Colossus (37 years old, 10,720 static rules) is ripe for disruption — but replacement must be explainable for regulators
+- **Insight #43:** Each insurer runs effectively different software — Colossus configs, reserve formulas, fraud thresholds, ACV tools all customized per carrier
+- **Insight #44:** The tribal knowledge crisis (400K retirements, 70-85% of BI negotiation undocumented) creates urgency AND opportunity — whoever captures adjuster decision patterns creates a moat
+- **Insight #45:** Clean data at the decision boundary is the prerequisite — you can't automate decisions on garbage inputs (Colossus GIGO problem proves this)
+- **Insight #46:** The decision that matters most for Mysa's wedge is the one where (a) data quality is the bottleneck, (b) insurer variation is high, and (c) no competitor owns it
+- **Insight #47:** BI valuation is where the money is — ~20-30% of claims by count but ~60-70% by cost, dominated by a 37-year-old tool
+
+---
+
+### Phase 9 Deep Dive: Codifiable vs Judgment-Dependent Decisions
+
+Every claims decision falls on a spectrum from pure rule-based (codifiable) to pure expert judgment. Understanding where each decision sits determines the automation ceiling.
+
+#### Classification Matrix
+
+| Decision | Classification | Automation Ceiling | Why |
+|----------|---------------|-------------------|-----|
+| **D1: Coverage Determination** | **Codifiable** | ~90% | Binary lookup: does the policy cover this event type? Policy wording is structured. Exclusions are enumerable. AI can parse the policy PDF and match event → coverage in seconds. Grey areas (10%) need underwriting consultation. |
+| **D2: Liability Assignment** | **EU: Codifiable / US: Judgment** | EU: ~85% / US: ~40% | In the EU, convention baremes turn liability into a table lookup — 13 cases in France, you match the diagram, you get the fault %. In the US, there's no such system. The adjuster reads two conflicting stories, reviews photos/police reports, and decides based on experience + state negligence laws. |
+| **D3: Reserve Setting** | **Mixed** | ~60% | Initial reserves use formulas (claim type × severity tier × geography = reserve amount). But adjusting reserves is judgment — as new information comes in, the adjuster uses experience to know "this is going to cost more than it looks." |
+| **D4: Total Loss** | **Codifiable** | ~95% | Pure math: if repair cost > X% of vehicle value → total loss. Threshold varies (typically 70-80% depending on insurer/state), but it's a formula. Vehicle valuation uses databases (CCC, Mitchell, Audatex). |
+| **D5: Fraud Referral** | **Mixed** | ~65% | Red flags are codifiable (claim <30 days after policy start, prior claim history, story inconsistencies). But the decision to formally refer to SIU involves judgment — false positives are expensive and damage customer relationships. |
+| **D6: Subrogation** | **Codifiable** | ~85% | If fault% < 100% on your policyholder, you have a recovery opportunity. Rules are clear: fault%, recovery conventions (EU) or demand letters (US). Massively under-automated — billions left on the table. |
+| **D7: BI Valuation** | **Judgment-heavy** | ~30% | Hardest decision. "What is this person's pain and suffering worth?" In the US, Colossus (37 years old, 10,720 rules) tries to codify it, but adjusters routinely override. In the EU, each country has different tables. 70-85% of BI negotiation knowledge is undocumented tribal knowledge. |
+
+**Bottom line**: ~60-70% of decisions can be automated with rules + AI. The remaining 30-40% (mainly BI valuation and edge cases) need AI-augmented adjusters, not fully autonomous AI.
+
+#### Terminology Deep Dive
+
+**Bareme Lookup (EU Liability)**
+
+A bareme (from French "barème" = scale/table) is a pre-computed fault allocation table used in EU convention systems.
+
+How it works in practice (France/IRSA example):
+1. Two cars collide
+2. Both drivers fill out the EAS (European Accident Statement)
+3. The EAS has checkboxes (17 of them) — "was changing lanes", "was turning left", "was reversing", etc.
+4. Each combination of checked boxes maps to one of 13 standard accident cases (called "cas IDA")
+5. Each case has a pre-determined fault split: 0/100, 50/50, 100/0, etc.
+6. No human judgment needed — it's a lookup table
+
+Example: Driver A checked "was turning left" + Driver B checked "was going straight" → Case 5 → Driver A is 100% at fault. Done. No argument.
+
+Country-specific scales:
+- **France (IRSA/IDA)**: 13 cases, simplest
+- **Italy (CARD/CID)**: ~50 cases, most complex
+- **Portugal (IDS/CIMPAS)**: ~20 cases
+- **Spain (CIDE/ASCIDE/CICOS)**: ~30 cases
+
+**Why this matters for Mysa**: In EU markets, liability determination is already a solved, codifiable problem IF you have clean EAS data. The bottleneck is not the decision — it's getting the data into structured form (50% of EAS are still paper, handwritten, often unclear).
+
+**Reserve — The Insurer's Budget Estimate**
+
+The reserve is the amount of money the insurer sets aside for a claim. It's NOT what they've paid — it's what they expect to pay. Reserves affect the insurer's financial statements immediately (they reduce reported profit).
+
+**Reserve → Amount Paid Flow:**
+1. FNOL: Initial reserve set (e.g., "rear-end collision, minor damage" → €3,000 reserve)
+2. Investigation: May adjust up/down as facts emerge ("actually the frame is bent" → reserve goes to €8,000)
+3. Assessment: Repair estimate comes in → reserve adjusted to match (€7,200)
+4. Decision: Final reserve confirmed
+5. Settlement: Actual payment issued (€7,200 paid to repair shop)
+6. Close: Reserve = Amount paid. If reserve was €8,000 but you paid €7,200, the €800 "releases" back as profit.
+
+The gap between reserve and payment is where insurers leak money: Over-reserving ties up capital unnecessarily. Under-reserving means surprises to the balance sheet. Getting reserves right is a $67B/year problem industry-wide.
+
+**PD (Property Damage)**
+
+Physical damage to things — the car, a fence, a guardrail. Relatively straightforward to value (get a repair estimate or market value). Typically handled by one adjuster. Average PD claim: ~€4,500.
+
+**BI (Bodily Injury)**
+
+Injuries to people — medical bills, lost wages, pain and suffering. This is where claims get expensive and complex. Average BI claim: ~€20,000-€50,000 (can reach millions). BI claims often involve lawyers, take 1-3 years to settle, and are where most of the "tribal knowledge" lives. ~20-30% of claims by count but ~60-70% by cost.
+
+**SIU (Special Investigations Unit)**
+
+The insurer's internal fraud team. When a claim looks suspicious (e.g., brand new policy + total loss, injuries inconsistent with damage, prior claim history), the claim gets "referred to SIU." SIU investigators are typically ex-law enforcement. They do surveillance, social media checks, statement analysis, etc. ~10-15% of all claims show some fraud indicators, but only ~1-3% are actually fraudulent.
+
+---
+
+### Phase 9 Deep Dive: EU Insurer Core Systems & Policy Loading
+
+#### Do EU Insurers Use Guidewire/Duck Creek?
+
+**Guidewire in EU:**
+- Dominant in UK (Aviva, RSA, Direct Line, Admiral)
+- Growing in continental Europe (Allianz Germany, AXA France experimenting)
+- ~30-35% of top 50 EU insurers use Guidewire for claims (ClaimCenter)
+- But many EU insurers run legacy in-house systems (especially in Southern/Eastern Europe)
+
+**Duck Creek:**
+- Smaller EU presence than Guidewire
+- More common in Benelux and Nordic markets
+- ~10-15% of EU top 50
+
+**Other EU CMS (Claims Management Systems):**
+- **Sapiens**: Strong in Israel, growing in EU (~10-15%)
+- **In-house/legacy**: Still ~40-50% of EU insurers, especially in PT, ES, IT
+- **EIS Group, Majesco**: Emerging alternatives
+
+#### Can We Load Policies?
+
+Yes, but it's complicated:
+- Guidewire has PolicyCenter (policy admin) with APIs. If the insurer uses both PolicyCenter + ClaimCenter, the data link exists
+- Duck Creek has similar integration capability
+- The challenge: most EU insurers have policy data in a different system than claims data. Policy might be in SAP, claims in Guidewire, documents in SharePoint
+- Each policy is NOT unique per user — it's a contract between the insurer and policyholder. The policy defines: what's covered, what's excluded, deductibles, limits, drivers covered, vehicle details. One policy = one contract, but the terms come from the insurer's product catalog
+
+**For Mysa**: The key integration is reading the policy at decision time to check coverage. This requires either API access to PolicyCenter/Duck Creek or parsing the policy PDF. The bigger opportunity is that most adjusters today check coverage manually by opening the policy document and ctrl+F searching for exclusions — an AI can do this instantly.
+
+#### EU CMS Market Share (Approximate)
+
+| System | EU Market Share | Key Markets | Notes |
+|--------|----------------|-------------|-------|
+| Guidewire ClaimCenter | ~30-35% of top 50 | UK, DE, FR (growing) | Dominant vendor, expensive |
+| In-house/Legacy | ~40-50% | PT, ES, IT, Eastern EU | Often 20-30 year old systems |
+| Sapiens | ~10-15% | Nordics, IL-origin | Growing in EU |
+| Duck Creek | ~10-15% | Benelux, Nordics | Cloud-native push |
+| EIS/Majesco/Other | ~5% | Various | Emerging challengers |
+
+---
+
+### Phase 9 Deep Dive: The Adjuster — Complete Role Mapping
+
+The adjuster is the most important role in claims and AI won't fully replace them but can make them dramatically more productive. Here's the complete mapping of everything they do.
+
+#### Desk Adjuster (Handles claims from desk, no travel)
+
+| Activity | Current State | Time Spent | AI Opportunity |
+|----------|--------------|------------|----------------|
+| Read FNOL & claim notes | Manual review of 5-20 pages | 15-30 min/claim | AI summarization → 30 seconds |
+| Check policy coverage | Open policy doc, ctrl+F, read exclusions | 10-20 min | Instant AI policy parsing |
+| Review photos/docs | Manual photo review, read estimates | 15-30 min | AI photo analysis (Tractable) |
+| Call policyholder | Live call, take notes, build rapport | 15-30 min | AI pre-fills questions, auto-transcribes |
+| Call counterparty (US) | Same as above, often hostile | 15-30 min | AI sentiment analysis, key point extraction |
+| Set/adjust reserves | Calculate based on experience | 5-15 min | AI recommendation based on similar claims |
+| Determine liability | Review evidence, apply rules/judgment | 15-45 min | EU: Auto (bareme). US: AI assist |
+| Write coverage letter | Type out coverage determination | 10-20 min | AI draft from decision |
+| Send payment/denial | Process in system, generate letter | 10-15 min | Workflow automation |
+| Handle supplements | Review additional damage findings | 10-20 min | AI comparison of original vs supplement |
+| Document everything | Write notes in claim file for audit | 15-30 min per touch | Auto-documentation from AI |
+| Respond to claimant inquiries | Phone/email, "where's my claim?" | 10-15 min each | Chatbot for status, AI draft responses |
+| Subrogation referral | Identify recovery opportunity, prepare | 10-20 min | AI auto-identifies, pre-fills demand |
+
+**Desk adjuster total per claim**: 3-6 hours across multiple touches over days/weeks
+**With AI augmentation**: Could drop to 1-2 hours (60-70% reduction)
+
+#### Field Adjuster (Goes to scene/vehicle/property)
+
+| Activity | Current State | Time Spent | AI Opportunity |
+|----------|--------------|------------|----------------|
+| Drive to inspection site | Physical travel | 30-90 min each way | Virtual inspections (video) for simple claims |
+| Inspect vehicle/property | Walk around, look at damage, take photos | 30-60 min | AI guides inspection checklist, ensures nothing missed |
+| Write damage estimate | Use CCC/Mitchell/Audatex, line-item | 45-90 min | AI pre-populates from photos, adjuster validates |
+| Interview claimant at scene | In-person conversation | 15-30 min | AI records, transcribes, flags inconsistencies |
+| Check for hidden damage | Lift panels, look underneath | 15-30 min | AI predicts hidden damage from visible damage patterns |
+| Photograph everything | 20-50 photos per claim | 10-20 min | AI guides "take photo of X" based on damage type |
+| ADAS recalibration check | Check if car has sensors that need recalibration | 5-10 min | AI auto-flags based on make/model/year |
+| Upload to system | Back at desk, upload photos/estimate | 15-30 min | Real-time mobile upload with AI tagging |
+| Total loss inspection | Same + verify VIN, mileage, options | Additional 15-30 min | Database lookup for valuation |
+
+**Field adjuster total per claim**: 4-8 hours including travel
+**With AI augmentation**: Travel still required, but estimate/documentation time drops ~50%
+
+#### What's Already Automated Today (Industry-Wide)
+
+| Activity | Automation Level | Who Does It |
+|----------|-----------------|------------|
+| Photo damage assessment | ~15-20% of claims | Tractable, CCC AI |
+| FNOL intake | ~5-10% fully auto | Lemonade, some insurer chatbots |
+| Reserve setting (initial) | ~20-30% use formulas | Built into CMS |
+| Fraud scoring | ~60-70% get scored | Shift Technology, FICO |
+| Coverage check | ~5% automated | Almost nobody |
+| Liability (EU convention) | ~10% STP | omni:us, some insurer systems |
+| BI valuation | ~30% use Colossus | DXC Colossus (US mainly) |
+| Subrogation identification | ~10-15% auto-flagged | Shift, some CMS rules |
+| Status communication | ~10-15% automated | Hi Marley, chatbots |
+
+#### What's Still Fully Manual
+
+- **Recorded statements (US)** — 100% human, 15-30 min per party
+- **Complex coverage interpretation** — grey areas require UW consultation
+- **BI negotiation with attorneys** — 100% human, tribal knowledge
+- **Fraud investigation (post-referral)** — SIU investigators, surveillance
+- **Multi-party liability disputes** — judgment calls on comparative negligence
+- **Supplement negotiations** — back-and-forth with repair shops
+- **Customer empathy/de-escalation** — the human touch that matters
+
+#### The Adjuster Productivity Thesis
+
+The adjuster is NOT going away. But today's adjuster is:
+- 60% administrator (reading docs, writing notes, sending letters, keying data)
+- 25% investigator (gathering facts, making calls, reviewing evidence)
+- 15% decision-maker (applying judgment to complex situations)
+
+AI can flip this to:
+- 15% administrator (reviewing AI-generated summaries, approving drafts)
+- 25% investigator (AI pre-gathers, human validates)
+- 60% decision-maker (focused on the hard stuff that matters)
+
+**This is the Mysa thesis for the adjuster**: Don't replace the adjuster. Make them 3-4x more productive by eliminating the 60% of administrative work and augmenting the 25% of investigation work. The adjuster then spends their time on the 15% where human judgment creates the most value.
+
+---
+
+### Phase 9 Deep Dive: Competitors Focused on Decision Automation
+
+#### Who Owns Which Decisions?
+
+| Competitor | Primary Focus | Decisions They Automate | Do They "Own the Decision"? |
+|-----------|---------------|------------------------|-----------------------------|
+| **Five Sigma (Clive)** | Multi-agent AI for adjusters | Claim summarization, coverage check, decision recommendations, documentation | Attempting to — AI recommends, human approves |
+| **Shift Technology** | Fraud decisions | Fraud scoring, subrogation detection | Partially — they own the fraud/subro decision signal |
+| **Davies/Kuarterback** | UK motor BI adjusters | Auto-read Stage 2 packs, valuate BI claims <1 min | Yes, for UK motor BI — 75-80% auto-processed |
+| **Sprout.ai** | Coverage + simple decisions | Auto-approve simple claims, coverage checking | Partially — simple claims only |
+| **Tractable** | Assessment decision | Total loss vs repair, damage valuation | Yes, for assessment — but not other decisions |
+| **Colossus (DXC)** | BI valuation | 10,720 rules for BI injury valuation | Yes, for BI — 70%+ of US insurers, but 37 years old |
+| **Lemonade (AI Jim)** | Full stack (not vendor) | All 7 decisions, but only for their own policies | Yes, but can't buy it — B2C only |
+| **ClaimSorted** | Full claims TPA | Auto-decision for simple, handler for complex | Attempting to — TPA model gives them all decisions |
+| **omni:us** | EU convention STP | Liability via convention lookup, STP routing | Partially — liability in EU convention markets |
+
+**Key insight**: Nobody owns ALL 7 decisions across multiple markets. The closest are Five Sigma and ClaimSorted, but they're early-stage. Davies/Colossus own specific slices deeply. This is the white space Mysa targets — the intelligence layer that sits across all 7 decisions, learns from each insurer's patterns, and progressively automates from codifiable → judgment-dependent.
+
+#### Assumptions Added
+
+- **A120:** ~60-70% of claims decisions are codifiable or mixed; ~30-40% are judgment-heavy (mainly BI valuation)
+- **A121:** Desk adjusters spend 3-6 hours per claim; AI can reduce to 1-2 hours (60-70% reduction)
+- **A122:** Field adjusters spend 4-8 hours per claim including travel; AI can reduce non-travel time by ~50%
+- **A123:** Today's adjuster is ~60% administrator, ~25% investigator, ~15% decision-maker; AI can invert this ratio
+- **A124:** ~30-35% of top 50 EU insurers use Guidewire; ~40-50% still on in-house/legacy systems
+- **A125:** No competitor automates all 7 decisions across multiple markets — the horizontal decision intelligence layer is white space
+
+#### Strategic Insights Added
+
+- **Insight #48:** The adjuster is 60% admin — this is the immediate AI opportunity. Don't replace the adjuster; eliminate their paperwork so they can focus on decisions.
+- **Insight #49:** EU liability is already solved (bareme tables) — the bottleneck is data quality upstream, not the decision logic. Clean data IS the wedge for EU markets.
+- **Insight #50:** Policy loading is the hidden blocker — most adjusters check coverage manually (ctrl+F in a PDF). Instant policy parsing at decision time could be Mysa's fastest-to-value feature.
+- **Insight #51:** The reserve → payment gap is a $67B/year problem — whoever predicts reserves more accurately captures enormous value for insurers.
+- **Insight #52:** Nobody owns the horizontal decision intelligence layer — competitors own narrow vertical slices. This is Mysa's target architecture.
+
+---
+
 # DATA SCHEMAS — EU vs US
 
 > **Purpose:** Track what data is captured, when, by whom, and whether it's manual or automated. This informs where data quality issues originate and where automation opportunities exist.
@@ -5490,6 +6581,89 @@ The ~3x time penalty for multi-adjuster claims comes from:
   - **Insight #31:** Extraction is commoditizing; the defensible moat is insurance-native INFERENCE (understanding    
   what documents mean, not just what they say)                                                                        
   - **Insight #32:** The path is: Extraction → Inference → Triage → Decisions → Infrastructure                        
-  - **Insight #33:** "Corti for Insurance" is the right end state but wrong starting pitch — need a concrete product  
-  that leads there                                                                                                    
-                     
+  - **Insight #33:** "Corti for Insurance" is the right end state but wrong starting pitch — need a concrete product
+  that leads there
+
+---
+
+### Wedge Sharpening: Clean Data → Own Decisions
+
+*Added: February 2025 — Product Discovery JAM Session*
+
+#### The Thesis
+
+Mysa's long-term vision is to **own the decision layer** in claims — approve/deny, reserve amount, settlement amount, repair vs total loss, fraud referral, subrogation pursuit. This is where the real value sits (it's what claims handlers are paid for, and where cycle time and money leak).
+
+To get there, we need **clean, structured data** — you can't make good decisions on garbage inputs.
+
+#### The Problem with "Clean Data" as a Wedge
+
+"We need clean data" is what **every claims insurtech says**:
+- omni:us: "We extract and structure EAS data"
+- Sprout.ai: "We automate document processing"
+- Shift Technology: "We ingest claims data for fraud detection"
+- Hi Marley: "We capture structured communication data"
+
+If clean data is the wedge, we're entering a crowded lane with players that have years of training data ahead.
+
+**The real question isn't WHETHER we need clean data. It's: clean data for what, where, and for whom?**
+
+#### Two Paths
+
+| | Path A: Horizontal Data Layer | Path B: Vertical Data Wedge |
+|---|---|---|
+| **What** | Clean all claims data across lifecycle | Own data quality for ONE specific handoff/decision |
+| **Compete with** | Guidewire ecosystem, omni:us, dozens of others | Nobody (if chosen correctly) |
+| **Capital needed** | Massive | Lean |
+| **Precedent** | — | Plaid (bank verification → all finance), Stripe (online payments → all commerce), Veeva (pharma CRM → life sciences) |
+
+**Path B is how companies win.** You solve one specific problem so well you become the system of record for that slice — then expand.
+
+#### The Key Insight from Phase 0-8 Mapping
+
+**The most broken data isn't INSIDE a single system — it's at the BOUNDARIES between parties.**
+
+Every time a claim crosses a boundary, data degrades:
+- Re-keyed manually
+- Reformatted with loss
+- Translated with ambiguity
+- Or just lost entirely
+
+If this is true, the wedge isn't "clean data" generically — it's being the **structured interchange layer at a specific boundary**.
+
+#### Candidate Boundaries (From Phase Mapping)
+
+| # | Boundary | Phases | Pain Level | Buyer | Path to Decisions |
+|---|----------|--------|------------|-------|-------------------|
+| 1 | **FNOL intake** (policyholder → insurer) | 1-2 | High but crowded | Insurer | Triage, coverage check |
+| 2 | **TPA handoffs** (insurer → TPA) | 4+ | Very high, overlooked | TPA or insurer | Assignment, reserve, authority |
+| 3 | **Repair estimate exchange** (shop/appraiser → insurer) | 8 | High, fragmented | Insurer | Total loss, settlement amount |
+| 4 | **Convention/subrogation** (insurer A ↔ insurer B) | 7-8 | Very high, arcane | Insurer | Liability, recovery amount |
+
+#### Unresolved: Which Boundary?
+
+Each boundary has different characteristics:
+
+**Boundary 1 (FNOL intake)** — Most obvious, most competed. omni:us is here. Tractable is here. But it's also the highest volume entry point.
+
+**Boundary 2 (TPA handoffs)** — Overlooked by startups, massive pain. Every TPA handoff involves re-keying the entire claim. But TPA market is relationship-driven and slow to adopt.
+
+**Boundary 3 (Repair estimates)** — CCC/Mitchell/Audatex dominate estimation, but the handoff BETWEEN systems is broken. Supplements especially. Direct path to total loss and settlement decisions.
+
+**Boundary 4 (Convention/subrogation)** — Most arcane, least competed, highest $ impact ($15B+ left on the table in US alone). But requires deep regulatory knowledge per market.
+
+**Decision deferred** — need to complete Phase 9 (Decision) and Phase 10 (Settlement) mapping to see where the biggest decision-value concentration actually sits before committing to a boundary.
+
+#### Assumptions Added
+
+- **A102:** The most broken data in claims is at inter-party boundaries, not within single systems ⚠️ Needs validation with real claims handlers
+- **A103:** Being the structured interchange layer at one boundary creates expansion rights to adjacent boundaries ⚠️ Needs validation
+- **A104:** Clean data at a specific boundary naturally leads to owning decisions at that boundary ⚠️ Needs validation
+
+#### Strategic Insights Added
+
+- **Insight #34:** "Clean data" is a means, not a product — the wedge must be specific about WHICH data, WHERE, for WHOM
+- **Insight #35:** Data degrades most at inter-party boundaries (policyholder↔insurer, insurer↔TPA, insurer↔shop, insurer↔insurer) — this is where the data quality problem actually lives
+- **Insight #36:** The boundary you choose determines your expansion path to decisions — choose the boundary closest to the highest-value decisions
+
+---

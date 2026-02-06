@@ -396,8 +396,73 @@ C["documents-assessment"] = [
   { t: "Subrogation demand (if applicable)", y: "doc" },
 ];
 
+// Phase 9: Decision — The 7 Claims Decisions
+C["policyholder-decision"] = [
+  { t: "Awaits coverage confirmation", y: "action" },
+  { t: "May dispute liability %", y: "friction" },
+  { t: "Notified of total loss?", y: "action" },
+  { t: "BI: Provides medical docs", y: "action" },
+  { t: "May engage attorney (BI)", y: "friction" },
+];
+C["insurer_handler-decision"] = [
+  { t: "⚡ FORK 11: Decision type", y: "fork", f: "fork11" },
+  { t: "D1: Coverage determination", y: "action" },
+  { t: "D2: Liability assignment", y: "action" },
+  { t: "D3: Reserve setting/adjustment", y: "action" },
+  { t: "D4: Total loss vs repair", y: "fork" },
+  { t: "D5: Fraud referral to SIU", y: "action" },
+  { t: "D6: Subrogation identification", y: "action" },
+  { t: "D7: BI valuation (if injury)", y: "action" },
+];
+C["adjuster-decision"] = [
+  { t: "🇺🇸 Recommends liability %", y: "us" },
+  { t: "🇺🇸 Sets/adjusts reserves", y: "us" },
+  { t: "🇺🇸 Total loss recommendation", y: "us" },
+  { t: "🇺🇸 BI: Colossus/manual valuation", y: "us" },
+  { t: "🇪🇺 Expert report → handler decides", y: "eu" },
+  { t: "🇪🇺 Convention lookup = auto-liability", y: "eu" },
+];
+C["insurer_uw-decision"] = [
+  { t: "Coverage interpretation (grey areas)", y: "action" },
+  { t: "Policy exclusion review", y: "action" },
+  { t: "Referral for complex coverage Qs", y: "friction" },
+];
+C["insurer_fin-decision"] = [
+  { t: "Reserve adequacy review", y: "action" },
+  { t: "Large loss escalation", y: "action" },
+  { t: "Reinsurance notification", y: "action" },
+];
+C["siu-decision"] = [
+  { t: "D5: Fraud referral decision", y: "action" },
+  { t: "⚠️ Red flags → full investigation", y: "friction" },
+  { t: "Clear → return to handler", y: "path-a" },
+  { t: "Suspicious → deny/negotiate", y: "path-b" },
+];
+C["insurer_b-decision"] = [
+  { t: "🇺🇸 Own liability determination", y: "us" },
+  { t: "🇺🇸 May disagree on fault %", y: "friction" },
+  { t: "🇺🇸 Inter-company arbitration?", y: "us" },
+  { t: "🇪🇺 Convention determines", y: "eu" },
+];
+C["convention-decision"] = [
+  { t: "🇪🇺 Bareme lookup → fault %", y: "eu" },
+  { t: "🇪🇺 IRSA/CARD/IDS/CIDE tables", y: "eu" },
+  { t: "🇪🇺 13 cases (FR) to 50+ (IT)", y: "eu" },
+  { t: "🇺🇸 Arbitration Forums (if disputed)", y: "us" },
+];
+C["documents-decision"] = [
+  { t: "Coverage determination memo", y: "doc" },
+  { t: "Liability assignment (fault %)", y: "doc" },
+  { t: "Reserve calculation worksheet", y: "doc" },
+  { t: "Total loss valuation report", y: "doc" },
+  { t: "SIU referral (if applicable)", y: "doc" },
+  { t: "Subrogation demand letter", y: "doc" },
+  { t: "BI valuation (Colossus/manual)", y: "doc" },
+  { t: "🇪🇺 Convention fault ruling", y: "eu" },
+];
+
 // Remaining phases placeholder
-["decision","settlement","close"].forEach(p => {
+["settlement","close"].forEach(p => {
   ["policyholder","insurer_handler","documents"].forEach(a => {
     if (!C[`${a}-${p}`]) C[`${a}-${p}`] = [{ t: "TO BE MAPPED", y: "todo" }];
   });
@@ -679,6 +744,46 @@ const FORKS = {
       ["sr","f1"],["br","f1"],["cr","f1"],
       ["f1","f2","Yes"],["f2","fr"],
       ["f1","a1","No"],["a1","ar","Yes"],
+    ],
+  },
+  fork11: {
+    title: "Fork 11: The 7 Claims Decisions — Codifiable vs Judgment",
+    phase: "Phase 9 — Decision",
+    desc: "The decision phase contains 7 distinct decisions. Some are rule-based (codifiable), others require expert judgment. This is where the true value lies — and where AI can have the biggest impact.",
+    nodes: [
+      { id: "s", x: 300, y: 20, w: 220, h: 36, text: "Investigation complete", tp: "start" },
+      { id: "q", x: 300, y: 80, w: 220, h: 44, text: "Which decision?", tp: "decision" },
+      // Coverage (codifiable)
+      { id: "d1", x: 20, y: 160, w: 160, h: 34, text: "D1: Coverage", tp: "action" },
+      { id: "d1r", x: 10, y: 210, w: 180, h: 44, text: "CODIFIABLE\nPolicy terms lookup", tp: "result-a" },
+      // Liability (mixed)
+      { id: "d2", x: 200, y: 160, w: 160, h: 34, text: "D2: Liability", tp: "action" },
+      { id: "d2r", x: 190, y: 210, w: 180, h: 44, text: "EU: CODIFIABLE (bareme)\nUS: JUDGMENT", tp: "result-b" },
+      // Reserves (mixed)
+      { id: "d3", x: 380, y: 160, w: 160, h: 34, text: "D3: Reserves", tp: "action" },
+      { id: "d3r", x: 370, y: 210, w: 180, h: 44, text: "MIXED\nFormula + experience", tp: "result-b" },
+      // Total Loss (codifiable)
+      { id: "d4", x: 560, y: 160, w: 160, h: 34, text: "D4: Total Loss", tp: "action" },
+      { id: "d4r", x: 550, y: 210, w: 180, h: 44, text: "CODIFIABLE\nRepair > X% of value", tp: "result-a" },
+      // Fraud (mixed)
+      { id: "d5", x: 100, y: 300, w: 160, h: 34, text: "D5: Fraud Referral", tp: "action" },
+      { id: "d5r", x: 90, y: 350, w: 180, h: 44, text: "MIXED\nRules + pattern matching", tp: "result-b" },
+      // Subrogation (codifiable)
+      { id: "d6", x: 300, y: 300, w: 160, h: 34, text: "D6: Subrogation", tp: "action" },
+      { id: "d6r", x: 290, y: 350, w: 180, h: 44, text: "CODIFIABLE\nFault % + recovery rules", tp: "result-a" },
+      // BI Valuation (judgment)
+      { id: "d7", x: 500, y: 300, w: 160, h: 34, text: "D7: BI Valuation", tp: "action" },
+      { id: "d7r", x: 490, y: 350, w: 180, h: 44, text: "JUDGMENT-HEAVY\nColossus/tribal knowledge", tp: "result-c" },
+      // Summary
+      { id: "sum", x: 220, y: 430, w: 360, h: 50, text: "3 codifiable · 3 mixed · 1 judgment-heavy\nAutomation ceiling: ~60-70% of decisions", tp: "result-a" },
+    ],
+    edges: [
+      ["s","q"],
+      ["q","d1","Coverage"],["q","d2","Liability"],["q","d3","Reserves"],["q","d4","Total Loss"],
+      ["d1","d1r"],["d2","d2r"],["d3","d3r"],["d4","d4r"],
+      ["d1r","d5"],["d2r","d5"],["d3r","d6"],["d4r","d6"],
+      ["d5","d5r"],["d6","d6r"],["d6r","d7"],["d5r","d7"],
+      ["d7","d7r"],["d7r","sum"],
     ],
   },
 };
@@ -1187,7 +1292,7 @@ export default function App() {
       {view==="competitors"&&<CompetitorView />}
 
       <div style={{marginTop:6,padding:5,background:"#FEF3C7",borderRadius:4,border:"1px solid #F59E0B"}}>
-        <p style={{fontSize:8.5,color:"#92400E",margin:0}}><strong>Progress:</strong> Motor Phases 0-7 mapped. Home/Property FNOL & Adjuster workflow added. 12 competitors mapped to journey phases. Click 🏢 Competitors for landscape view.</p>
+        <p style={{fontSize:8.5,color:"#92400E",margin:0}}><strong>Progress:</strong> Motor Phases 0-9 mapped (incl. Decision — 7 decisions, 9 actors). Home/Property FNOL & Adjuster workflow added. 12 competitors mapped. Click ⚡ Forks → Fork 11 for Decision breakdown.</p>
       </div>
     </div>
   );
